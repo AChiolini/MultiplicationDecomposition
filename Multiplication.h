@@ -6,17 +6,17 @@
 
 class Multiplication
 {
-	private:
-		Multiplier *multipliers;
-		int nMultipliers;
-		void printMatrix (char*, short, short);
-		SubMultiplication* standardDisposition (Multiplier, short, short);
+    private:
+	Multiplier *multipliers;
+	int nMultipliers;
+	void printMatrix (char*, short, short);
+	SubMultiplication* standardDisposition (Multiplier*, short, short);
 
-	public:
-		Multiplication ();
-		void printMultipliers();
-		long long multiply(short, long long, short, long long);
-		virtual ~Multiplication () = default;
+    public:
+	Multiplication ();
+	void printMultipliers();
+	long long multiply(short, long long, short, long long);
+	virtual ~Multiplication () = default;
 };
 
 #endif

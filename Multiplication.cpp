@@ -5,77 +5,65 @@
 
 using namespace std;
 
-Multiplication::Multiplication ()
+Multiplication::Multiplication()
 {
-    int i;
+    int i, delay;
     short input1, input2, minInput1, minInput2;
+    vector <Multiplier> array;
     ifstream infile("multipliers");
-    Multiplier *tmp;
-    Multiplier *tmpArray;
 
     nMultipliers = 0;
-    while (infile >> input1 >> input2 >> minInput1 >> minInput2)
+    while (infile >> input1 >> input2 >> minInput1 >> minInput2 >> delay)
     {	
 	try
 	{
-	    tmp = new Multiplier (input1, input2, minInput1, minInput2);		
-	    if (nMultipliers == 0)
-	    {
-		multipliers = new Multiplier[1];
-		multipliers[0] = Multiplier (tmp->getInputLenght1(), tmp->getInputLenght2(), tmp->getMinInput1(), tmp->getMinInput2());
-	    }
-	    else
-	    {
-		tmpArray = new Multiplier[nMultipliers + 1];
-		for (i = 0; i < nMultipliers; i++)
-		    tmpArray[i] = Multiplier(multipliers[i].getInputLenght1(), multipliers[i].getInputLenght2(), multipliers[i].getMinInput1(), multipliers[i].getMinInput2());
-		tmpArray[nMultipliers] = Multiplier (tmp->getInputLenght1(), tmp->getInputLenght2(), tmp->getMinInput1(), tmp->getMinInput2());
-		delete[] multipliers;
-		multipliers = tmpArray;
-	    }
-	    nMultipliers++;
+	    array.push_back(Multiplier (input1, input2, minInput1, minInput2, delay));		
 	}
 	catch (const invalid_argument& e)
 	{
 	    cerr << e.what() << endl;
 	}
     }
+    nMultipliers = array.size();
+    if (nMultipliers > 0)
+    	multipliers = &array[0];
 }
 
-void Multiplication::printMultipliers ()
+void Multiplication::printMultipliers()
 {
     int i;
 	
     cout << "Number of multipliers " << nMultipliers << endl;
     for(i=0; i < nMultipliers; i++)
     {
-	cout << i+1 << ") " << multipliers[i].getInputLenght1() << " x " << multipliers[i].getInputLenght2() << " ( " << multipliers[i].getMinInput1() << " x " << multipliers[i].getMinInput2() << " ) " << endl;
+	cout << i+1 << ") " << multipliers[i].getInputLenght1() << "x" << multipliers[i].getInputLenght2() << " (" << multipliers[i].getMinInput1() << "x" << multipliers[i].getMinInput2() << ")" << endl;
     }
 }
 
-long long Multiplication::multiply (short inputLenght1, long long value1, short inputLenght2, long long value2)
+long long Multiplication::multiply(short inputLenght1, long long value1, short inputLenght2, long long value2)
 {
-	int i;
-	for (i=0; i<nMultipliers; i++){
-	 cout << i+1 << ") " << multipliers[i].getInputLenght1() << " x " << multipliers[i].getInputLenght2() << " ( " << multipliers[i].getMinInput1() << " x " << multipliers[i].getMinInput2() << " ) " << endl;
-     standardDisposition (multipliers[i], inputLenght1, inputLenght2);
-	 cout << endl;
-	}
+    int i;
+    for (i=0; i<nMultipliers; i++)
+    {
+	cout << i+1 << ") " << multipliers[i].getInputLenght1() << "x" << multipliers[i].getInputLenght2() << " (" << multipliers[i].getMinInput1() << "x" << multipliers[i].getMinInput2() << ")" << endl;
+     standardDisposition (&multipliers[i], (long long) inputLenght1 - 1, (long long) inputLenght2 - 1);
+	cout << endl;
+    }
 }
 
-SubMultiplication* Multiplication::standardDisposition (Multiplier mult, short x, short y)
+SubMultiplication* Multiplication::standardDisposition(Multiplier *mult, short x, short y)
 {
     short dim1; 
     short dim2;
     short max;
     short min; 
-    int nmaxv, nminv, countv, nmaxh, nminh, counth, i, j, k, n, nmaxtmp;
+    int nmaxv, nminv, countv, nmaxh, nminh, counth, i, j, k, n, nmaxtmp, lX, lY;
     bool match;
     vector <SubMultiplication> subMultiplications;
     SubMultiplication *tmp;
 	
-    dim1 = mult.getInputLenght1() - 1;
-    dim2 = mult.getInputLenght2() - 1;
+    dim1 = mult->getInputLenght1() - 1;
+    dim2 = mult->getInputLenght2() - 1;
     match = false;
     if (dim1 > dim2)
     {
@@ -92,8 +80,18 @@ SubMultiplication* Multiplication::standardDisposition (Multiplier mult, short x
 	//se il moltiplicatore è un quadrato mappo tutto fino a che non copro tutta la moltiplicazione
 	for (i = 0; i * max < x; i++)
 	{
+	    if ((i + 1) * max > x)
+		lX = max - ((i + 1) * max) + x;
+	    else
+		lX = max;
 	    for (j = 0; j * max < y; j++)
-		subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * max)), max, max));
+	    {
+		if ((j + 1) * max > y)
+		    lY = max - ((j + 1) * max) + y;
+		else
+		    lY = max;
+		subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * max)), (short) lX, (short) lY, mult));
+	    }
 	}
     }
     else
@@ -129,27 +127,67 @@ SubMultiplication* Multiplication::standardDisposition (Multiplier mult, short x
 	    }
 	    for (i = 0; i < nmaxh; i++)
 	    {
+		if ((i + 1) * max > x)
+		    lX = max - ((i + 1) * max) + x;
+	        else
+		    lX = max;
 		for (j = 0; j * min < y; j++)
-		    subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * min)), max, min));
+		{
+		    if ((j + 1) * min > y)
+		        lY = min - ((j + 1) * min) + y;
+		    else
+			lY = min;
+		    subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * min)), (short) lX, (short) lY, mult));
+		}
 	    }
 	    for (k = 0; k < nminh; k++)
 	    {
+		if ((i * max) + ((k + 1) * min) > x)
+		    lX = min - ((i * max) + ((k + 1) * min)) + x;
+	        else
+		    lX = min;
 		for (j = 0; j * max < y; j++)
-		    subMultiplications.push_back (SubMultiplication (((short) ((i * max) + (k * min))), ((short) (j * max)), min, max));
-	    } 
+		{
+		    if ((j + 1) * max > y)
+		        lY = max - ((j + 1) * max) + y;
+		    else
+			lY = max;
+		    subMultiplications.push_back (SubMultiplication (((short) ((i * max) + (k * min))), ((short) (j * max)), (short) lX, (short) lY, mult));	    
+		} 
+	    }
 	}
 	else
 	{
 	    //match verticale
 	    for (i = 0; i < nmaxv; i++)
 	    {
+		if ((i + 1) * max > y)
+		    lY = max - ((i + 1) * max) + y;
+	        else
+		    lY = max;
 		for (j = 0; j * min < x; j++)
-		    subMultiplications.push_back (SubMultiplication (((short) (j * min)), ((short) (i * max)), min, max));
+		{
+		    if ((j + 1) * min > x)
+		        lX = min - ((j + 1) * min) + x;
+		    else
+			lX = min;
+		    subMultiplications.push_back (SubMultiplication (((short) (j * min)), ((short) (i * max)), (short) lX, (short) lY, mult));
+		}
 	    }
 	    for (k = 0; k < nminv; k++)
 	    {
+		if ((i * max) + ((k + 1) * min) > y)
+		    lY = min - ((i * max) + ((k + 1) * min)) + y;
+	        else
+		    lY = min;
 		for (j = 0; j * max < x; j++)
-		    subMultiplications.push_back (SubMultiplication (((short) (j * max)), ((short) ((i * max) + (k * min))), max, min));
+		{
+		    if ((j + 1) * max > x)
+		        lX = max - ((j + 1) * max) + x;
+		    else
+			lX = max;
+		    subMultiplications.push_back (SubMultiplication (((short) (j * max)), ((short) ((i * max) + (k * min))), (short) lX, (short) lY, mult));
+		}		    
 	    }
 	}
     }
@@ -159,5 +197,5 @@ SubMultiplication* Multiplication::standardDisposition (Multiplier mult, short x
 	cout << "(" << subMultiplications[i].getX() << ", " << subMultiplications[i].getY() << ", ";
 	cout << subMultiplications[i].getLengthX() << ", " << subMultiplications[i].getLengthY() << ")" << endl;
     }
-    return NULL;
+    return &subMultiplications[0];
 }

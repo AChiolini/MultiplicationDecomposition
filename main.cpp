@@ -2,7 +2,7 @@
 
 int main ()
 {
-	Multiplication mult;
-	mult.multiply (65, 0, 32, 0);
-	return (0);
+    Multiplication mult;
+    mult.multiply (66, 0, 34, 0);
+    return (0);
 }
