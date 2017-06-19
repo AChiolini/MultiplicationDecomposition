@@ -2,7 +2,7 @@
 #define MULTIPLICATION_H
 
 #include "Multiplier.h"
-#include "SubMultiplication.h"
+#include "Configuration.h"
 
 class Multiplication
 {
@@ -10,7 +10,7 @@ class Multiplication
 	Multiplier *multipliers;
 	int nMultipliers;
 	void printMatrix (char*, short, short);
-	SubMultiplication* standardDisposition (Multiplier*, short, short);
+	Configuration* standardDisposition (Multiplier*, short, short);
 
     public:
 	Multiplication ();

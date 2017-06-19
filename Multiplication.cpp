@@ -1,7 +1,9 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <math.h>
 #include "Multiplication.h"
+
 
 using namespace std;
 
@@ -51,16 +53,17 @@ long long Multiplication::multiply(short inputLenght1, long long value1, short i
     }
 }
 
-SubMultiplication* Multiplication::standardDisposition(Multiplier *mult, short x, short y)
+Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, short y)
 {
     short dim1; 
     short dim2;
     short max;
-    short min; 
+    short min;
+    int levels, delay;
     int nmaxv, nminv, countv, nmaxh, nminh, counth, i, j, k, n, nmaxtmp, lX, lY;
     bool match;
     vector <SubMultiplication> subMultiplications;
-    SubMultiplication *tmp;
+    Configuration *tmp;
 	
     dim1 = mult->getInputLenght1() - 1;
     dim2 = mult->getInputLenght2() - 1;
@@ -191,11 +194,20 @@ SubMultiplication* Multiplication::standardDisposition(Multiplier *mult, short x
 	    }
 	}
     }
+    if (subMultiplications.size() > 0)
+    {
+	for (levels = 0; pow (2.0, levels) < subMultiplications.size(); levels++);
+	delay = levels + mult->getDelay();
+    }
+    else
+	delay = 0;
+    tmp = new Configuration(&subMultiplications[0], subMultiplications.size(), delay);
     //dovrei avere l´array pronto in questo punto
     for (i = 0; i < subMultiplications.size(); i++)
     {
 	cout << "(" << subMultiplications[i].getX() << ", " << subMultiplications[i].getY() << ", ";
 	cout << subMultiplications[i].getLengthX() << ", " << subMultiplications[i].getLengthY() << ")" << endl;
     }
-    return &subMultiplications[0];
+    cout << "Delay: " << delay << endl;
+    return tmp;
 }
