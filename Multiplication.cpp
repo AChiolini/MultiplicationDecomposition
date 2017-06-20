@@ -211,3 +211,29 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
     cout << "Delay: " << delay << endl;
     return tmp;
 }
+
+void Multiplication::KaratsubaOfman(long long x, long long y, short lengthX, short lengthY)
+{
+	int lengthX0, lengthX1, lengthY0, lengthY1;
+
+	div_t divrX, divrY;
+
+	divrX = std::div(lengthX, 2);
+	//cout << divr.rem << " " << divr.quot << endl;
+	divrY = std::div(lengthY, 2);
+
+	if(divrX.rem == 0){
+		lengthX0 = lengthX / 2;
+		lengthX1 = lengthX / 2;
+	} //TODO else estensione segno e poi divisione
+	if (divrY.rem == 0){
+		lengthY0 = lengthY / 2;
+		lengthY1 = lengthY / 2;
+	} //TODO else estensione segno e poi divisione
+
+	//cout << "(" << lengthX << "," << lengthX0 << "," << lengthX1 << ";" << lengthY << "," << lengthY0 << "," << lengthY1 << ")" << endl;
+	
+	//Calcolo i 2 sottonumeri che devo moltiplicare
+	
+	//Per ogni sottonumero rieseguo il multiply
+}

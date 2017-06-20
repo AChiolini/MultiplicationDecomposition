@@ -11,6 +11,7 @@ class Multiplication
 	int nMultipliers;
 	void printMatrix (char*, short, short);
 	Configuration* standardDisposition (Multiplier*, short, short);
+	void KaratsubaOfman (long long, long long, short, short);
 
     public:
 	Multiplication ();
