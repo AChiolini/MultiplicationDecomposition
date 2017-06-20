@@ -215,6 +215,7 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
 void Multiplication::KaratsubaOfman(long long x, long long y, short lengthX, short lengthY)
 {
 	int lengthX0, lengthX1, lengthY0, lengthY1;
+	long X0, Y0, X1, Y1;
 
 	div_t divrX, divrY;
 
@@ -236,4 +237,8 @@ void Multiplication::KaratsubaOfman(long long x, long long y, short lengthX, sho
 	//Calcolo i 2 sottonumeri che devo moltiplicare
 	
 	//Per ogni sottonumero rieseguo il multiply
+	multiply(X1, Y1);
+	multiply(X0, Y0);
+	multiply(X1-X0, Y1-Y0);
+	//Aggiunta degli shift
 }
