@@ -11,20 +11,20 @@ class SubMultiplication
 	short y;
 	short lengthX;
 	short lengthY;
-	Multiplier *multiplier;
+	Multiplier multiplier;
 
     public:
-	SubMultiplication(short, short, short, short, Multiplier*);
+	SubMultiplication(short, short, short, short, Multiplier);
 	short getX();
 	short getY();
 	short getLengthX();
 	short getLengthY();
-	Multiplier* getMultiplier();
+	Multiplier getMultiplier();
 	void setX(short);
 	void setY(short);
 	void setLengthX(short);
 	void setLengthY(short);
-	void setMultiplier(Multiplier*);
+	void setMultiplier(Multiplier);
 	virtual ~SubMultiplication() = default;
 };
 

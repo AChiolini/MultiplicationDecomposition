@@ -1,47 +1,38 @@
-#include "Multiplication.h"
+#include <iostream>
+#include <vector>
+#include <math.h>
+#include "StandardTiling.h"
 
 using namespace std;
 
-Multiplication::Multiplication()
+StandardTiling::StandardTiling(Multiplier *multipliers, int nMultipliers)
 {
-    /*int i, delay;
-    short input1, input2, minInput1, minInput2;
-    vector <Multiplier> array;
-    ifstream infile("multipliers");
-
-    nMultipliers = 0;
-    while (infile >> input1 >> input2 >> minInput1 >> minInput2 >> delay)
-    {	
-	try
-	{
-	    array.push_back(Multiplier (input1, input2, minInput1, minInput2, delay));		
-	}
-	catch (const invalid_argument& e)
-	{
-	    cerr << e.what() << endl;
-	}
-    }
-    nMultipliers = array.size();
-    if (nMultipliers > 0)
-    	multipliers = &array[0];*/
+    this->multipliers = multipliers;
+    this->nMultipliers = nMultipliers;
 }
 
-
-/*long long Multiplication::multiply(short inputLenght1, long long value1, short inputLenght2, long long value2)
+Configuration* StandardTiling::dispositions(short lengthX, short lengthY, int *nDispositions)
 {
+    vector <Configuration> configurations;
     int i;
-	KaratsubaOfman(value1, value2, inputLenght1, inputLenght2);
-    for (i=0; i<nMultipliers; i++)
+
+    for (i=0; i<nMultipliers;i++)
     {
-	cout << i+1 << ") " << multipliers[i].getInputLenght1() << "x" << multipliers[i].getInputLenght2() << " (" << multipliers[i].getMinInput1() << "x" << multipliers[i].getMinInput2() << ")" << endl;
-     standardDisposition (&multipliers[i], (long long) inputLenght1 - 1, (long long) inputLenght2 - 1);
-	cout << endl;
+        configurations.push_back(dispose(lengthX, lengthY, i));
+    }
+    if (configurations.size() > 0)
+    {
+        *nDispositions = configurations.size();
+        return &configurations[0];
+    }
+    else 
+    {
+        *nDispositions = 0;
+        return NULL;
     }
 }
-*/
 
-/*
-Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, short y)
+Configuration StandardTiling::dispose(short x, short y, int index)
 {
     short dim1; 
     short dim2;
@@ -53,8 +44,8 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
     vector <SubMultiplication> subMultiplications;
     Configuration *tmp;
 	
-    dim1 = mult->getInputLenght1() - 1;
-    dim2 = mult->getInputLenght2() - 1;
+    dim1 = multipliers[index].getInputLenght1() - 1;
+    dim2 = multipliers[index].getInputLenght2() - 1;
     match = false;
     if (dim1 > dim2)
     {
@@ -81,7 +72,7 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
 		    lY = max - ((j + 1) * max) + y;
 		else
 		    lY = max;
-		subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * max)), (short) lX, (short) lY, mult));
+		subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * max)), (short) lX, (short) lY, multipliers[index]));
 	    }
 	}
     }
@@ -128,7 +119,7 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
 		        lY = min - ((j + 1) * min) + y;
 		    else
 			lY = min;
-		    subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * min)), (short) lX, (short) lY, mult));
+		    subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * min)), (short) lX, (short) lY, multipliers[index]));
 		}
 	    }
 	    for (k = 0; k < nminh; k++)
@@ -143,7 +134,7 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
 		        lY = max - ((j + 1) * max) + y;
 		    else
 			lY = max;
-		    subMultiplications.push_back (SubMultiplication (((short) ((i * max) + (k * min))), ((short) (j * max)), (short) lX, (short) lY, mult));	    
+		    subMultiplications.push_back (SubMultiplication (((short) ((i * max) + (k * min))), ((short) (j * max)), (short) lX, (short) lY, multipliers[index]));	    
 		} 
 	    }
 	}
@@ -162,7 +153,7 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
 		        lX = min - ((j + 1) * min) + x;
 		    else
 			lX = min;
-		    subMultiplications.push_back (SubMultiplication (((short) (j * min)), ((short) (i * max)), (short) lX, (short) lY, mult));
+		    subMultiplications.push_back (SubMultiplication (((short) (j * min)), ((short) (i * max)), (short) lX, (short) lY, multipliers[index]));
 		}
 	    }
 	    for (k = 0; k < nminv; k++)
@@ -177,7 +168,7 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
 		        lX = max - ((j + 1) * max) + x;
 		    else
 			lX = max;
-		    subMultiplications.push_back (SubMultiplication (((short) (j * max)), ((short) ((i * max) + (k * min))), (short) lX, (short) lY, mult));
+		    subMultiplications.push_back (SubMultiplication (((short) (j * max)), ((short) ((i * max) + (k * min))), (short) lX, (short) lY, multipliers[index]));
 		}		    
 	    }
 	}
@@ -185,7 +176,7 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
     if (subMultiplications.size() > 0)
     {
 	for (levels = 0; pow (2.0, levels) < subMultiplications.size(); levels++);
-	delay = levels + mult->getDelay();
+	delay = levels + multipliers[index].getDelay();
     }
     else
 	delay = 0;
@@ -197,40 +188,5 @@ Configuration* Multiplication::standardDisposition(Multiplier *mult, short x, sh
 	cout << subMultiplications[i].getLengthX() << ", " << subMultiplications[i].getLengthY() << ")" << endl;
     }
     cout << "Delay: " << delay << endl;
-    return tmp;
+    return Configuration(&subMultiplications[0], subMultiplications.size(), delay);
 }
-*/
-
-
-/*
-void Multiplication::KaratsubaOfman(long long x, long long y, short lengthX, short lengthY)
-{
-	int lengthX0, lengthX1, lengthY0, lengthY1;
-	long X0, Y0, X1, Y1;
-
-	div_t divrX, divrY;
-
-	divrX = std::div(lengthX, 2);
-	//cout << divr.rem << " " << divr.quot << endl;
-	divrY = std::div(lengthY, 2);
-
-	if(divrX.rem == 0){
-		lengthX0 = lengthX / 2;
-		lengthX1 = lengthX / 2;
-	} //TODO else estensione segno e poi divisione
-	if (divrY.rem == 0){
-		lengthY0 = lengthY / 2;
-		lengthY1 = lengthY / 2;
-	} //TODO else estensione segno e poi divisione
-
-	//cout << "(" << lengthX << "," << lengthX0 << "," << lengthX1 << ";" << lengthY << "," << lengthY0 << "," << lengthY1 << ")" << endl;
-	
-	//Calcolo i 2 sottonumeri che devo moltiplicare
-	
-	//Per ogni sottonumero rieseguo il multiply
-	multiply(lengthX1, X1, lengthY1, Y1);
-	multiply(lengthX0, X0, lengthY0, Y0);
-	multiply(lengthX0, X1-X0, lengthY0, Y1-Y0); //Perchè dice k+1 bit?
-	//Aggiunta degli shift
-}
-*/

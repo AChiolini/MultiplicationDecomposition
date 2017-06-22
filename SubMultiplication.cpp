@@ -4,7 +4,7 @@
 
 using namespace std;
 
-SubMultiplication::SubMultiplication(short x, short y,  short lengthX, short lengthY, Multiplier *multiplier)
+SubMultiplication::SubMultiplication(short x, short y,  short lengthX, short lengthY, Multiplier multiplier)
 {
     if (x >= 0 && y >= 0)
     {
@@ -43,7 +43,7 @@ short SubMultiplication::getLengthY()
     return this->lengthY;
 }
 
-Multiplier* SubMultiplication::getMultiplier()
+Multiplier SubMultiplication::getMultiplier()
 {
     return this->multiplier;
 }
@@ -80,7 +80,7 @@ void SubMultiplication::setLengthY(short length)
     }
 }
 
-void SubMultiplication::setMultiplier(Multiplier *multiplier)
+void SubMultiplication::setMultiplier(Multiplier multiplier)
 {
     this->multiplier = multiplier;
 }
