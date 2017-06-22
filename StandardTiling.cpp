@@ -13,6 +13,7 @@ StandardTiling::StandardTiling(Multiplier *multipliers, int nMultipliers)
 
 Configuration* StandardTiling::dispositions(short lengthX, short lengthY, int *nDispositions)
 {
+    Configuration c;
     vector <Configuration> configurations;
     int i;
 
@@ -42,7 +43,6 @@ Configuration StandardTiling::dispose(short x, short y, int index)
     int nmaxv, nminv, countv, nmaxh, nminh, counth, i, j, k, n, nmaxtmp, lX, lY;
     bool match;
     vector <SubMultiplication> subMultiplications;
-    Configuration *tmp;
 	
     dim1 = multipliers[index].getInputLenght1() - 1;
     dim2 = multipliers[index].getInputLenght2() - 1;
@@ -180,8 +180,6 @@ Configuration StandardTiling::dispose(short x, short y, int index)
     }
     else
 	delay = 0;
-    tmp = new Configuration(&subMultiplications[0], subMultiplications.size(), delay);
-    //dovrei avere l´array pronto in questo punto
     for (i = 0; i < subMultiplications.size(); i++)
     {
 	cout << "(" << subMultiplications[i].getX() << ", " << subMultiplications[i].getY() << ", ";

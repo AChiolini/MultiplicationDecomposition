@@ -1,2 +1,2 @@
-g++ -o main main.cpp -std=c++11 Multiplication.cpp Multiplier.cpp SubMultiplication.cpp Configuration.cpp StandardTiling.cpp
+g++ -o main main.cpp -std=c++11 Multiplication.cpp Multiplier.cpp SubMultiplication.cpp Configuration.cpp StandardTiling.cpp KaratsubaOfman.cpp
  
