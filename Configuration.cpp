@@ -1,4 +1,5 @@
 #include "Configuration.h"
+#include <stddef.h>
 
 Configuration::Configuration()
 {
@@ -19,7 +20,7 @@ SubMultiplication* Configuration::getSubMultiplications()
     return this->subMultiplications;
 }
 
-int Configuration::getNSubMultiplication()
+int Configuration::getNSubMultiplications()
 {
     return this->nSubMultiplications;
 }

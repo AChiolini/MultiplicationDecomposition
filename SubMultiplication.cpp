@@ -4,6 +4,15 @@
 
 using namespace std;
 
+SubMultiplication::SubMultiplication()
+{
+    this->x = 0;
+    this->y = 0;
+    this->lengthX = 17;
+    this->lengthY = 17;
+    this->multiplier;
+}
+
 SubMultiplication::SubMultiplication(short x, short y,  short lengthX, short lengthY, Multiplier multiplier)
 {
     if (x >= 0 && y >= 0)

@@ -16,13 +16,15 @@ KaratsubaOfman::KaratsubaOfman(Multiplier *multipliers, int nMultipliers)
 Configuration* KaratsubaOfman::dispositions(short lengthX, short lengthY, int *nDispositions)
 {
     vector <Configuration> configurations;
+    Configuration c;
     int i;
 
     for(i=0; i<nMultipliers; i++)
     {
-        if(multipliers[i].getInputLenght1() % 2 == 0 && multipliers[i].getInputLenght2() % 2 == 0)
+        c = dispose(lengthX, lengthY, i);
+        if(c.getNSubMultiplications() > 0)
         {
-            configurations.push_back(dispose(lengthX, lengthY, i));
+            configurations.push_back(c);
         }
     }
     if (configurations.size() > 0)
@@ -41,7 +43,7 @@ Configuration KaratsubaOfman::dispose(short x, short y, int index)
 {
     SubMultiplication *s;
     short lx, ly, lm;
-    //s = new SubMultiplication(0, 0, x, y, multipliers[index]);
+
     cout << "Karatsuba" << endl;
     cout << multipliers[index].getInputLenght1() << ", " << multipliers[index].getInputLenght2() << endl;
 
@@ -49,7 +51,14 @@ Configuration KaratsubaOfman::dispose(short x, short y, int index)
     (multipliers[index].getInputLenght1() * 2) > x && x > multipliers[index].getInputLenght1())
     {
         lm = x/2;
-        s = new SubMultiplication(0, 0, lm, lm, multipliers[index]);
+        s = new SubMultiplication[3];
+        s[0] = SubMultiplication(0, 0, lm - 1, lm - 1, multipliers[index]);
+        s[1] = SubMultiplication(lm - 1, lm - 1, x - lm - 2, x - lm - 2, multipliers[index]);
+        //Differenze
+
+        //SubMultiplication Differenze
+
+        return Configuration(s, 3, 1);
     }
-    return Configuration(s, (int) 1, (int) 1);
+    return Configuration();
 }
