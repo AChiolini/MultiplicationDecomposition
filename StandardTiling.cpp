@@ -13,7 +13,7 @@ StandardTiling::StandardTiling(Multiplier *multipliers, int nMultipliers)
 
 Configuration* StandardTiling::dispositions(short lengthX, short lengthY, int *nDispositions)
 {
-    Configuration c;
+    //Configuration c;
     vector <Configuration> configurations;
     int i;
 

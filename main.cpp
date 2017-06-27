@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Multiplication.h"
 #include "StandardTiling.h"
+#include "KaratsubaOfman.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ int main ()
 
     int i, delay, nMultipliers, n;
     short input1, input2, minInput1, minInput2;
-    Multiplication *tmp;
+    Multiplication *tmp, *tmp2;
     vector <Multiplier> array;
     Multiplier *multipliers;
     ifstream infile("multipliers");
@@ -38,6 +39,11 @@ int main ()
     
     tmp = new StandardTiling(multipliers, nMultipliers);
     tmp->dispositions(66, 34, &n);
+    tmp2 = new KaratsubaOfman(multipliers, nMultipliers);
+    tmp2->dispositions(66, 66, &n);
 
+    int a = -5000;
+    a = a>>5;
+    cout << a << endl;
     return (0);
 }

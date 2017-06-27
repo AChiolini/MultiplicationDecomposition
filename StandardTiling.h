@@ -7,6 +7,8 @@
 class StandardTiling : public Multiplication
 {
     private:
+        Multiplier *multipliers;
+		int nMultipliers;
         Configuration dispose(short, short, int);
 
     public: 

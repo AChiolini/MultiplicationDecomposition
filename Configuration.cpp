@@ -1,5 +1,12 @@
 #include "Configuration.h"
 
+Configuration::Configuration()
+{
+    this->delay = -1;
+    this->nSubMultiplications = 0;
+    this->subMultiplications = NULL;
+}
+
 Configuration::Configuration(SubMultiplication *subMultiplications, int nSubMultiplications, int delay)
 {
     this->subMultiplications = subMultiplications;
