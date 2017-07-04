@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include "OperationNode.h"
+#include "Addition.h"
 
 using namespace std;
 
@@ -11,7 +12,7 @@ OperationNode::OperationNode()
     this->right = NULL;
 }
 
-OperationNode::OperationNode(operation)
+OperationNode::OperationNode(Operation operation)
 {
     this->operation = operation;
     this->shift = 0;

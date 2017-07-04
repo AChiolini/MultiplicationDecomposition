@@ -4,7 +4,7 @@
 class Operation 
 {        
     public:
-        Operation();
+        virtual int OperationID() {return -1;};
         virtual ~Operation() = default;
 };
 

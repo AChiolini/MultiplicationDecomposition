@@ -27,7 +27,7 @@ MultiplicationTree* KaratsubaOfman::dispositions(short lengthX, short lengthY, i
     for(i=0; i<nMultipliers; i++)
     {
         c = dispose(lengthX, lengthY, i);
-        if(c.getNSubMultiplications() > 0)
+        if(c.getRoot() != NULL)
         {
             multiplicationTree.push_back(c);
         }
@@ -40,15 +40,15 @@ MultiplicationTree* KaratsubaOfman::dispositions(short lengthX, short lengthY, i
     else
     {
         *nDispositions = 0;
-        return 0;
+        return NULL;
     }
 }
 
 MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, int index)
 {
     short lm;
-    InputNode* x1, x0, y1, y0;
-    OperationNode* dX, dY, dXdY, x1y1, x1y1, halfMiddle, pMiddle, middle, first, last, root;
+    InputNode *x1, *x0, *y1, *y0;
+    OperationNode *dX, *dY, *dXdY, *x0y0, *x1y1, *halfMiddle, *pMiddle, *middle, *first, *last, *root;
 
     cout << "Karatsuba" << endl;
     cout << multipliers[index].getInputLenght1() << ", " << multipliers[index].getInputLenght2() << endl;
@@ -73,7 +73,7 @@ MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, int ind
 
         dXdY = new OperationNode(SubMultiplication(multipliers[index]));
         dXdY->setLeftChild(dX);
-        dXdY->setRightChild(dY)
+        dXdY->setRightChild(dY);
         
         x1y1 = new OperationNode(SubMultiplication(multipliers[index]));
         x1y1->setLeftChild(x1);

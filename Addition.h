@@ -6,6 +6,7 @@
 class Addition : public Operation
 {
     public:
+    	int OperationID() {return 1;};
         ~Addition() = default;
 };
 

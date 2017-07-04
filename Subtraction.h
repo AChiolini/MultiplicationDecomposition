@@ -6,6 +6,7 @@
 class Subtraction : public Operation
 {
     public:
+        int OperationID() {return 2;};
         ~Subtraction() = default;
 };
 

@@ -3,7 +3,7 @@
 
 #include "Node.h"
 
-final class InputNode : public Node
+class InputNode : public Node
 {
     private:
         bool firstInput;
@@ -17,8 +17,10 @@ final class InputNode : public Node
         bool isFirstInput();
         short getStart();
         short getLength();
-        void setFirstIndex(bool);
+        void setFirstInput(bool);
         void setStart(short);
         void setLength(short);
         ~InputNode() = default;
-}
+};
+
+#endif

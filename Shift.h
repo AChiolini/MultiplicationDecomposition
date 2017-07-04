@@ -11,8 +11,9 @@ class Shift : public Operation
     public:
         Shift();
         Shift(short);
-        short getK;
+        short getK();
         void setK(short);
+        int OperationID() {return 0;};
         ~Shift() = default;
 };
 

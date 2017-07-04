@@ -2,8 +2,9 @@
 #define OPERATIONNODE_H
 
 #include "Node.h"
+#include "Operation.h"
 
-final class OperationNode : public Node
+class OperationNode : public Node
 {
     private:
         Operation operation;
@@ -19,10 +20,10 @@ final class OperationNode : public Node
         Node* getLeftChild();
         Node* getRightChild();
         int getShift();
-        void setOperation(Operation)
+        void setOperation(Operation);
         void setLeftChild(Node*);
         void setRightChild(Node*);
-        void setShift();
+        void setShift(int);
         ~OperationNode();
 };
 

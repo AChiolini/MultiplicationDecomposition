@@ -15,7 +15,7 @@ short Shift::getK()
     return this->k;
 }
 
-void setK(short k)
+void Shift::setK(short k)
 {
     this->k = k;
 }
