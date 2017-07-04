@@ -3,30 +3,21 @@
 
 #include <stdbool.h>
 #include "Multiplier.h"
+#include "Operation.h"
 
-class SubMultiplication
+class SubMultiplication : public Operation
 {
     private:
-		short x;
-		short y;
-		short lengthX;
-		short lengthY;
 		Multiplier multiplier;
+		bool lut;
 
     public:
 		SubMultiplication();
-		SubMultiplication(short, short, short, short, Multiplier);
-		short getX();
-		short getY();
-		short getLengthX();
-		short getLengthY();
+		SubMultiplication(Multiplier);
+		bool isLUT();
 		Multiplier getMultiplier();
-		void setX(short);
-		void setY(short);
-		void setLengthX(short);
-		void setLengthY(short);
 		void setMultiplier(Multiplier);
-		virtual ~SubMultiplication() = default;
+		~SubMultiplication() = default;
 };
 
 #endif

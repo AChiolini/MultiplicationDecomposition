@@ -9,11 +9,11 @@ class KaratsubaOfman : public Multiplication
     private:
         Multiplier *multipliers;
 		int nMultipliers;
-        Configuration dispose(short, short, int);
+        MultiplicationTree dispose(short, short, int);
 
     public: 
         KaratsubaOfman(Multiplier*, int);
-        Configuration* dispositions(short, short, int*);
+        MultiplicationTree* dispositions(short, short, int*);
         ~KaratsubaOfman() = default;
 };
 

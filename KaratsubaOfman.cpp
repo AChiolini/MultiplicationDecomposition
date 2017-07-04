@@ -1,7 +1,12 @@
 #include "KaratsubaOfman.h"
-#include "Configuration.h"
+#include "MultiplicationTree.h"
 #include <vector>
 #include "SubMultiplication.h"
+#include "InputNode.h"
+#include "OperationNode.h"
+#include "Subtraction.h"
+#include "Addition.h"
+#include "Shift.h"
 #include <math.h>
 #include <iostream>
 
@@ -13,10 +18,10 @@ KaratsubaOfman::KaratsubaOfman(Multiplier *multipliers, int nMultipliers)
     this->nMultipliers = nMultipliers;
 }
 
-Configuration* KaratsubaOfman::dispositions(short lengthX, short lengthY, int *nDispositions)
+MultiplicationTree* KaratsubaOfman::dispositions(short lengthX, short lengthY, int *nDispositions)
 {
-    vector <Configuration> configurations;
-    Configuration c;
+    vector <MultiplicationTree> multiplicationTree;
+    MultiplicationTree c;
     int i;
 
     for(i=0; i<nMultipliers; i++)
@@ -24,13 +29,13 @@ Configuration* KaratsubaOfman::dispositions(short lengthX, short lengthY, int *n
         c = dispose(lengthX, lengthY, i);
         if(c.getNSubMultiplications() > 0)
         {
-            configurations.push_back(c);
+            multiplicationTree.push_back(c);
         }
     }
-    if (configurations.size() > 0)
+    if (multiplicationTree.size() > 0)
     {
-        *nDispositions = configurations.size();
-        return &configurations[0];
+        *nDispositions = multiplicationTree.size();
+        return &multiplicationTree[0];
     }
     else
     {
@@ -39,26 +44,68 @@ Configuration* KaratsubaOfman::dispositions(short lengthX, short lengthY, int *n
     }
 }
 
-Configuration KaratsubaOfman::dispose(short x, short y, int index)
+MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, int index)
 {
-    SubMultiplication *s;
-    short lx, ly, lm;
+    short lm;
+    InputNode* x1, x0, y1, y0;
+    OperationNode* dX, dY, dXdY, x1y1, x1y1, halfMiddle, pMiddle, middle, first, last, root;
 
     cout << "Karatsuba" << endl;
     cout << multipliers[index].getInputLenght1() << ", " << multipliers[index].getInputLenght2() << endl;
 
-    if (x == y && multipliers[index].getInputLenght1() == multipliers[index].getInputLenght2() && \
-    (multipliers[index].getInputLenght1() * 2) > x && x > multipliers[index].getInputLenght1())
+    if (lengthX == lengthY && multipliers[index].getInputLenght1() == multipliers[index].getInputLenght2() && \
+    (multipliers[index].getInputLenght1() * 2) > lengthX && lengthX > multipliers[index].getInputLenght1())
     {
-        lm = x/2;
-        s = new SubMultiplication[3];
-        s[0] = SubMultiplication(0, 0, lm - 1, lm - 1, multipliers[index]);
-        s[1] = SubMultiplication(lm - 1, lm - 1, x - lm - 2, x - lm - 2, multipliers[index]);
+        lm = lengthX/2;
+        x0 = new InputNode(true, 0, lm);
+        x1 = new InputNode(true, lm, lengthX - lm - 2);
+        y0 = new InputNode(false, 0, lm);
+        y1 = new InputNode(false, lm, lengthY - lm - 2);
+        
         //Differenze
+        dX = new OperationNode(Subtraction());
+        dX->setLeftChild(x1);
+        dX->setRightChild(x0);
 
-        //SubMultiplication Differenze
+        dY = new OperationNode(Subtraction());
+        dY->setLeftChild(y1);
+        dY->setRightChild(y0);
 
-        return Configuration(s, 3, 1);
+        dXdY = new OperationNode(SubMultiplication(multipliers[index]));
+        dXdY->setLeftChild(dX);
+        dXdY->setRightChild(dY)
+        
+        x1y1 = new OperationNode(SubMultiplication(multipliers[index]));
+        x1y1->setLeftChild(x1);
+        x1y1->setRightChild(y1);
+
+        x0y0 = new OperationNode(SubMultiplication(multipliers[index]));
+        x0y0->setLeftChild(x0);
+        x0y0->setRightChild(y0);
+
+        halfMiddle = new OperationNode(Addition());
+        halfMiddle->setLeftChild(x1y1);
+        halfMiddle->setRightChild(x0y0);
+
+        pMiddle = new OperationNode(Subtraction());
+        pMiddle->setLeftChild(halfMiddle);
+        pMiddle->setRightChild(dXdY);
+        
+        middle = new OperationNode(Shift(lm));
+        middle->setLeftChild(pMiddle);
+
+        first = new OperationNode(Shift(2*lm));
+        first->setLeftChild(x1y1);
+
+        last = new OperationNode(Addition());
+        last->setLeftChild(first);
+        last->setRightChild(x0y0);
+
+        root = new OperationNode(Addition());
+        root->setLeftChild(middle);
+        root->setRightChild(last);
+
+        return MultiplicationTree(root);
     }
-    return Configuration();
+    return MultiplicationTree();
 }

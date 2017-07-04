@@ -2,21 +2,16 @@
 
 InputNode::InputNode()
 {
-    this->xIndex = 0;
-    this->yIndex = 0;
+    this->firstInput = true;
+    this->start = 0;
+    this->length = 32;
 }
 
-InputNode::InputNode(short xIndex, short yIndex)
+InputNode::InputNode(bool firstInput, short start, short length)
 {
-    if (xIndex == 0 || xIndex == 1)
-        this->xIndex = xIndex;
-    else
-	    throw invalid_argument ("Error creating InputNode: X Index must be equal to 0 or 1");
-    
-    if (yIndex == 0 || yIndex == 1)
-        this->yIndex = yIndex;
-    else
-	    throw invalid_argument ("Error creating InputNode: Y Index must be equal to 0 or 1");
+    this->firstInput = firstInput;
+    this->start = start;
+    this->length = length;
 }
 
 bool InputNode::isLeaf()
@@ -24,22 +19,32 @@ bool InputNode::isLeaf()
     return true;
 }
 
-short InputNode::getXIndex()
+bool InputNode::isFirstInput()
 {
-    return this->xIndex;
+    return this->firstInput;
 }
 
-short InputNode::getYIndex()
+short InputNode::getStart()
 {
-    return this->yIndex;
+    return this->start;
 }
 
-void InputNode::setXIndex(short xIndex)
+short InputNode::getLength()
 {
-    this->xIndex = xIndex;
+    return this->length;
 }
 
-void InputNode::setYIndex(short yIndex)
+void InputNode::setFirstInput(bool firstInput)
 {
-    this->yIndex = yIndex;
+    this->firstInput = firstInput;
+}
+
+void InputNode::setStart(short start)
+{
+    this->start = start;
+}
+
+void InputNode::setLength(short length)
+{
+    this->length = length;
 }

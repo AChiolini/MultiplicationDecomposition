@@ -1,9 +1,10 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include "Multiplication.h"
-#include "StandardTiling.h"
-#include "KaratsubaOfman.h"
+//#include "Multiplication.h"
+//#include "StandardTiling.h"
+//#include "KaratsubaOfman.h"
+//#include "Addition.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ int main ()
     mult.multiply (66, 0, 34, 0);
     */
 
-    int i, delay, nMultipliers, n;
+    /*int i, delay, nMultipliers, n;
     short input1, input2, minInput1, minInput2;
     Multiplication *tmp, *tmp2;
     vector <Multiplier> array;
@@ -46,4 +47,9 @@ int main ()
     a = a>>5;
     cout << a << endl;
     return (0);
+    */
+
+    short lm;
+    lm = 35/2;
+    cout << lm <<endl;
 }

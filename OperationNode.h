@@ -6,19 +6,23 @@
 final class OperationNode : public Node
 {
     private:
-        //Operazione
+        Operation operation;
+        int shift;
         Node *left;
         Node *right;
         
     public:
         OperationNode();
+        OperationNode(Operation);
         bool isLeaf();
-        // getOperation();
+        Operation getOperation();
         Node* getLeftChild();
         Node* getRightChild();
-        //setOperation()
+        int getShift();
+        void setOperation(Operation)
         void setLeftChild(Node*);
         void setRightChild(Node*);
+        void setShift();
         ~OperationNode();
 };
 

@@ -6,16 +6,19 @@
 final class InputNode : public Node
 {
     private:
-        short xIndex;
-        short yIndex;
+        bool firstInput;
+        short start;
+        short length;
 
     public:
         InputNode();
-        InputNode(short, short);
+        InputNode(bool, short, short);
         bool isLeaf();
-        short getXIndex();
-        short getYIndex();
-        void setXIndex();
-        void setYIndex();
+        bool isFirstInput();
+        short getStart();
+        short getLength();
+        void setFirstIndex(bool);
+        void setStart(short);
+        void setLength(short);
         ~InputNode() = default;
 }

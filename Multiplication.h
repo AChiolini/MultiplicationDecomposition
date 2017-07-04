@@ -2,12 +2,12 @@
 #define MULTIPLICATION_H
 
 #include "Multiplier.h"
-#include "Configuration.h"
+#include "MultiplicationTree.h"
 
 class Multiplication
 {
     public:
-		virtual Configuration* dispositions (short, short, int*) = 0;
+		virtual MultiplicationTree* dispositions (short, short, int*) = 0;
 		virtual ~Multiplication () = default;
 };
 
