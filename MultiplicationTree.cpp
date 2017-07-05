@@ -2,6 +2,7 @@
 #include "SubMultiplication.h"
 #include <stddef.h>
 #include <iostream>
+#include <typeinfo>
 
 using namespace std;
 
@@ -46,10 +47,12 @@ int MultiplicationTree::delay(Node* next)
         return 0;
     }
     operationNode = static_cast<OperationNode*>(next);
+    cout << typeid(operationNode->getOperation()).name() << endl;
+    cout << operationNode->getOperation().OperationID() << endl;
     nodeDelay = 1;
     if(operationNode->getOperation().OperationID() == 3)
     {
-        cout << "Shift" << endl;
+        cout << "Mult" << endl;
         operation = operationNode->getOperation();
         ptr = &operation;
         subMultiplication = dynamic_cast<SubMultiplication*>(ptr);

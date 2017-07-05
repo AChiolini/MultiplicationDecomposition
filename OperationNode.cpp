@@ -6,7 +6,7 @@ using namespace std;
 
 OperationNode::OperationNode()
 {
-    this->operation = Addition();
+    //this->operation = Addition();
     this->shift = 0;
     this->left = NULL;
     this->right = NULL;
