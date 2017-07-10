@@ -37,22 +37,22 @@ int MultiplicationTree::delay(Node* next)
     SubMultiplication *subMultiplication;
     int nodeDelay, leftDelay, rightDelay;
 
-    if(next == NULL)
+    if (next == NULL)
     {
         return 0;
     }
-    if(next->isLeaf() == true)
+    if (next->isLeaf() == true)
     {
         return 0;
     }
     operationNode = static_cast<OperationNode*>(next);
     nodeDelay = 1;
-    if(operationNode->getOperation()->OperationID() == 3)
+    if (operationNode->getOperation()->getOperationType() == SUBMULTIPLICATION)
     {
         subMultiplication = static_cast<SubMultiplication*>(operationNode->getOperation());
         nodeDelay = subMultiplication->getMultiplier().getDelay();
     }
-    else if (operationNode->getOperation()->OperationID() == 0)
+    else if (operationNode->getOperation()->getOperationType() == SHIFT)
     {
         nodeDelay = 0;
     }
@@ -62,4 +62,24 @@ int MultiplicationTree::delay(Node* next)
         return nodeDelay + leftDelay;
     else
         return nodeDelay + rightDelay;
+}
+
+void MultiplicationTree::optimize()
+{
+    balanceSubTree(root);
+}
+
+void MultiplicationTree::balanceSubTree(Node *subRoot)
+{
+    OperationNode *operationNode;
+
+    if (subRoot == NULL)
+    {
+        return;
+    }
+    if (subRoot->isLeaf() == true)
+    {
+        return;
+    }
+    operationNode = static_cast<OperationNode*>(subRoot);
 }

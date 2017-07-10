@@ -17,7 +17,7 @@ class SubMultiplication : public Operation
 		bool isLUT();
 		Multiplier getMultiplier();
 		void setMultiplier(Multiplier);
-		int OperationID() {return 3;};
+		OperationType getOperationType() {return SUBMULTIPLICATION;};
 		~SubMultiplication() = default;
 };
 

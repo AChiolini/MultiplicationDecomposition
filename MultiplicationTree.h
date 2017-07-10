@@ -5,9 +5,10 @@
 
 class MultiplicationTree
 {
-	private:
-		OperationNode* root;
+    private:
+	OperationNode* root;
         int delay(Node*);
+        void balanceSubTree(Node*);
 
     public:
         MultiplicationTree();
@@ -15,6 +16,7 @@ class MultiplicationTree
         OperationNode* getRoot();
         void setRoot(OperationNode*);
         int getDelay();
+	void optimize();
         virtual ~MultiplicationTree() = default;
 };
 
