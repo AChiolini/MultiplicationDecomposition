@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "Multiplication.h"
-//#include "StandardTiling.h"
+#include "StandardTiling.h"
 #include "KaratsubaOfman.h"
 
 using namespace std;
@@ -16,7 +16,7 @@ int main ()
 
     int i, delay, nMultipliers, n;
     short input1, input2, minInput1, minInput2;
-    Multiplication *tmp, *tmp2;
+    Multiplication *tmp, *tmp2, *tmp3;
     MultiplicationTree *ptr;
     vector <Multiplier> array;
     Multiplier *multipliers;
@@ -42,6 +42,12 @@ int main ()
     tmp->dispositions(66, 34, &n);*/
     tmp2 = new KaratsubaOfman(multipliers, nMultipliers);
     ptr = tmp2->dispositions(32, 32, &n);
+    for (i = 0; i < n; i++)
+    {
+        cout << ptr[i].getDelay() << endl;
+    }
+    tmp3 = new StandardTiling(multipliers, nMultipliers);
+    ptr = tmp3->dispositions(58, 58, &n);
     for (i = 0; i < n; i++)
     {
         cout << ptr[i].getDelay() << endl;
