@@ -63,45 +63,45 @@ MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, int ind
         y1 = new InputNode(false, lm, lengthY - lm - 2);
         
         //Differenze
-        dX = new OperationNode(Subtraction());
+        dX = new OperationNode(new Subtraction());
         dX->setLeftChild(x1);
         dX->setRightChild(x0);
 
-        dY = new OperationNode(Subtraction());
+        dY = new OperationNode(new Subtraction());
         dY->setLeftChild(y1);
         dY->setRightChild(y0);
 
-        dXdY = new OperationNode(SubMultiplication(multipliers[index]));
+        dXdY = new OperationNode(new SubMultiplication(multipliers[index]));
         dXdY->setLeftChild(dX);
         dXdY->setRightChild(dY);
         
-        x1y1 = new OperationNode(SubMultiplication(multipliers[index]));
+        x1y1 = new OperationNode(new SubMultiplication(multipliers[index]));
         x1y1->setLeftChild(x1);
         x1y1->setRightChild(y1);
 
-        x0y0 = new OperationNode(SubMultiplication(multipliers[index]));
+        x0y0 = new OperationNode(new SubMultiplication(multipliers[index]));
         x0y0->setLeftChild(x0);
         x0y0->setRightChild(y0);
 
-        halfMiddle = new OperationNode(Addition());
+        halfMiddle = new OperationNode(new Addition());
         halfMiddle->setLeftChild(x1y1);
         halfMiddle->setRightChild(x0y0);
 
-        pMiddle = new OperationNode(Subtraction());
+        pMiddle = new OperationNode(new Subtraction());
         pMiddle->setLeftChild(halfMiddle);
         pMiddle->setRightChild(dXdY);
         
-        middle = new OperationNode(Shift(lm));
+        middle = new OperationNode(new Shift(lm));
         middle->setLeftChild(pMiddle);
 
-        first = new OperationNode(Shift(2*lm));
+        first = new OperationNode(new Shift(2*lm));
         first->setLeftChild(x1y1);
 
-        last = new OperationNode(Addition());
+        last = new OperationNode(new Addition());
         last->setLeftChild(first);
         last->setRightChild(x0y0);
 
-        root = new OperationNode(Addition());
+        root = new OperationNode(new Addition());
         root->setLeftChild(middle);
         root->setRightChild(last);
 

@@ -7,23 +7,20 @@
 class OperationNode : public Node
 {
     private:
-        Operation operation;
-        int shift;
+        Operation *operation;
         Node *left;
         Node *right;
         
     public:
         OperationNode();
-        OperationNode(Operation);
+        OperationNode(Operation*);
         bool isLeaf();
-        Operation getOperation();
+        Operation* getOperation();
         Node* getLeftChild();
         Node* getRightChild();
-        int getShift();
-        void setOperation(Operation);
+        void setOperation(Operation*);
         void setLeftChild(Node*);
         void setRightChild(Node*);
-        void setShift(int);
         ~OperationNode();
 };
 
