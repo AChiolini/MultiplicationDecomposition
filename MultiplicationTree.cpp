@@ -46,15 +46,14 @@ int MultiplicationTree::delay(Node* next)
         return 0;
     }
     operationNode = static_cast<OperationNode*>(next);
-    cout << operationNode->getOperation()->OperationID() << endl;
     nodeDelay = 1;
     if(operationNode->getOperation()->OperationID() == 3)
     {
-        cout << "Mult" << endl;
+        subMultiplication = static_cast<SubMultiplication*>(operationNode->getOperation());
+        nodeDelay = subMultiplication->getMultiplier().getDelay();
     }
     else if (operationNode->getOperation()->OperationID() == 0)
     {
-        cout << "Shift" << endl;
         nodeDelay = 0;
     }
     leftDelay = delay(operationNode->getLeftChild());
