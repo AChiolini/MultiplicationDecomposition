@@ -13,7 +13,7 @@ class Shift : public Operation
         Shift(short);
         short getK();
         void setK(short);
-        int OperationID() {return 0;};
+        OperationType getOperationType() {return SHIFT;};
         ~Shift() = default;
 };
 

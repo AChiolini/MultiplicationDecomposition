@@ -1,10 +1,18 @@
 #ifndef OPERATION_H
 #define OPERATION_H
 
+enum OperationType
+{
+    ADDITION = 1,
+    SUBTRACTION,
+    SUBMULTIPLICATION,
+    SHIFT
+};
+
 class Operation 
 {        
     public:
-        virtual int OperationID() = 0;
+        virtual OperationType getOperationType() = 0;
         virtual ~Operation() = default;
 };
 
