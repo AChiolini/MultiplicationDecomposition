@@ -241,8 +241,7 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
     cout << "Delay: " << delay << endl;
     return Configuration(&subMultiplications[0], subMultiplications.size(), delay);
 	*/
-
-	OperationNode *p;
+	cout << "Operation Nodes Size: " << operationNodes.size() << endl;
 	if(operationNodes.size() > 0)
 	{
 		for(i = 0; i < operationNodes.size(); i++)
@@ -258,11 +257,8 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
 				}
 				else
 				{
-					if(multiplicationTreeMapper[w-1]->getRightChild() == NULL){
+					if(multiplicationTreeMapper[w-1]->getRightChild() == NULL)
 						multiplicationTreeMapper[w-1]->setRightChild(operationNodes[i]);
-						p=static_cast<OperationNode*>(multiplicationTreeMapper[w-1]->getLeftChild());
-						p = static_cast<OperationNode*>(p->getLeftChild());
-					}
 					else
 					{
 						operationNode = new OperationNode(new Addition());
@@ -274,7 +270,8 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
 			}
 		}
 		w = multiplicationTreeMapper.size();
-		return MultiplicationTree(multiplicationTreeMapper[w-1]);
+		if(multiplicationTreeMapper[w-1]->getRightChild()!=NULL && multiplicationTreeMapper[w-1]->getOperation()->getOperationType()== ADDITION)
+			return MultiplicationTree(multiplicationTreeMapper[w-1]);
 	}
 	return MultiplicationTree();
 }

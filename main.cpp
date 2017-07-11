@@ -50,6 +50,6 @@ int main ()
     ptr = tmp3->dispositions(58, 58, &n);
     for (i = 0; i < n; i++)
     {
-        cout << ptr[i].getDelay() << endl;
+        cout << "Delay: " << ptr[i].getDelay() << endl;
     }
 }
