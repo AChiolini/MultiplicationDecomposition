@@ -46,7 +46,6 @@ int MultiplicationTree::delay(Node* next)
         return 0;
     }
     operationNode = static_cast<OperationNode*>(next);
-    cout << operationNode->getOperation()->getOperationType() << endl;
     nodeDelay = 1;
     if (operationNode->getOperation()->getOperationType() == SUBMULTIPLICATION)
     {
@@ -56,8 +55,6 @@ int MultiplicationTree::delay(Node* next)
     else if (operationNode->getOperation()->getOperationType() == SHIFT)
     {
         nodeDelay = 0;
-        ptr = static_cast<OperationNode*>(operationNode->getLeftChild());
-        cout << ptr->getOperation()->getOperationType() << endl;
     }
     leftDelay = delay(operationNode->getLeftChild());
     rightDelay = delay(operationNode->getRightChild());

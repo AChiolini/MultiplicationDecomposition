@@ -241,7 +241,6 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
     cout << "Delay: " << delay << endl;
     return Configuration(&subMultiplications[0], subMultiplications.size(), delay);
 	*/
-	cout << "Operation Nodes Size: " << operationNodes.size() << endl;
 	if(operationNodes.size() > 0)
 	{
 		for(i = 0; i < operationNodes.size(); i++)
