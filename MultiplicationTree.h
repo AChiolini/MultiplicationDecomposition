@@ -6,7 +6,7 @@
 class MultiplicationTree
 {
     private:
-	OperationNode* root;
+	    OperationNode* root;
         int delay(Node*);
         void balanceSubTree(Node*);
 
