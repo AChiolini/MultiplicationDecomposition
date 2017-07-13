@@ -47,7 +47,7 @@ int main ()
         cout << ptr[i].getDelay() << endl;
     }
     tmp3 = new StandardTiling(multipliers, nMultipliers);
-    ptr = tmp3->dispositions(58, 58, &n);
+    ptr = tmp3->dispositions(53, 53, &n);
     for (i = 0; i < n; i++)
     {
         cout << "Delay: " << ptr[i].getDelay() << endl;
