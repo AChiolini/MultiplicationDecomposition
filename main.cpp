@@ -45,6 +45,7 @@ int main ()
     for (i = 0; i < n; i++)
     {
         cout << ptr[i].getDelay() << endl;
+	cout << ptr[i].getExpression() << endl;
     }
     tmp3 = new StandardTiling(multipliers, nMultipliers);
     ptr = tmp3->dispositions(53, 53, &n);

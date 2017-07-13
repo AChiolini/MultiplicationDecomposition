@@ -58,9 +58,9 @@ MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, int ind
     {
         lm = lengthX/2;
         x0 = new InputNode(true, 0, lm);
-        x1 = new InputNode(true, lm, lengthX - lm - 2);
+        x1 = new InputNode(true, lm, lengthX - lm - 1);
         y0 = new InputNode(false, 0, lm);
-        y1 = new InputNode(false, lm, lengthY - lm - 2);
+        y1 = new InputNode(false, lm, lengthY - lm - 1);
         
         //Differenze
         dX = new OperationNode(new Subtraction());

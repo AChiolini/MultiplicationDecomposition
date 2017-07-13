@@ -1,14 +1,16 @@
 #ifndef MULTIPLICATIONTREE_H
 #define MULTIPLICATIONTREE_H
 
+#include <string>
 #include "OperationNode.h"
+#include "InputNode.h"
 
 class MultiplicationTree
 {
     private:
-	    OperationNode* root;
+	OperationNode* root;
         int delay(Node*);
-        void balanceSubTree(Node*);
+        std::string expression(Node*);
 
     public:
         MultiplicationTree();
@@ -16,7 +18,7 @@ class MultiplicationTree
         OperationNode* getRoot();
         void setRoot(OperationNode*);
         int getDelay();
-	void optimize();
+	char* getExpression();
         virtual ~MultiplicationTree() = default;
 };
 

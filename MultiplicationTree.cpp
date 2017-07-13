@@ -1,7 +1,9 @@
-#include "MultiplicationTree.h"
-#include "SubMultiplication.h"
 #include <stddef.h>
 #include <iostream>
+#include <string.h>
+#include "MultiplicationTree.h"
+#include "SubMultiplication.h"
+#include "Shift.h"
 
 using namespace std;
 
@@ -64,22 +66,65 @@ int MultiplicationTree::delay(Node* next)
         return nodeDelay + rightDelay;
 }
 
-void MultiplicationTree::optimize()
+char* MultiplicationTree::getExpression()
 {
-    balanceSubTree(root);
+    string s;
+    char *cstr;
+
+    s = expression(root);
+    cstr = new char[s.length() + 1];
+    strcpy(cstr, s.c_str());
+    return cstr;
 }
 
-void MultiplicationTree::balanceSubTree(Node *subRoot)
+string MultiplicationTree::expression(Node *next)
 {
     OperationNode *operationNode;
+    InputNode *inputNode;
+    Shift *shift;
+    string s;
 
-    if (subRoot == NULL)
+    if (next == NULL)
     {
-        return;
+        return "";
     }
-    if (subRoot->isLeaf() == true)
+    if (next->isLeaf() == true)
     {
-        return;
+        inputNode = static_cast<InputNode*>(next);
+        if (inputNode->isFirstInput() == true)
+        {
+            s = "X";
+	}
+        else
+        {
+            s = "Y";
+        }
+        s = s + "[" + to_string(inputNode->getStart()) + "-" + to_string(inputNode->getStart() + inputNode->getLength() - 1) +"]";
     }
-    operationNode = static_cast<OperationNode*>(subRoot);
+    else
+    {
+        operationNode = static_cast<OperationNode*>(next);
+	if (operationNode->getOperation()->getOperationType() == SHIFT)
+        {
+            shift = static_cast<Shift*>(operationNode->getOperation());
+            s = "(2^" + to_string(shift->getK()) + " * ";
+            s = s + expression(operationNode->getLeftChild()) + expression(operationNode->getRightChild());
+            s = s + ")";
+        }
+        else
+        {
+            s = "(" + expression(operationNode->getLeftChild());
+            switch (operationNode->getOperation()->getOperationType())
+            {
+                case ADDITION: s = s + " + ";
+                               break;
+                case SUBTRACTION: s = s + " - ";
+                                  break;
+                case SUBMULTIPLICATION: s = s + " * ";
+                                        break;
+            }
+            s = s + expression(operationNode->getRightChild()) + ")";
+        }
+    }
+    return s;
 }
