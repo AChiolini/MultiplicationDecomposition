@@ -46,11 +46,10 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
     short dim2;
     short max;
     short min;
-    //int levels, delay;
     int nmaxv, nminv, countv, nmaxh, nminh, counth, i, j, k, n, nmaxtmp, lX, lY;
 	int w;
     bool match;
-    vector <OperationNode*> operationNodes, multiplicationTreeMapper;
+    vector <OperationNode*> operationNodes, additions1;
 	OperationNode *operationNode, *operationNodeShift;
 	InputNode *in1, *in2;
 
@@ -87,8 +86,6 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
 				operationNode = new OperationNode(new SubMultiplication(multipliers[index]));
 				operationNode->setLeftChild(in1);
 				operationNode->setRightChild(in2);
-				//subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * max)), (short) lX, (short) lY, multipliers[index]));
-				//Aggiungo al vettore la moltiplicazione con il rispettivo shift
 				operationNodeShift = new OperationNode(new Shift(in1->getStart() + in2->getStart()));
 				operationNodeShift->setLeftChild(operationNode);
 				operationNodes.push_back(operationNodeShift);
@@ -143,7 +140,6 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
 					operationNode = new OperationNode(new SubMultiplication(multipliers[index]));
 					operationNode->setLeftChild(in1);
 					operationNode->setRightChild(in2);
-					//subMultiplications.push_back (SubMultiplication (((short) (i * max)), ((short) (j * min)), (short) lX, (short) lY, multipliers[index]));
 					operationNodeShift = new OperationNode(new Shift(in1->getStart() + in2->getStart()));
 					operationNodeShift->setLeftChild(operationNode);
 					operationNodes.push_back(operationNodeShift);
@@ -166,7 +162,6 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
 					operationNode = new OperationNode(new SubMultiplication(multipliers[index]));
 					operationNode->setLeftChild(in1);
 					operationNode->setRightChild(in2);
-					//subMultiplications.push_back (SubMultiplication (((short) ((i * max) + (k * min))), ((short) (j * max)), (short) lX, (short) lY, multipliers[index]));	    
 					operationNodeShift = new OperationNode(new Shift(in1->getStart() + in2->getStart()));
 					operationNodeShift->setLeftChild(operationNode);
 					operationNodes.push_back(operationNodeShift);
@@ -194,7 +189,6 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
                     operationNode = new OperationNode(new SubMultiplication(multipliers[index]));
                     operationNode->setLeftChild(in1);
                     operationNode->setRightChild(in2);
-                    //subMultiplications.push_back (SubMultiplication (((short) (j * min)), ((short) (i * max)), (short) lX, (short) lY, multipliers[index]));
 					operationNodeShift = new OperationNode(new Shift(in1->getStart() + in2->getStart()));
 					operationNodeShift->setLeftChild(operationNode);
 					operationNodes.push_back(operationNodeShift);
@@ -218,7 +212,6 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
                     operationNode = new OperationNode(new SubMultiplication(multipliers[index]));
                     operationNode->setLeftChild(in1);
                     operationNode->setRightChild(in2);
-                    //subMultiplications.push_back (SubMultiplication (((short) (j * max)), ((short) ((i * max) + (k * min))), (short) lX, (short) lY, multipliers[index]));
 					operationNodeShift = new OperationNode(new Shift(in1->getStart() + in2->getStart()));
 					operationNodeShift->setLeftChild(operationNode);
 					operationNodes.push_back(operationNodeShift);
@@ -227,51 +220,42 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
             }
         }
     }
-    /*if (operationNodes.size() > 0)
-    {
-		for (levels = 0; pow (2.0, levels) < subMultiplications.size(); levels++);
-		delay = levels + multipliers[index].getDelay();
-    }
-    else
-		delay = 0;
-    for (i = 0; i < operationNodes.size(); i++)
-    {
-	cout << "(" << subMultiplications[i].getX() << ", " << subMultiplications[i].getY() << ", ";
-	cout << subMultiplications[i].getLengthX() << ", " << subMultiplications[i].getLengthY() << ")" << endl;
-    }
-    cout << "Delay: " << delay << endl;
-    return Configuration(&subMultiplications[0], subMultiplications.size(), delay);
-	*/
-	if(operationNodes.size() > 0)
-	{
-		for(i = 0; i < operationNodes.size(); i++)
+	while(operationNodes.size() > 0 && operationNodes.size() != 1)
+	{	
+		for(i = 0; i < operationNodes.size(); i = i+2)
 		{
-			w = multiplicationTreeMapper.size();
-			if(operationNodes[i]->getOperation()->getOperationType() == SHIFT)
+			cout << "OK WHILE" << endl;
+			if (i < operationNodes.size() - 1)
 			{
-				if(w == 0)
-				{
-					operationNode = new OperationNode(new Addition());
-					operationNode->setLeftChild(operationNodes[i]);
-					multiplicationTreeMapper.push_back(operationNode);
-				}
-				else
-				{
-					if(multiplicationTreeMapper[w-1]->getRightChild() == NULL)
-						multiplicationTreeMapper[w-1]->setRightChild(operationNodes[i]);
-					else
-					{
-						operationNode = new OperationNode(new Addition());
-						operationNode->setLeftChild(multiplicationTreeMapper[w-1]);
-						operationNode->setRightChild(operationNodes[i]);
-						multiplicationTreeMapper.push_back(operationNode);
-					}
-				}
+				cout << "OK IF" << endl;
+				operationNode = new OperationNode(new Addition());
+				operationNode->setLeftChild(operationNodes[i]);
+				operationNode->setRightChild(operationNodes[i+1]);
+				additions1.push_back(operationNode);
+			}
+			else
+			{
+				cout << "OK ELSE" << endl;
+				additions1.push_back(operationNodes[i]);
 			}
 		}
-		w = multiplicationTreeMapper.size();
-		if(multiplicationTreeMapper[w-1]->getRightChild()!=NULL && multiplicationTreeMapper[w-1]->getOperation()->getOperationType()== ADDITION)
-			return MultiplicationTree(multiplicationTreeMapper[w-1]);
+		operationNodes.clear();
+		for (j = 0; j < additions1.size(); j++)
+		{
+			cout << "OK RIASSEGNAMENTO" << " " << additions1[i] << endl;
+			operationNodes.push_back(additions1[j]);
+		}
+		additions1.clear();
+		cout << operationNodes.size() << endl;
 	}
-	return MultiplicationTree();
+	if (operationNodes.size() == 1)
+	{
+		cout << "OK" << endl;
+		return MultiplicationTree(additions1[0]);
+	}
+	else
+	{
+		cout << operationNodes.size() << endl;
+		return MultiplicationTree();
+	}
 }

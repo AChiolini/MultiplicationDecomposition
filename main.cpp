@@ -9,11 +9,6 @@ using namespace std;
 
 int main ()
 {
-    /*
-    Multiplication mult;
-    mult.multiply (66, 0, 34, 0);
-    */
-
     int i, delay, nMultipliers, n;
     short input1, input2, minInput1, minInput2;
     Multiplication *tmp, *tmp2, *tmp3;
@@ -38,19 +33,19 @@ int main ()
     if (nMultipliers > 0)
     	multipliers = &array[0];
     
-    /*tmp = new StandardTiling(multipliers, nMultipliers);
-    tmp->dispositions(66, 34, &n);*/
     tmp2 = new KaratsubaOfman(multipliers, nMultipliers);
     ptr = tmp2->dispositions(32, 32, &n);
     for (i = 0; i < n; i++)
     {
-        cout << ptr[i].getDelay() << endl;
-	cout << ptr[i].getExpression() << endl;
+        cout << "Delay: " << ptr[i].getDelay() << endl;
+	    cout << ptr[i].getExpression() << endl;
     }
     tmp3 = new StandardTiling(multipliers, nMultipliers);
-    ptr = tmp3->dispositions(53, 53, &n);
+    ptr = tmp3->dispositions(48, 51, &n);
     for (i = 0; i < n; i++)
     {
         cout << "Delay: " << ptr[i].getDelay() << endl;
+        cout << ptr[i].getExpression() << endl;
+        cout << "FATTO" << endl;
     }
 }
