@@ -1,21 +1,22 @@
 #include <stddef.h>
 #include "OperationNode.h"
 #include "Addition.h"
+#include <iostream>
 
 using namespace std;
 
 OperationNode::OperationNode()
 {
-    this->operation = new Addition();
-    this->left = NULL;
-    this->right = NULL;
+    this->operation = make_shared<Addition>();
+    this->left = nullptr;
+    this->right = nullptr;
 }
 
-OperationNode::OperationNode(Operation *operation)
+OperationNode::OperationNode(shared_ptr<Operation> operation)
 {
     this->operation = operation;
-    this->left = NULL;
-    this->right = NULL;
+    this->left = nullptr;
+    this->right = nullptr;
 }
 
 bool OperationNode::isLeaf()
@@ -23,42 +24,32 @@ bool OperationNode::isLeaf()
     return false;
 }
 
-Operation* OperationNode::getOperation()
+shared_ptr<Operation> OperationNode::getOperation()
 {
     return this->operation;
 }
 
-void OperationNode::setOperation(Operation *operation)
+void OperationNode::setOperation(shared_ptr<Operation> operation)
 {
     this->operation = operation;
 }
 
-Node* OperationNode::getLeftChild()
+shared_ptr<Node> OperationNode::getLeftChild()
 {
     return this->left;
 }
 
-Node* OperationNode::getRightChild()
+shared_ptr<Node> OperationNode::getRightChild()
 {
     return this->right;
 }
 
-void OperationNode::setLeftChild(Node *n)
+void OperationNode::setLeftChild(shared_ptr<Node> n)
 {
     this->left = n;
 }
 
-void OperationNode::setRightChild(Node *n)
+void OperationNode::setRightChild(shared_ptr<Node> n)
 {
     this->right = n;
-}
-
-OperationNode::~OperationNode()
-{
-    if (operation != NULL)
-        delete operation;
-    if (left != NULL)
-        delete left;
-    if (right != NULL)
-        delete right;
 }

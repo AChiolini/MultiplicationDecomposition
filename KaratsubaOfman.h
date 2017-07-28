@@ -4,16 +4,24 @@
 #include "Multiplication.h"
 #include "Multiplier.h"
 
+using namespace std;
+
+/*****************************************************************************/
+/* Class that provides multiplication trees following the Karatsuba-Ofman    */
+/* idea. Multiplication trees follow the 2 way split and later on the 3 way  */
+/* split will be implemented.                                                */
+/*****************************************************************************/
+
 class KaratsubaOfman : public Multiplication
 {
     private:
         Multiplier *multipliers;
-		int nMultipliers;
+        int nMultipliers;
         MultiplicationTree dispose(short, short, int);
 
     public: 
         KaratsubaOfman(Multiplier*, int);
-        MultiplicationTree* dispositions(short, short, int*);
+        vector <MultiplicationTree> dispositions(short, short);
         ~KaratsubaOfman() = default;
 };
 

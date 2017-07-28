@@ -9,43 +9,47 @@ using namespace std;
 
 int main ()
 {
-    int i, delay, nMultipliers, n;
+    int i, delay, nMultipliers;
     short input1, input2, minInput1, minInput2;
-    Multiplication *tmp, *tmp2, *tmp3;
     MultiplicationTree *ptr;
-    vector <Multiplier> array;
+    vector <Multiplier> multipliersVec;
+    vector <Multiplication*> multiplications;
+    vector <MultiplicationTree> multiplicationTrees;
     Multiplier *multipliers;
     ifstream infile("multipliers");
 
+    //Creating multipliers
     nMultipliers = 0;
     while (infile >> input1 >> input2 >> minInput1 >> minInput2 >> delay)
     {	
         try
         {
-            array.push_back(Multiplier (input1, input2, minInput1, minInput2, delay));		
+            multipliersVec.push_back(Multiplier (input1, input2, minInput1, minInput2, delay));		
         }
         catch (const invalid_argument& e)
         {
             cerr << e.what() << endl;
         }
     }
-    nMultipliers = array.size();
+    nMultipliers = multipliersVec.size();
     if (nMultipliers > 0)
-    	multipliers = &array[0];
-    
-    tmp2 = new KaratsubaOfman(multipliers, nMultipliers);
-    ptr = tmp2->dispositions(32, 32, &n);
-    for (i = 0; i < n; i++)
+    	multipliers = &multipliersVec[0];
+    //Karatsuba-Ofman multiplication;
+    multiplications.push_back(new KaratsubaOfman(multipliers, nMultipliers));
+    multiplicationTrees = (multiplications[0])->dispositions(32, 32);
+    for (i = 0; i < multiplicationTrees.size(); i++)
     {
-        cout << "Delay: " << ptr[i].getDelay() << endl;
-	    cout << ptr[i].getExpression() << endl;
+        cout << multiplicationTrees[i].getDescription() << endl;
+        cout << "Expression: " << multiplicationTrees[i].getExpression() << endl;
+        cout << "Delay: " << multiplicationTrees[i].getDelay() << endl;
     }
-    tmp3 = new StandardTiling(multipliers, nMultipliers);
+
+    /*tmp3 = new StandardTiling(multipliers, nMultipliers);
     ptr = tmp3->dispositions(48, 51, &n);
     for (i = 0; i < n; i++)
     {
         cout << "Delay: " << ptr[i].getDelay() << endl;
         cout << ptr[i].getExpression() << endl;
         cout << "FATTO" << endl;
-    }
+    }*/
 }

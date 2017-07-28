@@ -5,20 +5,30 @@
 #include "OperationNode.h"
 #include "InputNode.h"
 
+using namespace std;
+
+/*****************************************************************************/
+/* Class that contains the tree of the multiplication and provides several   */
+/* methods that provides information about the tree.                         */
+/*****************************************************************************/
+
 class MultiplicationTree
 {
     private:
-	OperationNode* root;
-        int delay(Node*);
-        std::string expression(Node*);
+	shared_ptr<OperationNode> root;
+        string description;
+        int delay(shared_ptr<Node>);
+        string expression(shared_ptr<Node>);
 
     public:
         MultiplicationTree();
-        MultiplicationTree(OperationNode*);
-        OperationNode* getRoot();
-        void setRoot(OperationNode*);
+        MultiplicationTree(shared_ptr<OperationNode>, string);
+        shared_ptr<OperationNode> getRoot();
+        string getDescription();
         int getDelay();
-	char* getExpression();
+        string getExpression();
+        void setRoot(shared_ptr<OperationNode>);
+	void setDescription(string);	
         virtual ~MultiplicationTree() = default;
 };
 

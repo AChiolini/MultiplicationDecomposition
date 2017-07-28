@@ -16,7 +16,7 @@ StandardTiling::StandardTiling(Multiplier *multipliers, int nMultipliers)
     this->nMultipliers = nMultipliers;
 }
 
-MultiplicationTree* StandardTiling::dispositions(short lengthX, short lengthY, int *nDispositions)
+vector <MultiplicationTree> StandardTiling::dispositions(short lengthX, short lengthY)
 {
 	vector <MultiplicationTree> multiplicationTree;    
 	int i;
@@ -251,7 +251,7 @@ MultiplicationTree StandardTiling::dispose(short x, short y, int index)
 	if (operationNodes.size() == 1)
 	{
 		cout << "OK" << endl;
-		return MultiplicationTree(additions1[0]);
+		return MultiplicationTree(additions1[0], "prova");
 	}
 	else
 	{

@@ -7,32 +7,78 @@
 
 using namespace std;
 
+/*****************************************************************************/
+/* Default constructor which set the tree to NULL.                           */
+/*****************************************************************************/
+
 MultiplicationTree::MultiplicationTree()
 {
     this->root = NULL;
+    this->description = "";
 }
 
-MultiplicationTree::MultiplicationTree(OperationNode *root)
+/*****************************************************************************/
+/* Constructor that required the root operation node of the tree and a       */
+/* description.                                                              */
+/*****************************************************************************/
+
+MultiplicationTree::MultiplicationTree(shared_ptr<OperationNode> root, string description)
 {
     this->root = root;
+    this->description = description;
 }
 
-OperationNode* MultiplicationTree::getRoot()
+/*****************************************************************************/
+/* GetRoot method                                                            */
+/*****************************************************************************/
+
+shared_ptr<OperationNode> MultiplicationTree::getRoot()
 {
     return this->root;
 }
+
+/*****************************************************************************/
+/* GetDescription method                                                     */
+/*****************************************************************************/
+
+string MultiplicationTree::getDescription()
+{
+    return this->description;
+}
+
+/*****************************************************************************/
+/* Method that returns the delay of the tree, which is the sum of the delay  */
+/* of the components on the longest path of the computation.                 */
+/*****************************************************************************/
 
 int MultiplicationTree::getDelay()
 {
     return delay(root);
 }
 
-void MultiplicationTree::setRoot(OperationNode *root)
+/*****************************************************************************/
+/* SetRoot method                                                            */
+/*****************************************************************************/
+
+void MultiplicationTree::setRoot(shared_ptr<OperationNode> root)
 {
     this->root = root;
 }
 
-int MultiplicationTree::delay(Node* next)
+/*****************************************************************************/
+/* SetDescription method                                                     */
+/*****************************************************************************/
+
+void MultiplicationTree::setDescription(string description)
+{
+    this->description = description;
+}
+
+/*****************************************************************************/
+/* Recursive method that calculates the delay of the tree.                   */
+/*****************************************************************************/
+
+int MultiplicationTree::delay(shared_ptr<Node> next)
 {
     OperationNode *operationNode; 
     OperationNode *ptr;
@@ -47,11 +93,11 @@ int MultiplicationTree::delay(Node* next)
     {
         return 0;
     }
-    operationNode = static_cast<OperationNode*>(next);
+    operationNode = static_cast<OperationNode*>(next.get());
     nodeDelay = 1;
     if (operationNode->getOperation()->getOperationType() == SUBMULTIPLICATION)
     {
-        subMultiplication = static_cast<SubMultiplication*>(operationNode->getOperation());
+        subMultiplication = static_cast<SubMultiplication*>(operationNode->getOperation().get());
         nodeDelay = subMultiplication->getMultiplier().getDelay();
     }
     else if (operationNode->getOperation()->getOperationType() == SHIFT)
@@ -66,18 +112,20 @@ int MultiplicationTree::delay(Node* next)
         return nodeDelay + rightDelay;
 }
 
-char* MultiplicationTree::getExpression()
-{
-    string s;
-    char *cstr;
+/*****************************************************************************/
+/* Method that returns the string of the mathematical expression of the tree.*/
+/*****************************************************************************/
 
-    s = expression(root);
-    cstr = new char[s.length() + 1];
-    strcpy(cstr, s.c_str());
-    return cstr;
+string MultiplicationTree::getExpression()
+{
+    return expression(root);
 }
 
-string MultiplicationTree::expression(Node *next)
+/*****************************************************************************/
+/* Recursive method that construct the mathematical expression of the tree.  */
+/*****************************************************************************/
+
+string MultiplicationTree::expression(shared_ptr<Node> next)
 {
     OperationNode *operationNode;
     InputNode *inputNode;
@@ -90,7 +138,7 @@ string MultiplicationTree::expression(Node *next)
     }
     if (next->isLeaf() == true)
     {
-        inputNode = static_cast<InputNode*>(next);
+        inputNode = static_cast<InputNode*>(next.get());
         if (inputNode->isFirstInput() == true)
         {
             s = "X";
@@ -103,10 +151,10 @@ string MultiplicationTree::expression(Node *next)
     }
     else
     {
-        operationNode = static_cast<OperationNode*>(next);
+        operationNode = static_cast<OperationNode*>(next.get());
 	if (operationNode->getOperation()->getOperationType() == SHIFT)
         {
-            shift = static_cast<Shift*>(operationNode->getOperation());
+            shift = static_cast<Shift*>(operationNode->getOperation().get());
             s = "(2^" + to_string(shift->getK()) + " * ";
             s = s + expression(operationNode->getLeftChild()) + expression(operationNode->getRightChild());
             s = s + ")";
