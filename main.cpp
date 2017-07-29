@@ -9,7 +9,7 @@ using namespace std;
 
 int main ()
 {
-    int i, delay;
+    int i, j, delay;
     short input1, input2, minInput1, minInput2;
     MultiplicationTree *ptr;
     vector <Multiplier> multipliers;
@@ -32,12 +32,17 @@ int main ()
     }
     //Karatsuba-Ofman multiplication;
     multiplications.push_back(new KaratsubaOfman(multipliers));
-    multiplicationTrees = (multiplications[0])->dispositions(32, 32);
-    for (i = 0; i < multiplicationTrees.size(); i++)
+    //Standard Tiling
+    multiplications.push_back(new StandardTiling(multipliers));
+    for (j = 0; j < multiplications.size(); j++)
     {
-        cout << multiplicationTrees[i].getDescription() << endl;
-        cout << "Expression: " << multiplicationTrees[i].getExpression() << endl;
-        cout << "Delay: " << multiplicationTrees[i].getDelay() << endl;
+        multiplicationTrees = (multiplications[j])->dispositions(32, 32);
+        for (i = 0; i < multiplicationTrees.size(); i++)
+        {
+            cout << multiplicationTrees[i].getDescription() << endl;
+            cout << "Expression: " << multiplicationTrees[i].getExpression() << endl;
+            cout << "Delay: " << multiplicationTrees[i].getDelay() << endl;
+        }
     }
 
     /*tmp3 = new StandardTiling(multipliers, nMultipliers);
