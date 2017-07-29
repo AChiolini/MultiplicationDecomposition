@@ -14,7 +14,7 @@ class Shift : public Operation
         short getK();
         void setK(short);
         OperationType getOperationType() {return SHIFT;};
-        ~Shift() = default;
+        virtual ~Shift() = default;
 };
 
 #endif

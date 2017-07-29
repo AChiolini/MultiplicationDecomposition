@@ -15,14 +15,13 @@ using namespace std;
 class KaratsubaOfman : public Multiplication
 {
     private:
-        Multiplier *multipliers;
-        int nMultipliers;
-        MultiplicationTree dispose(short, short, int);
+        vector<Multiplier> multipliers;
+        MultiplicationTree dispose(short, short, Multiplier);
 
     public: 
-        KaratsubaOfman(Multiplier*, int);
+        KaratsubaOfman(vector<Multiplier>);
         vector <MultiplicationTree> dispositions(short, short);
-        ~KaratsubaOfman() = default;
+        virtual ~KaratsubaOfman() = default;
 };
 
 #endif

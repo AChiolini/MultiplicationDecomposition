@@ -4,18 +4,18 @@
 #include "Multiplication.h"
 #include "Multiplier.h"
 #include "MultiplicationTree.h"
+#include <vector>
 
 class StandardTiling : public Multiplication
 {
     private:
-        Multiplier *multipliers;
-		int nMultipliers;
-        MultiplicationTree dispose(short, short, int);
+        vector<Multiplier> multipliers;
+        MultiplicationTree dispose(short, short, Multiplier);
 
     public: 
-        StandardTiling(Multiplier*, int);
-        MultiplicationTree* dispositions(short, short, int*);
-        ~StandardTiling() = default;
+        StandardTiling(vector<Multiplier>);
+        vector<MultiplicationTree> dispositions(short, short);
+        virtual ~StandardTiling() = default;
 };
 
 #endif

@@ -8,17 +8,17 @@
 class SubMultiplication : public Operation
 {
     private:
-		Multiplier multiplier;
-		bool lut;
+        Multiplier multiplier;
+        bool lut;
 
     public:
-		SubMultiplication();
-		SubMultiplication(Multiplier);
-		bool isLUT();
-		Multiplier getMultiplier();
-		void setMultiplier(Multiplier);
-		OperationType getOperationType() {return SUBMULTIPLICATION;};
-		~SubMultiplication() = default;
+        SubMultiplication();
+        SubMultiplication(Multiplier);
+        bool isLUT();
+        Multiplier getMultiplier();
+        void setMultiplier(Multiplier);
+        OperationType getOperationType() {return SUBMULTIPLICATION;};
+        virtual ~SubMultiplication() = default;
 };
 
 #endif

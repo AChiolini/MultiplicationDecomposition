@@ -20,7 +20,7 @@ class InputNode : public Node
         void setFirstInput(bool);
         void setStart(short);
         void setLength(short);
-        ~InputNode() = default;
+        virtual ~InputNode() = default;
 };
 
 #endif

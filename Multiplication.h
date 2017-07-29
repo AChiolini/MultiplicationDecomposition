@@ -8,8 +8,8 @@
 class Multiplication
 {
     public:
-		virtual vector <MultiplicationTree> dispositions (short, short) = 0;
-		virtual ~Multiplication () = default;
+        virtual vector <MultiplicationTree> dispositions (short, short) = 0;
+        virtual ~Multiplication () = default;
 };
 
 #endif

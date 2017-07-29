@@ -7,7 +7,7 @@ class Addition : public Operation
 {
     public:
     	OperationType getOperationType() {return ADDITION;};
-        ~Addition() = default;
+        virtual ~Addition() = default;
 };
 
 #endif

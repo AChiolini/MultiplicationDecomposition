@@ -7,7 +7,7 @@ class Subtraction : public Operation
 {
     public:
         OperationType getOperationType() {return SUBTRACTION;};
-        ~Subtraction() = default;
+        virtual ~Subtraction() = default;
 };
 
 #endif

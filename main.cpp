@@ -9,33 +9,29 @@ using namespace std;
 
 int main ()
 {
-    int i, delay, nMultipliers;
+    int i, delay;
     short input1, input2, minInput1, minInput2;
     MultiplicationTree *ptr;
-    vector <Multiplier> multipliersVec;
+    vector <Multiplier> multipliers;
     vector <Multiplication*> multiplications;
     vector <MultiplicationTree> multiplicationTrees;
-    Multiplier *multipliers;
+
     ifstream infile("multipliers");
 
     //Creating multipliers
-    nMultipliers = 0;
     while (infile >> input1 >> input2 >> minInput1 >> minInput2 >> delay)
     {	
         try
         {
-            multipliersVec.push_back(Multiplier (input1, input2, minInput1, minInput2, delay));		
+            multipliers.push_back(Multiplier (input1, input2, minInput1, minInput2, delay));		
         }
         catch (const invalid_argument& e)
         {
             cerr << e.what() << endl;
         }
     }
-    nMultipliers = multipliersVec.size();
-    if (nMultipliers > 0)
-    	multipliers = &multipliersVec[0];
     //Karatsuba-Ofman multiplication;
-    multiplications.push_back(new KaratsubaOfman(multipliers, nMultipliers));
+    multiplications.push_back(new KaratsubaOfman(multipliers));
     multiplicationTrees = (multiplications[0])->dispositions(32, 32);
     for (i = 0; i < multiplicationTrees.size(); i++)
     {

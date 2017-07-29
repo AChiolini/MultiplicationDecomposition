@@ -17,10 +17,9 @@ using namespace std;
 /* Constructor that accepts the multipliers available.                       */
 /*****************************************************************************/
 
-KaratsubaOfman::KaratsubaOfman(Multiplier *multipliers, int nMultipliers)
+KaratsubaOfman::KaratsubaOfman(vector<Multiplier> multipliers)
 {
     this->multipliers = multipliers;
-    this->nMultipliers = nMultipliers;
 }
 
 /*****************************************************************************/
@@ -33,9 +32,9 @@ vector <MultiplicationTree> KaratsubaOfman::dispositions(short lengthX, short le
     MultiplicationTree tmp;
     int i;
 
-    for(i = 0; i < nMultipliers; i++)
+    for(i = 0; i < multipliers.size(); i++)
     {
-        tmp = dispose (lengthX, lengthY, i);
+        tmp = dispose (lengthX, lengthY, multipliers[i]);
         if(tmp.getRoot() != nullptr)
         {
             multiplicationTrees.push_back(tmp);
@@ -49,15 +48,15 @@ vector <MultiplicationTree> KaratsubaOfman::dispositions(short lengthX, short le
 /* multiplier.                                                               */
 /*****************************************************************************/
 
-MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, int index)
+MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, Multiplier multiplier)
 {
     short lm;
     shared_ptr<InputNode> x1, x0, y1, y0;
     shared_ptr<OperationNode> dX, dY, dXdY, x0y0, x1y1, halfMiddle, pMiddle, middle, first, last, root;
     string s;
 
-    if (lengthX == lengthY && multipliers[index].getInputLenght1() == multipliers[index].getInputLenght2() && \
-    (multipliers[index].getInputLenght1() * 2) > lengthX && lengthX > multipliers[index].getInputLenght1())
+    if (lengthX == lengthY && multiplier.getInputLenght1() == multiplier.getInputLenght2() && \
+    (multiplier.getInputLenght1() * 2) > lengthX && lengthX > multiplier.getInputLenght1())
     {
         lm = lengthX/2;
         x0 = make_shared<InputNode>(true, 0, lm);
@@ -70,13 +69,13 @@ MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, int ind
         dY = make_shared<OperationNode>(make_shared<Subtraction>());
         dY->setLeftChild(y1);
         dY->setRightChild(y0);
-        dXdY = make_shared<OperationNode>(make_shared<SubMultiplication>(multipliers[index]));
+        dXdY = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
         dXdY->setLeftChild(dX);
         dXdY->setRightChild(dY);        
-        x1y1 = make_shared<OperationNode>(make_shared<SubMultiplication>(multipliers[index]));
+        x1y1 = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
         x1y1->setLeftChild(x1);
         x1y1->setRightChild(y1);
-        x0y0 = make_shared<OperationNode>(make_shared<SubMultiplication>(multipliers[index]));
+        x0y0 = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
         x0y0->setLeftChild(x0);
         x0y0->setRightChild(y0);
         halfMiddle = make_shared<OperationNode>(make_shared<Addition>());
@@ -95,7 +94,7 @@ MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, int ind
         root = make_shared<OperationNode>(make_shared<Addition>());
         root->setLeftChild(middle);
         root->setRightChild(last);
-        s = "Karatsuba-Ofman 2 way split (" + to_string(multipliers[index].getInputLenght1()) + "x" + to_string(multipliers[index].getInputLenght2()) + ")";
+        s = "Karatsuba-Ofman 2 way split (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")";
         return MultiplicationTree(root, s);
     }
     return MultiplicationTree();

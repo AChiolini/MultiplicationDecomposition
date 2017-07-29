@@ -9,13 +9,13 @@ class ProposedTiling : public Multiplication
 {
     private:
         Multiplier *multipliers;
-		int nMultipliers;
+        int nMultipliers;
         MultiplicationTree dispose(short, short, int);
 
     public: 
         ProposedTiling(Multiplier*, int);
         MultiplicationTree* dispositions(short, short, int*);
-        ~ProposedTiling() = default;
+        virtual ~ProposedTiling() = default;
 };
 
 #endif
