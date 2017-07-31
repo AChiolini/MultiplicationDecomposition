@@ -11,6 +11,7 @@ int main ()
 {
     int i, j, delay;
     short input1, input2, minInput1, minInput2;
+    long long in1, in2;
     MultiplicationTree *ptr;
     vector <Multiplier> multipliers;
     vector <Multiplication*> multiplications;
@@ -30,6 +31,8 @@ int main ()
             cerr << e.what() << endl;
         }
     }
+    in1 = -5;
+    in2 = 5;
     //Karatsuba-Ofman multiplication;
     multiplications.push_back(new KaratsubaOfman(multipliers));
     //Standard Tiling
@@ -42,15 +45,8 @@ int main ()
             cout << multiplicationTrees[i].getDescription() << endl;
             cout << "Expression: " << multiplicationTrees[i].getExpression() << endl;
             cout << "Delay: " << multiplicationTrees[i].getDelay() << endl;
+            cout << "Expected value: " << (in1 * in2) << endl;
+            cout << "Obtained value: " << multiplicationTrees[i].executeMultiplication(in1, in2) << endl;
         }
     }
-
-    /*tmp3 = new StandardTiling(multipliers, nMultipliers);
-    ptr = tmp3->dispositions(48, 51, &n);
-    for (i = 0; i < n; i++)
-    {
-        cout << "Delay: " << ptr[i].getDelay() << endl;
-        cout << ptr[i].getExpression() << endl;
-        cout << "FATTO" << endl;
-    }*/
 }

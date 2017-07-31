@@ -13,7 +13,7 @@ using namespace std;
 
 MultiplicationTree::MultiplicationTree()
 {
-    this->root = NULL;
+    this->root = nullptr;
     this->description = "";
 }
 
@@ -85,7 +85,7 @@ int MultiplicationTree::delay(shared_ptr<Node> next)
     SubMultiplication *subMultiplication;
     int nodeDelay, leftDelay, rightDelay;
 
-    if (next == NULL)
+    if (next == nullptr)
     {
         return 0;
     }
@@ -132,7 +132,7 @@ string MultiplicationTree::expression(shared_ptr<Node> next)
     Shift *shift;
     string s;
 
-    if (next == NULL)
+    if (next == nullptr)
     {
         return "";
     }
@@ -175,4 +175,71 @@ string MultiplicationTree::expression(shared_ptr<Node> next)
         }
     }
     return s;
+}
+
+long long MultiplicationTree::executeMultiplication(long long input1, long long input2)
+{
+    return execute(root, input1, input2);
+}
+
+long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, long long input2)
+{
+    OperationNode *operationNode;
+    InputNode *inputNode;
+    Shift *shift;
+    long long input, signExtension, andMask, tmp;
+    int i;
+
+    if (next == nullptr)
+    {
+        return 0;
+    }
+    if (next->isLeaf() == true)
+    {
+        inputNode = static_cast<InputNode*>(next.get());
+        if (inputNode->isFirstInput() == true)
+        {
+            input = input1;
+	}
+        else
+        {
+            input = input2;
+        }
+        signExtension = 0;
+        signExtension |= (input >> 63);
+        tmp = 1;
+        tmp <<= 63;
+        signExtension &= tmp;
+        signExtension >>= (64 - inputNode->getLength() - 1);
+        andMask = 1;
+        andMask <<= (inputNode->getLength());
+        andMask--;
+        input >>= inputNode->getStart();
+        input &= andMask;
+        input |= signExtension;
+    }
+    else
+    {
+        operationNode = static_cast<OperationNode*>(next.get());
+	if (operationNode->getOperation()->getOperationType() == SHIFT)
+        {
+            shift = static_cast<Shift*>(operationNode->getOperation().get());
+            input = execute(operationNode->getLeftChild(), input1, input2) + execute(operationNode->getRightChild(), input1, input2);
+            input <<= shift->getK();
+        }
+        else
+        {
+            switch (operationNode->getOperation()->getOperationType())
+            {
+                case ADDITION: input = execute(operationNode->getLeftChild(), input1, input2) + execute(operationNode->getRightChild(), input1, input2);
+                               break;
+                case SUBTRACTION: input = execute(operationNode->getLeftChild(), input1, input2) - execute(operationNode->getRightChild(), input1, input2);
+                                  break;
+                case SUBMULTIPLICATION: input = execute(operationNode->getLeftChild(), input1, input2) * execute(operationNode->getRightChild(), input1, input2);
+                                        break;
+            }
+
+        }
+    }
+    return input;
 }
