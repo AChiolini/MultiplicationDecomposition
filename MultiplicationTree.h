@@ -19,6 +19,7 @@ class MultiplicationTree
         string description;
         int delay(shared_ptr<Node>);
         string expression(shared_ptr<Node>);
+        long long execute(shared_ptr<Node>, long long, long long);
 
     public:
         MultiplicationTree();
@@ -29,6 +30,7 @@ class MultiplicationTree
         string getExpression();
         void setRoot(shared_ptr<OperationNode>);
 	void setDescription(string);	
+        long long executeMultiplication(long long, long long);
         virtual ~MultiplicationTree() = default;
 };
 
