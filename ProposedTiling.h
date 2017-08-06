@@ -4,17 +4,17 @@
 #include "Multiplication.h"
 #include "Multiplier.h"
 #include "MultiplicationTree.h"
+#include <vector>
 
 class ProposedTiling : public Multiplication
 {
     private:
-        Multiplier *multipliers;
-        int nMultipliers;
-        MultiplicationTree dispose(short, short, int);
+        vector<Multiplier> multipliers;
+        MultiplicationTree dispose(short, short, Multiplier);
 
     public: 
-        ProposedTiling(Multiplier*, int);
-        MultiplicationTree* dispositions(short, short, int*);
+        ProposedTiling(vector<Multiplier>);
+        vector<MultiplicationTree> dispositions(short, short);
         virtual ~ProposedTiling() = default;
 };
 

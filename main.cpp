@@ -4,6 +4,7 @@
 #include "Multiplication.h"
 #include "StandardTiling.h"
 #include "KaratsubaOfman.h"
+#include "ProposedTiling.h"
 
 using namespace std;
 
@@ -34,9 +35,11 @@ int main ()
     multiplications.push_back(new KaratsubaOfman(multipliers));
     //Standard Tiling
     multiplications.push_back(new StandardTiling(multipliers));
+    //Proposed Tiling
+    multiplications.push_back(new ProposedTiling(multipliers));
     for (j = 0; j < multiplications.size(); j++)
     {
-        multiplicationTrees = (multiplications[j])->dispositions(32, 32);
+        multiplicationTrees = (multiplications[j])->dispositions(58, 58);
         for (i = 0; i < multiplicationTrees.size(); i++)
         {
             cout << multiplicationTrees[i].getDescription() << endl;
