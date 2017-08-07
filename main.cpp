@@ -32,7 +32,7 @@ int main ()
             cerr << e.what() << endl;
         }
     }
-    in1 = -5;
+    in1 = 5;
     in2 = 5;
     //Karatsuba-Ofman multiplication;
     multiplications.push_back(new KaratsubaOfman(multipliers));

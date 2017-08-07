@@ -39,6 +39,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
     shared_ptr<OperationNode> operationNode, operationNodeShift;
     shared_ptr<InputNode> in1, in2;
+    SubMultiplication *tmp;
 
     dim1 = multiplier.getInputLenght1() - 1;
     dim2 = multiplier.getInputLenght2() - 1;
@@ -141,18 +142,17 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         //Central LUT
         in1 = make_shared<InputNode>(true, ((short) max), ((short) (minh*min) - max));
         in2 = make_shared<InputNode>(false, ((short) max), ((short) (minv*min) - max));
-        operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+        if(in1.get()->getLength() < multiplier.getMinInput1() && in2.get()->getLength() < multiplier.getMinInput2())
+        {
+        operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>());
         operationNode->setLeftChild(in1);
         operationNode->setRightChild(in2);
-        //TODO Controllare che sia una LUT
-        /*if(operationNode->getOperation()->isLUT())
-            return MultiplicationTree();
-        else
-        {*/
         operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
         operationNodeShift->setLeftChild(operationNode);
         operationNodes.push_back(operationNodeShift);
-        //}
+        }
+        else
+            return MultiplicationTree();
 
         while(operationNodes.size() > 0 && operationNodes.size() != 1)
         {	
