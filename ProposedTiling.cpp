@@ -36,7 +36,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
     short max;
     short min;
     int i, j, minv, minh;
-    vector <shared_ptr<OperationNode>> operationNodes, multiplicationTreeMapper, tmpArray;
+    vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
     shared_ptr<OperationNode> operationNode, operationNodeShift;
     shared_ptr<InputNode> in1, in2;
 
@@ -106,7 +106,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         i = minv;
         j = minh;
         in1 = make_shared<InputNode>(true, ((short) j * min), ((short) x - (j*min))); 
-        in2 = make_shared<InputNode>(false, ((short) min - ((i*min) + max - y)), ((short) y - ((i-1)*min) - max));
+        in2 = make_shared<InputNode>(false, ((short) max + ((i-1)*min)), ((short) min - ((i*min) + max - y)));
         operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
         operationNode->setLeftChild(in1);
         operationNode->setRightChild(in2);
@@ -137,6 +137,22 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNodeShift->setLeftChild(operationNode);
             operationNodes.push_back(operationNodeShift);
         }
+
+        //Central LUT
+        in1 = make_shared<InputNode>(true, ((short) max), ((short) (minh*min) - max));
+        in2 = make_shared<InputNode>(false, ((short) max), ((short) (minv*min) - max));
+        operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+        operationNode->setLeftChild(in1);
+        operationNode->setRightChild(in2);
+        //TODO Controllare che sia una LUT
+        /*if(operationNode->getOperation()->isLUT())
+            return MultiplicationTree();
+        else
+        {*/
+        operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
+        operationNodeShift->setLeftChild(operationNode);
+        operationNodes.push_back(operationNodeShift);
+        //}
 
         while(operationNodes.size() > 0 && operationNodes.size() != 1)
         {	
