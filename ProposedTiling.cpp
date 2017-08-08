@@ -48,6 +48,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
     minv = 0;
     minh = 0;
 
+    // Proposed tiling is possible only with rectangular multipliers
     if(multiplier.getInputLenght1() != multiplier.getInputLenght2())
     {
         if (dim1 > dim2)
@@ -61,6 +62,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             min = dim1;
         }
 
+        // Posiziono il minimo numero di moltiplicatori sulla verticale dal lato minore
         for(; (i * min) + max < y; i++)
         {
             in1 = make_shared<InputNode>(true, ((short) j * min), ((short) max));
@@ -73,6 +75,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNodes.push_back(operationNodeShift);
             minv++;
         }
+        // Aggiungo l'ultimo moltiplicatore dal lato maggiore che sforerà la dimensione della moltiplicazione da eseguire 
         in1 = make_shared<InputNode>(true, ((short) j * min), ((short) min));
         in2 = make_shared<InputNode>(false, ((short) i * min), ((short) y - (i * min)));
         operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
@@ -83,6 +86,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         operationNodes.push_back(operationNodeShift);
         minh++;
 
+        // Posiziono il minimo numero di moltiplicatori sull'orizzontale partendo dai bit 0 dal lato minimo
         for(j = minh, i = 0; max + (j * min) < x; j++)
         {
             in1 = make_shared<InputNode>(true, ((short) max + ((j-1)*min)), (short) min);
@@ -95,6 +99,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNodes.push_back(operationNodeShift);
             minh++;
         }
+        // Aggiungo l'ultimo moltiplicatore dal lato minimo che sforerà la dimensione della moltiplicazione da eseguire
         in1 = make_shared<InputNode>(true, ((short) max + (j-1) * min), ((short) x - max - (j-1)*min));
         in2 = make_shared<InputNode>(false, ((short) i*min), ((short) max));
         operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
@@ -104,6 +109,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         operationNodeShift->setLeftChild(operationNode);
         operationNodes.push_back(operationNodeShift);
 
+        // Posiziono il moltiplicatore più estremo
         i = minv;
         j = minh;
         in1 = make_shared<InputNode>(true, ((short) j * min), ((short) x - (j*min))); 
@@ -115,7 +121,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         operationNodeShift->setLeftChild(operationNode);
         operationNodes.push_back(operationNodeShift);
         
-
+        // Posiziono i moltiplicatori rimanenti sulla verticale e sull'orizzontale
         for(i = minv - 1, j = minh; i > 0; i--)
         {
             in1 = make_shared<InputNode>(true, ((short) j * min), (short) x - (j*min));
@@ -139,7 +145,8 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNodes.push_back(operationNodeShift);
         }
 
-        //Central LUT
+        // Verifico che la parte centrale rimanente sia mappabile tramite LUT.
+        // Se non lo è allora scarto la soluzione
         in1 = make_shared<InputNode>(true, ((short) max), ((short) (minh*min) - max));
         in2 = make_shared<InputNode>(false, ((short) max), ((short) (minv*min) - max));
         if(in1.get()->getLength() < multiplier.getMinInput1() && in2.get()->getLength() < multiplier.getMinInput2())
@@ -154,6 +161,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         else
             return MultiplicationTree();
 
+        // Creo l'albero di somme di moltiplicazioni
         while(operationNodes.size() > 0 && operationNodes.size() != 1)
         {	
             for(i = 0; i < operationNodes.size(); i = i+2)
