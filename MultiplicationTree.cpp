@@ -187,8 +187,8 @@ long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, l
     OperationNode *operationNode;
     InputNode *inputNode;
     Shift *shift;
-    long long input, signExtension, andMask, tmp;
-    int i;
+    long long input, andMask;
+    int i, sign;
 
     if (next == nullptr)
     {
@@ -205,18 +205,21 @@ long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, l
         {
             input = input2;
         }
-        signExtension = 0;
-        signExtension |= (input >> 63);
-        tmp = 1;
-        tmp <<= 63;
-        signExtension &= tmp;
-        signExtension >>= (64 - inputNode->getLength() - 1);
+        if (input < 0)
+        {
+            sign = -1;
+            input = input * -1;
+        }
+        else
+        {
+            sign = 1;
+        }
         andMask = 1;
         andMask <<= (inputNode->getLength());
         andMask--;
         input >>= inputNode->getStart();
         input &= andMask;
-        input |= signExtension;
+        input = input * sign;
     }
     else
     {

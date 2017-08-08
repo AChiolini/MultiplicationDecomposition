@@ -33,7 +33,7 @@ int main ()
         }
     }
     in1 = 5;
-    in2 = 5;
+    in2 = -5;
     //Karatsuba-Ofman multiplication;
     multiplications.push_back(new KaratsubaOfman(multipliers));
     //Standard Tiling
@@ -42,7 +42,7 @@ int main ()
     multiplications.push_back(new ProposedTiling(multipliers));
     for (j = 0; j < multiplications.size(); j++)
     {
-        multiplicationTrees = (multiplications[j])->dispositions(58, 58);
+        multiplicationTrees = (multiplications[j])->dispositions(32, 32);
         for (i = 0; i < multiplicationTrees.size(); i++)
         {
             cout << multiplicationTrees[i].getDescription() << endl;
