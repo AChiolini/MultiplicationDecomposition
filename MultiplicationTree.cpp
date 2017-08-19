@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <iostream>
 #include <string.h>
+#include <algorithm>
 #include "MultiplicationTree.h"
 #include "SubMultiplication.h"
 #include "Shift.h"
@@ -175,6 +176,111 @@ string MultiplicationTree::expression(shared_ptr<Node> next)
         }
     }
     return s;
+}
+
+/*****************************************************************************/
+/* Method that returns the cost in term of components for the multiplication.*/
+/*****************************************************************************/
+
+string MultiplicationTree::getCost()
+{
+    vector<OperationNode*> operations;
+    vector<string> description;
+    vector<int> quantities;
+    string s, singleDescription;
+    SubMultiplication *multiplication;
+    Multiplier multiplier;
+    int i, j;
+    bool found;
+
+    operations = cost(root);
+    for (i = 0; i < operations.size(); i++)
+    {
+        switch(operations[i]->getOperation()->getOperationType())
+        {
+            case ADDITION: singleDescription = "Addition(s)";
+                           break;
+            case SUBTRACTION: singleDescription = "Subtraction(s)";
+                              break;
+            case SUBMULTIPLICATION: multiplication = static_cast<SubMultiplication*>(operations[i]->getOperation().get());
+                                    singleDescription = "Multiplication(s) with ";
+                                    if (multiplication->isLUT() == true)
+                                    {
+                                        singleDescription = singleDescription + "LUT";
+                                    }
+                                    else
+                                    {
+                                        multiplier = multiplication->getMultiplier();
+                                        singleDescription = singleDescription + "Multiplier (" + to_string(multiplier.getInputLenght1()) + "x";
+                                        singleDescription = singleDescription + to_string(multiplier.getInputLenght2()) + ")";
+                                    }
+                                    break;
+            case SHIFT: singleDescription = "Shift(s)";
+                        break;
+        }
+        found = false;
+        for (j = 0; j < description.size() && found == false; j++)
+        {
+            if (description[j].compare(singleDescription) == 0)
+            {
+                found = true;
+                quantities[j]++;
+            }
+        }
+        if (found == false)
+        {
+            description.push_back(singleDescription);
+            quantities.push_back(1);
+        }
+    }
+    s = "";
+    for (i = 0; i < description.size(); i++)
+    {
+        s = s + to_string(quantities[i]) + " " + description[i];
+        if (i + 1 != description.size())
+        {
+            s = s + ", ";
+        }
+    }
+    return s;
+}
+
+/*****************************************************************************/
+/* Recursive method that construct the cost string for the multiplication.   */
+/*****************************************************************************/
+
+vector<OperationNode*> MultiplicationTree::cost(shared_ptr<Node> next)
+{
+    vector<OperationNode*> operations, childOperations;
+    OperationNode *operationNode;
+    int i;
+
+    if (next == nullptr)
+    {
+        return operations;
+    }
+    if (next->isLeaf() == false)
+    {
+        operationNode = static_cast<OperationNode*>(next.get());
+        operations.push_back(operationNode);
+        childOperations = cost(operationNode->getLeftChild());
+        for (i = 0; i < childOperations.size(); i++)
+        {
+            if(find(operations.begin(), operations.end(), childOperations[i]) == operations.end())
+            {
+                operations.push_back(childOperations[i]);
+            }
+        }
+        childOperations = cost(operationNode->getRightChild());
+        for (i = 0; i < childOperations.size(); i++)
+        {
+            if(find(operations.begin(), operations.end(), childOperations[i]) == operations.end())
+            {
+                operations.push_back(childOperations[i]);
+            }
+        }
+    }
+    return operations;
 }
 
 __int128 MultiplicationTree::executeMultiplication(__int128 input1, __int128 input2)

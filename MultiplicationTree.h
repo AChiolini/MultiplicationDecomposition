@@ -2,6 +2,7 @@
 #define MULTIPLICATIONTREE_H
 
 #include <string>
+#include <vector>
 #include "OperationNode.h"
 #include "InputNode.h"
 
@@ -19,6 +20,7 @@ class MultiplicationTree
         string description;
         int delay(shared_ptr<Node>);
         string expression(shared_ptr<Node>);
+        vector<OperationNode*> cost(shared_ptr<Node>);
         __int128 execute(shared_ptr<Node>, __int128, __int128);
 
     public:
@@ -28,6 +30,7 @@ class MultiplicationTree
         string getDescription();
         int getDelay();
         string getExpression();
+        string getCost();
         void setRoot(shared_ptr<OperationNode>);
 	void setDescription(string);	
         __int128 executeMultiplication(__int128, __int128);

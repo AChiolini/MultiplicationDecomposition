@@ -56,12 +56,14 @@ int main (int argc, char** argv)
             multiplicationTrees = (multiplications[j])->dispositions(inputLength1, inputLength2);
             for (i = 0; i < multiplicationTrees.size(); i++)
             {
-                cout << endl;
                 cout << multiplicationTrees[i].getDescription() << endl;
                 cout << "Expression: " << multiplicationTrees[i].getExpression() << endl;
                 cout << "Delay: " << multiplicationTrees[i].getDelay() << endl;
+                cout << "Cost: " << multiplicationTrees[i].getCost() << endl;
                 cout << "Expected value: " << Int128Operations::getString(in1 * in2) << endl;
                 cout << "Obtained value: " << Int128Operations::getString(multiplicationTrees[i].executeMultiplication(in1, in2)) << endl;
+                cout << endl;
+                cout << endl;
             }
         }
     }
