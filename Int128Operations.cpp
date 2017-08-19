@@ -43,6 +43,7 @@ __int128 Int128Operations::getInt128(const char *p)
 string Int128Operations::getString(__int128 n)
 {
     string s;
+    char c;
     __int128 copy;
 
     copy = n;
@@ -51,7 +52,13 @@ string Int128Operations::getString(__int128 n)
     {
         while (n != 0)
         {
-            s = (char) ((n % 10) + 48) + s;
+            c = (char) n % 10;
+            if ( c < 0)
+            {
+                c = 0 - c;
+            }
+            c = c + 48;
+            s = c + s;
             n = n / 10;
         }
         if (copy < 0)
