@@ -177,17 +177,17 @@ string MultiplicationTree::expression(shared_ptr<Node> next)
     return s;
 }
 
-long long MultiplicationTree::executeMultiplication(long long input1, long long input2)
+__int128 MultiplicationTree::executeMultiplication(__int128 input1, __int128 input2)
 {
     return execute(root, input1, input2);
 }
 
-long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, long long input2)
+__int128 MultiplicationTree::execute(shared_ptr<Node> next, __int128 input1, __int128 input2)
 {
     OperationNode *operationNode;
     InputNode *inputNode;
     Shift *shift;
-    long long input, andMask;
+    __int128 input, andMask;
     int i, sign;
 
     if (next == nullptr)

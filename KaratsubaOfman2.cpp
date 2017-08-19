@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-#include "KaratsubaOfman.h"
+#include "KaratsubaOfman2.h"
 #include "MultiplicationTree.h"
 #include "SubMultiplication.h"
 #include "InputNode.h"
@@ -17,7 +17,7 @@ using namespace std;
 /* Constructor that accepts the multipliers available.                       */
 /*****************************************************************************/
 
-KaratsubaOfman::KaratsubaOfman(vector<Multiplier> multipliers)
+KaratsubaOfman2::KaratsubaOfman2(vector<Multiplier> multipliers)
 {
     this->multipliers = multipliers;
 }
@@ -26,7 +26,7 @@ KaratsubaOfman::KaratsubaOfman(vector<Multiplier> multipliers)
 /* Method that provides all the dispositions available.                      */
 /*****************************************************************************/
 
-vector <MultiplicationTree> KaratsubaOfman::dispositions(short lengthX, short lengthY)
+vector <MultiplicationTree> KaratsubaOfman2::dispositions(short lengthX, short lengthY)
 {
     vector <MultiplicationTree> multiplicationTrees;
     MultiplicationTree tmp;
@@ -48,7 +48,7 @@ vector <MultiplicationTree> KaratsubaOfman::dispositions(short lengthX, short le
 /* multiplier.                                                               */
 /*****************************************************************************/
 
-MultiplicationTree KaratsubaOfman::dispose(short lengthX, short lengthY, Multiplier multiplier)
+MultiplicationTree KaratsubaOfman2::dispose(short lengthX, short lengthY, Multiplier multiplier)
 {
     short lm;
     shared_ptr<InputNode> x1, x0, y1, y0;
