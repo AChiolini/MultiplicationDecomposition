@@ -283,17 +283,17 @@ vector<OperationNode*> MultiplicationTree::cost(shared_ptr<Node> next)
     return operations;
 }
 
-__int128 MultiplicationTree::executeMultiplication(__int128 input1, __int128 input2)
+long long MultiplicationTree::executeMultiplication(long long input1, long long input2)
 {
     return execute(root, input1, input2);
 }
 
-__int128 MultiplicationTree::execute(shared_ptr<Node> next, __int128 input1, __int128 input2)
+long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, long long input2)
 {
     OperationNode *operationNode;
     InputNode *inputNode;
     Shift *shift;
-    __int128 input, andMask;
+    long long input, andMask;
     int i, sign;
 
     if (next == nullptr)

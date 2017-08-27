@@ -2,7 +2,6 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
-#include "Int128Operations.h"
 #include "Multiplication.h"
 #include "StandardTiling.h"
 #include "KaratsubaOfman2.h"
@@ -17,7 +16,7 @@ int main (int argc, char** argv)
 {
     int i, j, delay;
     short input1, input2, minInput1, minInput2;
-    __int128 in1, in2;
+    long long in1, in2;
     int inputLength1, inputLength2;
     MultiplicationTree *ptr;
     vector <Multiplier> multipliers;
@@ -27,8 +26,8 @@ int main (int argc, char** argv)
 
     if (argc == 5 && is_number(argv[1]) && is_number(argv[2]) && is_number(argv[3]) && is_number(argv[4]))
     {
-        in1 = Int128Operations::getInt128(argv[3]);
-        in2 = Int128Operations::getInt128(argv[4]);
+        in1 = atoll(argv[3]);
+        in2 = atoll(argv[4]);
         inputLength1 = atoi(argv[1]);
         inputLength2 = atoi(argv[2]);
         //Creating multipliers
@@ -60,8 +59,8 @@ int main (int argc, char** argv)
                 cout << "Expression: " << multiplicationTrees[i].getExpression() << endl;
                 cout << "Delay: " << multiplicationTrees[i].getDelay() << endl;
                 cout << "Cost: " << multiplicationTrees[i].getCost() << endl;
-                cout << "Expected value: " << Int128Operations::getString(in1 * in2) << endl;
-                cout << "Obtained value: " << Int128Operations::getString(multiplicationTrees[i].executeMultiplication(in1, in2)) << endl;
+                cout << "Expected value: " << in1 * in2 << endl;
+                cout << "Obtained value: " << multiplicationTrees[i].executeMultiplication(in1, in2) << endl;
                 cout << endl;
                 cout << endl;
             }
