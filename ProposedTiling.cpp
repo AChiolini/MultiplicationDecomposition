@@ -62,7 +62,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             min = dim1;
         }
 
-        // Posiziono il minimo numero di moltiplicatori sulla verticale dal lato minore
+        // Posiziono il minimo numero di moltiplicatori sulla verticale dall'input di lunghezza minore
         for(; (i * min) + max < y; i++)
         {
             in1 = make_shared<InputNode>(true, ((short) j * min), ((short) max));
@@ -86,7 +86,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         operationNodes.push_back(operationNodeShift);
         minh++;
 
-        // Posiziono il minimo numero di moltiplicatori sull'orizzontale partendo dai bit 0 dal lato minimo
+        // Posiziono il minimo numero di moltiplicatori sull'orizzontale partendo dai bit 0 dall'input di lunghezza minore
         for(j = minh, i = 0; max + (j * min) < x; j++)
         {
             in1 = make_shared<InputNode>(true, ((short) max + ((j-1)*min)), (short) min);
@@ -147,16 +147,29 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
 
         // Verifico che la parte centrale rimanente sia mappabile tramite LUT.
         // Se non lo è allora scarto la soluzione
+        if(((minh*min) - max) > 0 && ((minv*min) - max) > 0)
+        {
         in1 = make_shared<InputNode>(true, ((short) max), ((short) (minh*min) - max));
+        cout << ((minh*min) - max) << endl;
         in2 = make_shared<InputNode>(false, ((short) max), ((short) (minv*min) - max));
+        cout << ((minv*min) - max) << endl;
+        }
+        else
+        {
+            in1 = make_shared<InputNode>(true, ((short) min), ((short) (max - min)));
+            cout << max - min << endl;
+            in2 = make_shared<InputNode>(false, ((short) min), ((short) (max - min)));
+            cout << max - min << endl;
+        }
+
         if(in1.get()->getLength() < multiplier.getMinInput1() && in2.get()->getLength() < multiplier.getMinInput2())
         {
-        operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>());
-        operationNode->setLeftChild(in1);
-        operationNode->setRightChild(in2);
-        operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-        operationNodeShift->setLeftChild(operationNode);
-        operationNodes.push_back(operationNodeShift);
+            operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>());
+            operationNode->setLeftChild(in1);
+            operationNode->setRightChild(in2);
+            operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
+            operationNodeShift->setLeftChild(operationNode);
+            operationNodes.push_back(operationNodeShift);
         }
         else
             return MultiplicationTree();
