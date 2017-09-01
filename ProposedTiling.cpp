@@ -47,6 +47,8 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
     j = 0;
     minv = 0;
     minh = 0;
+    x--;
+    y--;
 
     // Proposed tiling is possible only with rectangular multipliers
     if(multiplier.getInputLenght1() != multiplier.getInputLenght2())
@@ -63,7 +65,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         }
 
         // Posiziono il minimo numero di moltiplicatori sulla verticale dall'input di lunghezza minore
-        for(; (i * min) + max < y; i++)
+        for(; (i * min) + max <= y; i++)
         {
             in1 = make_shared<InputNode>(true, ((short) j * min), ((short) max));
             in2 = make_shared<InputNode>(false, ((short) i * min), ((short) min));
@@ -87,7 +89,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         minh++;
 
         // Posiziono il minimo numero di moltiplicatori sull'orizzontale partendo dai bit 0 dall'input di lunghezza minore
-        for(j = minh, i = 0; max + (j * min) < x; j++)
+        for(j = minh, i = 0; max + (j * min) <= x; j++)
         {
             in1 = make_shared<InputNode>(true, ((short) max + ((j-1)*min)), (short) min);
             in2 = make_shared<InputNode>(false, ((short) i * min), (short) max);
@@ -147,19 +149,15 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
 
         // Verifico che la parte centrale rimanente sia mappabile tramite LUT.
         // Se non lo è allora scarto la soluzione
-        if(((minh*min) - max) > 0 && ((minv*min) - max) > 0)
+        if((minh*min) > max && (minv*min) > max)
         {
-        in1 = make_shared<InputNode>(true, ((short) max), ((short) (minh*min) - max));
-        cout << ((minh*min) - max) << endl;
-        in2 = make_shared<InputNode>(false, ((short) max), ((short) (minv*min) - max));
-        cout << ((minv*min) - max) << endl;
+            in1 = make_shared<InputNode>(true, ((short) max), ((short) (minh*min) - max));
+            in2 = make_shared<InputNode>(false, ((short) max), ((short) (minv*min) - max));
         }
         else
         {
             in1 = make_shared<InputNode>(true, ((short) min), ((short) (max - min)));
-            cout << max - min << endl;
             in2 = make_shared<InputNode>(false, ((short) min), ((short) (max - min)));
-            cout << max - min << endl;
         }
 
         if(in1.get()->getLength() < multiplier.getMinInput1() && in2.get()->getLength() < multiplier.getMinInput2())

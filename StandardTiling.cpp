@@ -47,6 +47,8 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
     dim1 = multiplier.getInputLenght1() - 1;
     dim2 = multiplier.getInputLenght2() - 1;
     match = false;
+    x--;
+    y--;
     //Occorre controllare se la moltiplicazione è abbastanza grande per un moltiplicatore (SOGLIE)
     if (dim1 > dim2)
     {
@@ -87,7 +89,7 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
                 operationNode->setLeftChild(in1);
                 operationNode->setRightChild(in2);
                 if (in1->getStart() + in2->getStart() > 0)
-		{
+		        {
                     operationNode2 = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
                     operationNode2->setLeftChild(operationNode);
                     operationNodes.push_back(operationNode2);
@@ -110,7 +112,7 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
                 nmaxv--;
                 for (countv = nmaxv * max, nminv = 0; countv < y;  countv = countv + min, nminv++);
                 if (countv == y)
-		{
+		        {
                     match = true;
                 }
             } while (match == false && nmaxv > 0);
@@ -160,7 +162,7 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
                     operationNode->setLeftChild(in1);
                     operationNode->setRightChild(in2);
                     if (in1->getStart() + in2->getStart() > 0)
-		    {
+		            {
                         operationNode2 = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
                         operationNode2->setLeftChild(operationNode);
                         operationNodes.push_back(operationNode2);
