@@ -16,6 +16,8 @@ MultiplicationTree::MultiplicationTree()
 {
     this->root = nullptr;
     this->description = "";
+    this->lengthX = 0;
+    this->lengthY = 0;
 }
 
 /*****************************************************************************/
@@ -23,10 +25,13 @@ MultiplicationTree::MultiplicationTree()
 /* description.                                                              */
 /*****************************************************************************/
 
-MultiplicationTree::MultiplicationTree(shared_ptr<OperationNode> root, string description)
+MultiplicationTree::MultiplicationTree(shared_ptr<OperationNode> root, string description, int lengthX, int lengthY)
 {
     this->root = root;
     this->description = description;
+    this->lengthX = lengthX;
+    this->lengthY = lengthY;
+    getLengthNode(root);
 }
 
 /*****************************************************************************/
@@ -57,6 +62,16 @@ int MultiplicationTree::getDelay()
     return delay(root);
 }
 
+int MultiplicationTree::getLengthX()
+{
+    return lengthX;
+}
+
+int MultiplicationTree::getLengthY()
+{
+    return lengthY;
+}
+
 /*****************************************************************************/
 /* SetRoot method                                                            */
 /*****************************************************************************/
@@ -73,6 +88,16 @@ void MultiplicationTree::setRoot(shared_ptr<OperationNode> root)
 void MultiplicationTree::setDescription(string description)
 {
     this->description = description;
+}
+
+void MultiplicationTree::setLengthX(int lengthX)
+{
+    this->lengthX = lengthX;
+}
+
+void MultiplicationTree::setLengthY(int lengthY)
+{
+    this->lengthY = lengthY;
 }
 
 /*****************************************************************************/
@@ -351,4 +376,19 @@ long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, l
         }
     }
     return input;
+}
+
+int getLengthNode(shared_ptr<Node> node)
+{
+    InputNode inputNode;
+    OperationNode operationNode;
+    
+    if(node == nullptr)
+    {
+        return 0;
+    }
+    if (node->isLeaf() == true)
+    {
+        inputNode = static_cast<InputNode*>(node.get());
+    }
 }

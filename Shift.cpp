@@ -3,11 +3,13 @@
 Shift::Shift()
 {
     this->k = 0;
+    this->length = -1;
 }
 
 Shift::Shift(short k)
 {
     this->k = k;
+    this->length = -1;
 }
 
 short Shift::getK()

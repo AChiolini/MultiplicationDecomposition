@@ -16,12 +16,15 @@ using namespace std;
 class MultiplicationTree
 {
     private:
-	shared_ptr<OperationNode> root;
+        int lengthX;
+        int lengthY;
+	    shared_ptr<OperationNode> root;
         string description;
         int delay(shared_ptr<Node>);
         string expression(shared_ptr<Node>);
         vector<OperationNode*> cost(shared_ptr<Node>);
         long long execute(shared_ptr<Node>, long long, long long);
+        int getLengthNode(shared_ptr<Node>);
 
     public:
         MultiplicationTree();
@@ -31,8 +34,12 @@ class MultiplicationTree
         int getDelay();
         string getExpression();
         string getCost();
+        int getLengthX();
+        int getLengthY();
         void setRoot(shared_ptr<OperationNode>);
-	void setDescription(string);	
+	    void setDescription(string);
+        void setLengthX(int);
+        void setLengthY(int);
         long long executeMultiplication(long long, long long);
         virtual ~MultiplicationTree() = default;
 };

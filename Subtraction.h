@@ -5,7 +5,12 @@
 
 class Subtraction : public Operation
 {
+    private:
+        int length;
+
     public:
+        Subtraction();
+        int getLengthOperation();
         OperationType getOperationType() {return SUBTRACTION;};
         virtual ~Subtraction() = default;
 };
