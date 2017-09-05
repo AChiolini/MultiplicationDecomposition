@@ -389,6 +389,7 @@ int getLengthNode(shared_ptr<Node> node)
     }
     if (node->isLeaf() == true)
     {
-        inputNode = static_cast<InputNode*>(node.get());
+        //inputNode = static_cast<InputNode*>(node.get());
+        cout << "input" << endl;
     }
 }

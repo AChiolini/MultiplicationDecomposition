@@ -28,7 +28,7 @@ class MultiplicationTree
 
     public:
         MultiplicationTree();
-        MultiplicationTree(shared_ptr<OperationNode>, string);
+        MultiplicationTree(shared_ptr<OperationNode>, string, int, int);
         shared_ptr<OperationNode> getRoot();
         string getDescription();
         int getDelay();

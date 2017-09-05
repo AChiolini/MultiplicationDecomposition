@@ -11,6 +11,7 @@ class ProposedTiling : public Multiplication
     private:
         vector<Multiplier> multipliers;
         MultiplicationTree dispose(short, short, Multiplier);
+        shared_ptr<OperationNode> makeShift(shared_ptr<InputNode>, shared_ptr<InputNode>, shared_ptr<OperationNode>);
 
     public: 
         ProposedTiling(vector<Multiplier>);

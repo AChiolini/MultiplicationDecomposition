@@ -72,8 +72,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
             operationNode->setLeftChild(in1);
             operationNode->setRightChild(in2);
-            operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-            operationNodeShift->setLeftChild(operationNode);
+            operationNodeShift = makeShift(in1, in2, operationNode);
             operationNodes.push_back(operationNodeShift);
             minv++;
         }
@@ -83,8 +82,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
         operationNode->setLeftChild(in1);
         operationNode->setRightChild(in2);
-        operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-        operationNodeShift->setLeftChild(operationNode);
+        operationNodeShift = makeShift(in1, in2, operationNode);
         operationNodes.push_back(operationNodeShift);
         minh++;
 
@@ -96,8 +94,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
             operationNode->setLeftChild(in1);
             operationNode->setRightChild(in2);
-            operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-            operationNodeShift->setLeftChild(operationNode);
+            operationNodeShift = makeShift(in1, in2, operationNode);
             operationNodes.push_back(operationNodeShift);
             minh++;
         }
@@ -107,8 +104,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
         operationNode->setLeftChild(in1);
         operationNode->setRightChild(in2);
-        operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-        operationNodeShift->setLeftChild(operationNode);
+        operationNodeShift = makeShift(in1, in2, operationNode);
         operationNodes.push_back(operationNodeShift);
 
         // Posiziono il moltiplicatore più estremo
@@ -119,8 +115,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
         operationNode->setLeftChild(in1);
         operationNode->setRightChild(in2);
-        operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-        operationNodeShift->setLeftChild(operationNode);
+        operationNodeShift = makeShift(in1, in2, operationNode);
         operationNodes.push_back(operationNodeShift);
         
         // Posiziono i moltiplicatori rimanenti sulla verticale e sull'orizzontale
@@ -131,8 +126,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
             operationNode->setLeftChild(in1);
             operationNode->setRightChild(in2);
-            operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-            operationNodeShift->setLeftChild(operationNode);
+            operationNodeShift = makeShift(in1, in2, operationNode);
             operationNodes.push_back(operationNodeShift);
         }
         for(i = minv, j = minh - 1; j > 0; j--)
@@ -142,8 +136,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
             operationNode->setLeftChild(in1);
             operationNode->setRightChild(in2);
-            operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-            operationNodeShift->setLeftChild(operationNode);
+            operationNodeShift = makeShift(in1, in2, operationNode);
             operationNodes.push_back(operationNodeShift);
         }
 
@@ -165,8 +158,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>());
             operationNode->setLeftChild(in1);
             operationNode->setRightChild(in2);
-            operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-            operationNodeShift->setLeftChild(operationNode);
+            operationNodeShift = makeShift(in1, in2, operationNode);
             operationNodes.push_back(operationNodeShift);
         }
         else
@@ -192,8 +184,23 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNodes.swap(tmpArray);
             tmpArray.clear();
         }
-        return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")");
+        return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")", (int) x, (int) y);
     }
     else    
         return MultiplicationTree();
+}
+
+shared_ptr<OperationNode> ProposedTiling::makeShift(shared_ptr<InputNode> in1, shared_ptr<InputNode> in2, shared_ptr<OperationNode> operationNode)
+{
+    shared_ptr<OperationNode> operationNodeShift;
+    if(in1->getStart() + in2->getStart() > 0)
+    {
+        operationNodeShift = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
+        operationNodeShift->setLeftChild(operationNode);
+        return operationNodeShift;
+    }
+    else
+    {
+        return operationNode;
+    }
 }

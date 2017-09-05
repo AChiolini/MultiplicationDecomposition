@@ -95,7 +95,7 @@ MultiplicationTree KaratsubaOfman2::dispose(short lengthX, short lengthY, Multip
         root->setLeftChild(middle);
         root->setRightChild(last);
         s = "Karatsuba-Ofman 2 way split (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")";
-        return MultiplicationTree(root, s);
+        return MultiplicationTree(root, s, (int) lengthX, (int) lengthY);
     }
     return MultiplicationTree();
 }

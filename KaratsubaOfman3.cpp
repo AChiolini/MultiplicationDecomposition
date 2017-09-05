@@ -144,7 +144,7 @@ MultiplicationTree KaratsubaOfman3::dispose(short lengthX, short lengthY, Multip
         root->setLeftChild(third);
         root->setRightChild(first);
         s = "Karatsuba-Ofman three-part splitting (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")";
-        return MultiplicationTree(root, s);
+        return MultiplicationTree(root, s, (int) lengthX, (int) lengthY);
     }
     return MultiplicationTree();
 }

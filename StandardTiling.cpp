@@ -313,5 +313,5 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
         operationNodes.swap(tmpArray);
         tmpArray.clear();
     }
-    return MultiplicationTree(operationNodes[0], "Standard tiling (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")");
+    return MultiplicationTree(operationNodes[0], "Standard tiling (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")", (int) x, (int) y);
 }
