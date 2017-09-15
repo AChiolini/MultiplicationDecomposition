@@ -21,3 +21,8 @@ void Shift::setK(short k)
 {
     this->k = k;
 }
+
+int Shift::getLengthOperation()
+{
+    return 1;
+}
