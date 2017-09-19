@@ -31,8 +31,3 @@ void SubMultiplication::setMultiplier(Multiplier multiplier)
 {
     this->multiplier = multiplier;
 }
-
-int SubMultiplication::getLengthOperation()
-{
-    return 1;
-}

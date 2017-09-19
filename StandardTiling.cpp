@@ -44,8 +44,8 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
     shared_ptr<OperationNode> operationNode, operationNode2;
     shared_ptr<InputNode> in1, in2;
 
-    dim1 = multiplier.getInputLenght1() - 1;
-    dim2 = multiplier.getInputLenght2() - 1;
+    dim1 = multiplier.getInputLength1() - 1;
+    dim2 = multiplier.getInputLength2() - 1;
     match = false;
     x--;
     y--;
@@ -313,5 +313,5 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
         operationNodes.swap(tmpArray);
         tmpArray.clear();
     }
-    return MultiplicationTree(operationNodes[0], "Standard tiling (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")", (int) x, (int) y);
+    return MultiplicationTree(operationNodes[0], "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x, (int) y);
 }

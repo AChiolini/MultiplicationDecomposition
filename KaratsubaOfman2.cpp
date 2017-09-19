@@ -44,7 +44,7 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(short lengthX, short l
 }
 
 /*****************************************************************************/
-/* Method that tries to create a disposition given two input lenghts and a   */
+/* Method that tries to create a disposition given two input lengths and a   */
 /* multiplier.                                                               */
 /*****************************************************************************/
 
@@ -55,8 +55,8 @@ MultiplicationTree KaratsubaOfman2::dispose(short lengthX, short lengthY, Multip
     shared_ptr<OperationNode> dX, dY, dXdY, x0y0, x1y1, halfMiddle, pMiddle, middle, first, last, root;
     string s;
 
-    if (lengthX == lengthY && multiplier.getInputLenght1() == multiplier.getInputLenght2() && \
-    (multiplier.getInputLenght1() * 2) > lengthX && lengthX > multiplier.getInputLenght1())
+    if (lengthX == lengthY && multiplier.getInputLength1() == multiplier.getInputLength2() && \
+    (multiplier.getInputLength1() * 2) > lengthX && lengthX > multiplier.getInputLength1())
     {
         lm = lengthX/2;
         x0 = make_shared<InputNode>(true, 0, lm);
@@ -94,7 +94,7 @@ MultiplicationTree KaratsubaOfman2::dispose(short lengthX, short lengthY, Multip
         root = make_shared<OperationNode>(make_shared<Addition>());
         root->setLeftChild(middle);
         root->setRightChild(last);
-        s = "Karatsuba-Ofman 2 way split (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")";
+        s = "Karatsuba-Ofman 2 way split (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")";
         return MultiplicationTree(root, s, (int) lengthX, (int) lengthY);
     }
     return MultiplicationTree();

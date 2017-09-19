@@ -31,7 +31,6 @@ MultiplicationTree::MultiplicationTree(shared_ptr<OperationNode> root, string de
     this->description = description;
     this->lengthX = lengthX;
     this->lengthY = lengthY;
-    getLengthNode(root);
 }
 
 /*****************************************************************************/
@@ -236,8 +235,8 @@ string MultiplicationTree::getCost()
                                     else
                                     {
                                         multiplier = multiplication->getMultiplier();
-                                        singleDescription = singleDescription + "Multiplier (" + to_string(multiplier.getInputLenght1()) + "x";
-                                        singleDescription = singleDescription + to_string(multiplier.getInputLenght2()) + ")";
+                                        singleDescription = singleDescription + "Multiplier (" + to_string(multiplier.getInputLength1()) + "x";
+                                        singleDescription = singleDescription + to_string(multiplier.getInputLength2()) + ")";
                                     }
                                     break;
             case SHIFT: singleDescription = "Shift(s)";
@@ -378,18 +377,7 @@ long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, l
     return input;
 }
 
-int getLengthNode(shared_ptr<Node> node)
+int MultiplicationTree::getOutputLength()
 {
-    InputNode inputNode;
-    OperationNode operationNode;
-    
-    if(node == nullptr)
-    {
-        return 0;
-    }
-    if (node->isLeaf() == true)
-    {
-        //inputNode = static_cast<InputNode*>(node.get());
-        cout << "input" << endl;
-    }
+    return root->getOutputLength();
 }

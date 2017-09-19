@@ -7,6 +7,7 @@ class Node
 {
     public:
         virtual bool isLeaf() = 0;
+        virtual int getOutputLength() = 0;
         virtual ~Node() = default;
 };
 

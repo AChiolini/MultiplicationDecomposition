@@ -12,7 +12,6 @@ enum OperationType
 class Operation 
 {        
     public:
-        virtual int getLengthOperation();
         virtual OperationType getOperationType() = 0;
         virtual ~Operation() = default;
 };

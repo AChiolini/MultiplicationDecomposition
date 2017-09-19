@@ -61,6 +61,7 @@ int main (int argc, char** argv)
                 cout << "Cost: " << multiplicationTrees[i].getCost() << endl;
                 cout << "Expected value: " << in1 * in2 << endl;
                 cout << "Obtained value: " << multiplicationTrees[i].executeMultiplication(in1, in2) << endl;
+                cout << "Output Length: " << multiplicationTrees[i].getOutputLength() << endl;
                 cout << endl;
                 cout << endl;
             }

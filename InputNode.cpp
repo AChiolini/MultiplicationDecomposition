@@ -34,6 +34,11 @@ short InputNode::getLength()
     return this->length;
 }
 
+int InputNode::getOutputLength()
+{
+    return this->length + 1;
+}
+
 void InputNode::setFirstInput(bool firstInput)
 {
     this->firstInput = firstInput;

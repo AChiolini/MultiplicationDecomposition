@@ -17,6 +17,7 @@ class InputNode : public Node
         bool isFirstInput();
         short getStart();
         short getLength();
+        int getOutputLength();
         void setFirstInput(bool);
         void setStart(short);
         void setLength(short);

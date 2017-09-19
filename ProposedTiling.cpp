@@ -42,8 +42,8 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
     shared_ptr<InputNode> in1, in2;
     SubMultiplication *tmp;
 
-    dim1 = multiplier.getInputLenght1() - 1;
-    dim2 = multiplier.getInputLenght2() - 1;
+    dim1 = multiplier.getInputLength1() - 1;
+    dim2 = multiplier.getInputLength2() - 1;
     i = 0;
     j = 0;
     minv = 0;
@@ -53,7 +53,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
     match = false;
 
     // Proposed tiling is possible only with rectangular multipliers
-    if(multiplier.getInputLenght1() != multiplier.getInputLenght2())
+    if(multiplier.getInputLength1() != multiplier.getInputLength2())
     {
         if (dim1 > dim2)
         {
@@ -200,7 +200,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
                 operationNodes.swap(tmpArray);
                 tmpArray.clear();
             }
-            return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLenght1()) + "x" + to_string(multiplier.getInputLenght2()) + ")", (int) x, (int) y);
+            return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x, (int) y);
         }
     }
     else    

@@ -13,8 +13,8 @@ class Multiplier
     public:
         Multiplier();
         Multiplier(short, short, short, short, int);
-        short getInputLenght1();
-        short getInputLenght2();
+        short getInputLength1();
+        short getInputLength2();
         short getMinInput1();
         short getMinInput2();
         int getDelay();

@@ -5,12 +5,7 @@
 
 class Addition : public Operation
 {
-    private:
-        int length;
-
     public:
-        Addition();
-        int getLengthOperation();
     	OperationType getOperationType() {return ADDITION;};
         virtual ~Addition() = default;
 };

@@ -29,12 +29,12 @@ Multiplier::Multiplier(short inputLength1, short inputLength2, short minInput1, 
 	throw invalid_argument ("Error creating multiplier: delay must be greater than 0");
 }
 
-short Multiplier::getInputLenght1()
+short Multiplier::getInputLength1()
 {
     return inputLength1;
 }
 
-short Multiplier::getInputLenght2()
+short Multiplier::getInputLength2()
 {
     return inputLength2;
 }
