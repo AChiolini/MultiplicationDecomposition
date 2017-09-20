@@ -65,18 +65,25 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             max = dim2;
             min = dim1;
         }
-        //TODO match
-        if(min == in1->getStart() && max == in2->getStart())
+        if(min == x && max == y)
         {
+            in1 = make_shared<InputNode>(true, (short) 0, min);
+            in2 = make_shared<InputNode>(false, (short) 0, max);
             operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-            match = true;
-            operationNodes.push_back(operationNodeShift);
-        }
-        else if (max == in1->getStart() && min == in2->getStart())
-        {
-            operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-            match = true;
+            operationNode->setLeftChild(in1);
+            operationNode->setRightChild(in2);
             operationNodes.push_back(operationNode);
+            match = true;
+        }
+        else if (max == x && min == y)
+        {
+            in1 = make_shared<InputNode>(true, (short) 0, (short) max);
+            in2 = make_shared<InputNode>(false, (short) 0, (short) min);
+            operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+            operationNode->setLeftChild(in1);
+            operationNode->setRightChild(in2);
+            operationNodes.push_back(operationNode);
+            match = true;
         }
         if (!match)
         {
@@ -179,29 +186,29 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             }
             else
                 return MultiplicationTree();
-
-            // Creo l'albero di somme di moltiplicazioni
-            while(operationNodes.size() > 0 && operationNodes.size() != 1)
-            {	
-                for(i = 0; i < operationNodes.size(); i = i+2)
-                {
-                    if (i + 1 < operationNodes.size())
-                    {
-                        operationNode = make_shared<OperationNode>(make_shared<Addition>());
-                        operationNode->setLeftChild(operationNodes[i]);
-                        operationNode->setRightChild(operationNodes[i+1]);
-                        tmpArray.push_back(operationNode);
-                    }
-                    else
-                    {
-                        tmpArray.push_back(operationNodes[i]);
-                    }
-                }
-                operationNodes.swap(tmpArray);
-                tmpArray.clear();
-            }
-            return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x, (int) y);
         }
+        // Creo l'albero di somme di moltiplicazioni
+        while(operationNodes.size() > 0 && operationNodes.size() != 1)
+        {	
+            for(i = 0; i < operationNodes.size(); i = i+2)
+            {
+                if (i + 1 < operationNodes.size())
+                {
+                    operationNode = make_shared<OperationNode>(make_shared<Addition>());
+                    operationNode->setLeftChild(operationNodes[i]);
+                    operationNode->setRightChild(operationNodes[i+1]);
+                    tmpArray.push_back(operationNode);
+                }
+                else
+                {
+                    tmpArray.push_back(operationNodes[i]);
+                }
+            }
+            operationNodes.swap(tmpArray);
+            tmpArray.clear();
+        }
+        
+        return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x, (int) y);
     }
     else    
         return MultiplicationTree();
