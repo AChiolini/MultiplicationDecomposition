@@ -194,7 +194,14 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             {
                 if (i + 1 < operationNodes.size())
                 {
-                    operationNode = make_shared<OperationNode>(make_shared<Addition>());
+                    if (i + 1 == operationNodes.size() - 1 && ((minh * min > max && minv * min < max) || (minh*min < max && minv * min > max)))
+                    {
+                        operationNode = make_shared<OperationNode>(make_shared<Subtraction>());
+                    }
+                    else
+                    {
+                        operationNode = make_shared<OperationNode>(make_shared<Addition>());
+                    }
                     operationNode->setLeftChild(operationNodes[i]);
                     operationNode->setRightChild(operationNodes[i+1]);
                     tmpArray.push_back(operationNode);
