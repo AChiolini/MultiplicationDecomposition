@@ -37,6 +37,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
     short min;
     int i, j, minv, minh;
     bool match;
+    bool sub;
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
     shared_ptr<OperationNode> operationNode, operationNodeShift;
     shared_ptr<InputNode> in1, in2;
@@ -51,6 +52,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
     x--;
     y--;
     match = false;
+    sub = false;
 
     // Proposed tiling is possible only with rectangular multipliers
     if(multiplier.getInputLength1() != multiplier.getInputLength2())
@@ -165,15 +167,25 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
 
             // Verifico che la parte centrale rimanente sia mappabile tramite LUT.
             // Se non lo è allora scarto la soluzione
-            if((minh*min) > max && (minv*min) > max)
+            if((minh * min) > max && (minv * min) > max)
             {
                 in1 = make_shared<InputNode>(true, ((short) max), ((short) (minh*min) - max));
                 in2 = make_shared<InputNode>(false, ((short) max), ((short) (minv*min) - max));
             }
-            else
+            else if ((minh * min) < max && (minv * min) < max)
             {
                 in1 = make_shared<InputNode>(true, ((short) min), ((short) (max - min)));
                 in2 = make_shared<InputNode>(false, ((short) min), ((short) (max - min)));
+            }
+            else if ((minv * min) > max && (minh * min) < max)
+            {
+                in1 = make_shared<InputNode>(true, (short) min, (short) max - min);
+                in2 = make_shared<InputNode>(false, (short) max, (short) (minv * min) - max);
+            }
+            else if ((minh * min) > max && (minv * min) < max)
+            {
+                in1 = make_shared<InputNode>(true, (short) max, (short) (minh * min) - max);
+                in2 = make_shared<InputNode>(false, (short) min, (short) max - min);
             }
 
             if(in1.get()->getLength() < multiplier.getMinInput1() && in2.get()->getLength() < multiplier.getMinInput2())
@@ -190,13 +202,14 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
         // Creo l'albero di somme di moltiplicazioni
         while(operationNodes.size() > 0 && operationNodes.size() != 1)
         {	
-            for(i = 0; i < operationNodes.size(); i = i+2)
+            for(i = 0; i < operationNodes.size(); i = i + 2)
             {
                 if (i + 1 < operationNodes.size())
                 {
-                    if (i + 1 == operationNodes.size() - 1 && ((minh * min > max && minv * min < max) || (minh*min < max && minv * min > max)))
+                    if (i + 1 == operationNodes.size() - 1 && ((minh * min > max && minv * min < max) || (minh*min < max && minv * min > max)) && operationNodes.size() % 2 == 0 && sub == false)
                     {
                         operationNode = make_shared<OperationNode>(make_shared<Subtraction>());
+                        sub = true;
                     }
                     else
                     {
