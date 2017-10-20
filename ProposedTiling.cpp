@@ -35,10 +35,12 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
     short dim2;
     short max;
     short min;
+    short index1, index2;
     int i, j, minv, minh;
     bool match;
     bool sub;
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
+    vector<shared_ptr<InputNode>> inputNodes;
     shared_ptr<OperationNode> operationNode, operationNodeShift;
     shared_ptr<InputNode> in1, in2;
     SubMultiplication *tmp;
@@ -92,8 +94,27 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             // Posiziono il minimo numero di moltiplicatori sulla verticale dall'input di lunghezza minore
             for(; (i * min) + max <= y; i++)
             {
-                in1 = make_shared<InputNode>(true, ((short) j * min), ((short) max));
-                in2 = make_shared<InputNode>(false, ((short) i * min), ((short) min));
+                //inputNodes.push_back(make_shared<InputNode>(true, ((short) j * min), ((short) max)));
+                index1 = checkExist(true, ((short) j * min), ((short) max), inputNodes);
+                if (index1 == -1)
+                {
+                    in1 = make_shared<InputNode>(true, ((short) j * min), ((short) max));
+                    inputNodes.push_back(in1);
+                }
+                else
+                {
+                    in1 = inputNodes[index1];
+                }
+                index2 = checkExist(false, ((short) i * min), ((short) min), inputNodes);
+                if (index2 == -1)
+                {
+                    in2 = make_shared<InputNode>(false, ((short) i * min), ((short) min));
+                    inputNodes.push_back(in2);
+                }
+                else
+                {
+                    in2 = inputNodes[index2];
+                }
                 operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
                 operationNode->setLeftChild(in1);
                 operationNode->setRightChild(in2);
@@ -101,9 +122,27 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
                 operationNodes.push_back(operationNodeShift);
                 minv++;
             }
-            // Aggiungo l'ultimo moltiplicatore dal lato maggiore che sforerà la dimensione della moltiplicazione da eseguire 
-            in1 = make_shared<InputNode>(true, ((short) j * min), ((short) min));
-            in2 = make_shared<InputNode>(false, ((short) i * min), ((short) y - (i * min)));
+            // Aggiungo l'ultimo moltiplicatore dal lato maggiore che sforerà la dimensione della moltiplicazione da eseguire
+            index1 = checkExist(true, ((short) j * min), ((short) min), inputNodes);
+            if (index1 == -1)
+            {
+                in1 = make_shared<InputNode>(true, ((short) j * min), ((short) min));
+                inputNodes.push_back(in1);
+            }
+            else
+            {
+                in1 = inputNodes[index1];
+            }
+            index2 = checkExist(false, ((short) i * min), ((short) y - (i * min)), inputNodes);
+            if (index2 == -1)
+            {
+                in2 = make_shared<InputNode>(false, ((short) i * min), ((short) y - (i * min)));
+                inputNodes.push_back(in2);
+            }
+            else
+            {
+                in2 = inputNodes[index2];
+            }
             operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
             operationNode->setLeftChild(in1);
             operationNode->setRightChild(in2);
@@ -114,8 +153,26 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             // Posiziono il minimo numero di moltiplicatori sull'orizzontale partendo dai bit 0 dall'input di lunghezza minore
             for(j = minh, i = 0; max + (j * min) <= x; j++)
             {
-                in1 = make_shared<InputNode>(true, ((short) max + ((j-1)*min)), (short) min);
-                in2 = make_shared<InputNode>(false, ((short) i * min), (short) max);
+                index1 = checkExist(true, ((short) max + ((j-1)*min)), (short) min, inputNodes);
+                if (index1 == -1)
+                {
+                    in1 = make_shared<InputNode>(true, ((short) max + ((j-1)*min)), (short) min);
+                    inputNodes.push_back(in1);
+                }
+                else
+                {
+                    in1 = inputNodes[index1];
+                }
+                index2 = checkExist(false, ((short) i * min), (short) max, inputNodes);
+                if (index2 == -1)
+                {
+                    in2 = make_shared<InputNode>(false, ((short) i * min), (short) max);
+                    inputNodes.push_back(in2);
+                }
+                else
+                {
+                    in2 = inputNodes[index2];
+                }
                 operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
                 operationNode->setLeftChild(in1);
                 operationNode->setRightChild(in2);
@@ -124,8 +181,26 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
                 minh++;
             }
             // Aggiungo l'ultimo moltiplicatore dal lato minimo che sforerà la dimensione della moltiplicazione da eseguire
-            in1 = make_shared<InputNode>(true, ((short) max + (j-1) * min), ((short) x - max - (j-1)*min));
-            in2 = make_shared<InputNode>(false, ((short) i*min), ((short) max));
+            index1 = checkExist(true, ((short) max + (j-1) * min), ((short) x - max - (j-1)*min), inputNodes);
+            if (index1 == -1)
+            {
+                in1 = make_shared<InputNode>(true, ((short) max + (j-1) * min), ((short) x - max - (j-1)*min));
+                inputNodes.push_back(in1);
+            }
+            else
+            {
+                in1 = inputNodes[index1];
+            }
+            index2 = checkExist(false, ((short) i*min), ((short) max), inputNodes);
+            if (index2 == -1)
+            {
+                in2 = make_shared<InputNode>(false, ((short) i*min), ((short) max));
+                inputNodes.push_back(in2);
+            }
+            else
+            {
+                in2 = inputNodes[index2];
+            }
             operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
             operationNode->setLeftChild(in1);
             operationNode->setRightChild(in2);
@@ -135,8 +210,26 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             // Posiziono il moltiplicatore più estremo
             i = minv;
             j = minh;
-            in1 = make_shared<InputNode>(true, ((short) j * min), ((short) x - (j*min))); 
-            in2 = make_shared<InputNode>(false, ((short) max + ((i-1)*min)), ((short) min - ((i*min) + max - y)));
+            index1 = checkExist(true, ((short) j * min), ((short) x - (j*min)), inputNodes);
+            if (index1 == -1)
+            {
+                in1 = make_shared<InputNode>(true, ((short) j * min), ((short) x - (j*min))); 
+                inputNodes.push_back(in1);
+            }
+            else
+            {
+                in1 = inputNodes[index1];
+            }
+            index2 = checkExist(false, ((short) max + ((i-1)*min)), ((short) min - ((i*min) + max - y)), inputNodes);
+            if (index2 == -1)
+            {
+                in2 = make_shared<InputNode>(false, ((short) max + ((i-1)*min)), ((short) min - ((i*min) + max - y)));
+                inputNodes.push_back(in2);
+            }
+            else
+            {
+                in2 = inputNodes[index2];
+            }
             operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
             operationNode->setLeftChild(in1);
             operationNode->setRightChild(in2);
@@ -146,8 +239,26 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             // Posiziono i moltiplicatori rimanenti sulla verticale e sull'orizzontale
             for(i = minv - 1, j = minh; i > 0; i--)
             {
-                in1 = make_shared<InputNode>(true, ((short) j * min), (short) x - (j*min));
-                in2 = make_shared<InputNode>(false, ((short) max + ((i-1)*min)), ((short) min));
+                index1 = checkExist(true, ((short) j * min), (short) x - (j*min), inputNodes);
+                if (index1 == -1)
+                {
+                    in1 = make_shared<InputNode>(true, ((short) j * min), (short) x - (j*min));
+                    inputNodes.push_back(in1);
+                }
+                else
+                {
+                    in1 = inputNodes[index1];
+                }
+                index2 = checkExist(false, ((short) max + ((i-1)*min)), ((short) min), inputNodes);
+                if (index2 == -1)
+                {
+                    in2 = make_shared<InputNode>(false, ((short) max + ((i-1)*min)), ((short) min));
+                    inputNodes.push_back(in2);
+                }
+                else
+                {
+                    in2 = inputNodes[index2];
+                }
                 operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
                 operationNode->setLeftChild(in1);
                 operationNode->setRightChild(in2);
@@ -156,8 +267,26 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             }
             for(i = minv, j = minh - 1; j > 0; j--)
             {
-                in1 = make_shared<InputNode>(true, ((short) j * min), ((short) min));
+                index1 = checkExist(true, ((short) j * min), ((short) min), inputNodes);
+                if (index1 == -1)
+                {
+                    in1 = make_shared<InputNode>(true, ((short) j * min), ((short) min));
+                    inputNodes.push_back(in1);
+                }
+                else
+                {
+                    in1 = inputNodes[index1];
+                }
+                index2 = checkExist(false, ((short) i * min), ((short) y - (i * min)), inputNodes);
+                if (index2 == -1)
+                {
                 in2 = make_shared<InputNode>(false, ((short) i * min), ((short) y - (i * min)));
+                inputNodes.push_back(in2);
+                }
+                else
+                {
+                    in2 = inputNodes[index2];
+                }
                 operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
                 operationNode->setLeftChild(in1);
                 operationNode->setRightChild(in2);
@@ -247,4 +376,18 @@ shared_ptr<OperationNode> ProposedTiling::makeShift(shared_ptr<InputNode> in1, s
     {
         return operationNode;
     }
+}
+
+short ProposedTiling::checkExist(bool firstInput, short start, short length, vector<shared_ptr<InputNode>> inputNodes)
+{
+    short i;
+    for (i = 0; i < inputNodes.size(); i++)
+    {
+        if (inputNodes[i].get()->isFirstInput() == firstInput && inputNodes[i].get()->getStart() == start && inputNodes[i].get()->getLength() == length)
+        {
+            cout << i << endl;
+            return i;
+        }
+    }
+    return -1;
 }
