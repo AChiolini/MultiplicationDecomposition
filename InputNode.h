@@ -18,6 +18,7 @@ class InputNode : public Node
         short getStart();
         short getLength();
         int getOutputLength();
+        OutSpecs getOutputSpecifications();
         void setFirstInput(bool);
         void setStart(short);
         void setLength(short);

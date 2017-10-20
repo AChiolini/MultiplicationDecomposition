@@ -20,6 +20,7 @@ class OperationNode : public Node
         OperationNode(shared_ptr<Operation>, shared_ptr<Node>, shared_ptr<Node>);
         bool isLeaf();
         int getOutputLength();
+        OutSpecs getOutputSpecifications();
         shared_ptr<Operation> getOperation();
         shared_ptr<Node> getLeftChild();
         shared_ptr<Node> getRightChild();

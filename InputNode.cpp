@@ -1,4 +1,7 @@
+#include <iostream>
 #include "InputNode.h"
+
+using namespace std;
 
 InputNode::InputNode()
 {
@@ -36,7 +39,17 @@ short InputNode::getLength()
 
 int InputNode::getOutputLength()
 {
-    return this->length + 1;
+    return getOutputSpecifications().length;
+}
+
+OutSpecs InputNode::getOutputSpecifications()
+{
+    OutSpecs specs;
+
+    specs.length = length + 1;
+    specs.sign = POSITIVE;
+    specs.MCS = 0;
+    return specs;
 }
 
 void InputNode::setFirstInput(bool firstInput)
