@@ -37,10 +37,12 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
     short dim2;
     short max;
     short min;
+    short index1, index2;
     int nmaxv, nminv, countv, nmaxh, nminh, counth, i, j, k, n, nmaxtmp, lX, lY;
     int w;
     bool match;
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
+    vector<shared_ptr<InputNode>> inputNodes;
     shared_ptr<OperationNode> operationNode, operationNode2;
     shared_ptr<InputNode> in1, in2;
 
@@ -83,8 +85,26 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
                 {
                     lY = max;
                 }
-                in1 = make_shared<InputNode>(true, ((short) (i * max)), (short) lX);
+                index1 = checkExist(true, ((short) (i * max)), (short) lX, inputNodes);
+                if(index1 == -1)
+                {
+                    in1 = make_shared<InputNode>(true, ((short) (i * max)), (short) lX);
+                    inputNodes.push_back(in1);
+                }
+                else
+                {
+                    in1 = inputNodes[index1];
+                }
+                index2 = checkExist(false, ((short) (j * max)), (short) lY, inputNodes);
+                if(index2 == -1)
+                {
                 in2 = make_shared<InputNode>(false, ((short) (j * max)), (short) lY);
+                inputNodes.push_back(in2);
+                }
+                else
+                {
+                    in2 = inputNodes[index2];
+                }
                 operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
                 operationNode->setLeftChild(in1);
                 operationNode->setRightChild(in2);
@@ -156,8 +176,26 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
                     {
                         lY = min;
                     }
+                    index1 = checkExist(true, ((short) (i * max)), (short) lX, inputNodes);
+                    if (index1 == -1)
+                    {
                     in1 = make_shared<InputNode>(true, ((short) (i * max)), (short) lX);
+                    inputNodes.push_back(in1);
+                    }
+                    else
+                    {
+                        in1 = inputNodes[index1];
+                    }
+                    index2 = checkExist(false, ((short) (j * max)), (short) lY, inputNodes);
+                    if (index2 == -1)
+                    {
                     in2 = make_shared<InputNode>(false, ((short) (j * max)), (short) lY);
+                    inputNodes.push_back(in2);
+                    }
+                    else
+                    {
+                        in2 = inputNodes[index2];
+                    }
                     operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
                     operationNode->setLeftChild(in1);
                     operationNode->setRightChild(in2);
@@ -196,9 +234,27 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
 			//NOTA BENE
 			//NOTA BENE
 			//NOTA BENE
-			//Creare una funzione per questa parte in modo da semplificare il codice
+            //Creare una funzione per questa parte in modo da semplificare il codice
+                    index1 = checkExist(true, ((short) ((i * max) + (k * min))), (short) lX, inputNodes);
+                    if (index1 == -1)
+                    {
                     in1 = make_shared<InputNode>(true, ((short) ((i * max) + (k * min))), (short) lX);
+                    inputNodes.push_back(in1);
+                    }
+                    else
+                    {
+                        in1 = inputNodes[index1];
+                    }
+                    index2 = checkExist(false, ((short) (j * max)), (short) lY, inputNodes);
+                    if (index2 == -1)
+                    {
                     in2 = make_shared<InputNode>(false, ((short) (j * max)), (short) lY);
+                    inputNodes.push_back(in2);
+                    }
+                    else
+                    {
+                        in2 = inputNodes[index2];
+                    }
                     operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
                     operationNode->setLeftChild(in1);
                     operationNode->setRightChild(in2);
@@ -238,8 +294,26 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
                     {
                     	lX = min;
                     }
+                    index1 = checkExist(true, ((short) (j * min)), (short) lX, inputNodes);
+                    if (index1 == -1)
+                    {
                     in1 = make_shared<InputNode>(true, ((short) (j * min)), (short) lX);
+                    inputNodes.push_back(in1);
+                    }
+                    else
+                    {
+                        in1 = inputNodes[index1];
+                    }
+                    index2 = checkExist(false, ((short) (i * max)), (short) lY, inputNodes);
+                    if (index2 == -1)
+                    {
                     in2 = make_shared<InputNode>(false, ((short) (i * max)), (short) lY);
+                    inputNodes.push_back(in2);
+                    }
+                    else
+                    {
+                        in2 = inputNodes[index2];
+                    }
                     operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
                     operationNode->setLeftChild(in1);
                     operationNode->setRightChild(in2);
@@ -275,8 +349,26 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
                     {
                         lX = max;
                     }
+                    index1 = checkExist(true, ((short) (j * max)), (short) lX, inputNodes);
+                    if(index1 == -1)
+                    {
                     in1 = make_shared<InputNode>(true, ((short) (j * max)), (short) lX);
+                    inputNodes.push_back(in1);
+                    }
+                    else
+                    {
+                        in1 = inputNodes[index1];
+                    }
+                    index2 = checkExist(false, ((short) ((i * max) + (k * min))), (short) lY, inputNodes);
+                    if(index2 == -1)
+                    {
                     in2 = make_shared<InputNode>(false, ((short) ((i * max) + (k * min))), (short) lY);
+                    inputNodes.push_back(in2);
+                    }
+                    else
+                    {
+                        in2 = inputNodes[index2];
+                    }
                     operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
                     operationNode->setLeftChild(in1);
                     operationNode->setRightChild(in2);
@@ -314,4 +406,17 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
         tmpArray.clear();
     }
     return MultiplicationTree(operationNodes[0], "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x, (int) y);
+}
+
+short StandardTiling::checkExist(bool firstInput, short start, short length, vector<shared_ptr<InputNode>> inputNodes)
+{
+    short i;
+    for (i = 0; i < inputNodes.size(); i++)
+    {
+        if (inputNodes[i].get()->isFirstInput() == firstInput && inputNodes[i].get()->getStart() == start && inputNodes[i].get()->getLength() == length)
+        {
+            return i;
+        }
+    }
+    return -1;
 }

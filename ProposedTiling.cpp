@@ -385,7 +385,7 @@ short ProposedTiling::checkExist(bool firstInput, short start, short length, vec
     {
         if (inputNodes[i].get()->isFirstInput() == firstInput && inputNodes[i].get()->getStart() == start && inputNodes[i].get()->getLength() == length)
         {
-            cout << i << endl;
+            //cout << i << endl;
             return i;
         }
     }

@@ -11,6 +11,7 @@ class StandardTiling : public Multiplication
     private:
         vector<Multiplier> multipliers;
         MultiplicationTree dispose(short, short, Multiplier);
+        short checkExist (bool, short, short, vector<shared_ptr<InputNode>>);
 
     public: 
         StandardTiling(vector<Multiplier>);
