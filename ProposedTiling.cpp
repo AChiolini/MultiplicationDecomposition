@@ -357,7 +357,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             tmpArray.clear();
         }
         
-        return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x, (int) y);
+        return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x + 1, (int) y + 1);
     }
     else    
         return MultiplicationTree();

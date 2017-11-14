@@ -405,7 +405,7 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
         operationNodes.swap(tmpArray);
         tmpArray.clear();
     }
-    return MultiplicationTree(operationNodes[0], "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x, (int) y);
+    return MultiplicationTree(operationNodes[0], "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x + 1, (int) y + 1);
 }
 
 short StandardTiling::checkExist(bool firstInput, short start, short length, vector<shared_ptr<InputNode>> inputNodes)

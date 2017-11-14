@@ -6,6 +6,8 @@
 #include "SubMultiplication.h"
 #include "Shift.h"
 
+#include <bitset>
+
 using namespace std;
 
 /*****************************************************************************/
@@ -309,7 +311,17 @@ vector<OperationNode*> MultiplicationTree::cost(shared_ptr<Node> next)
 
 long long MultiplicationTree::executeMultiplication(long long input1, long long input2)
 {
-    return execute(root, input1, input2);
+    long long signX, signY, positive, negative, result, test;
+
+    signX = ((input1 >> 63) & 1);
+    signY = ((input2 >> 63) & 1);
+    positive = execute(root, input1, input2);
+    positive |= ((signX & signY) << (lengthX + lengthY - 2));
+    negative = ((signX * input2) << (lengthX - 1));
+    negative =  negative + ((signY * input1) << (lengthY - 1));
+    negative = -negative;
+    result = positive + negative;
+    return result;
 }
 
 long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, long long input2)
@@ -318,7 +330,7 @@ long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, l
     InputNode *inputNode;
     Shift *shift;
     long long input, andMask;
-    int i, sign;
+    int i;
 
     if (next == nullptr)
     {
@@ -335,21 +347,11 @@ long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, l
         {
             input = input2;
         }
-        if (input < 0)
-        {
-            sign = -1;
-            input = input * -1;
-        }
-        else
-        {
-            sign = 1;
-        }
         andMask = 1;
         andMask <<= (inputNode->getLength());
         andMask--;
         input >>= inputNode->getStart();
         input &= andMask;
-        input = input * sign;
     }
     else
     {
@@ -379,5 +381,5 @@ long long MultiplicationTree::execute(shared_ptr<Node> next, long long input1, l
 
 int MultiplicationTree::getOutputLength()
 {
-    return root->getOutputLength();
+    return (lengthX + lengthY);
 }
