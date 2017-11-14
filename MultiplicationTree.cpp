@@ -311,14 +311,22 @@ vector<OperationNode*> MultiplicationTree::cost(shared_ptr<Node> next)
 
 long long MultiplicationTree::executeMultiplication(long long input1, long long input2)
 {
-    long long signX, signY, positive, negative, result, test;
+    long long signX, signY, maskX, maskY, positive, negative, result, test;
 
     signX = ((input1 >> 63) & 1);
     signY = ((input2 >> 63) & 1);
+    maskX = 1;
+    maskY = 1;
+    maskX <<= lengthX - 1;
+    maskY <<= lengthY - 1;
+    maskX = maskX - 1;
+    maskY = maskY - 1;
     positive = execute(root, input1, input2);
     positive |= ((signX & signY) << (lengthX + lengthY - 2));
-    negative = ((signX * input2) << (lengthX - 1));
-    negative =  negative + ((signY * input1) << (lengthY - 1));
+    negative = ((signX * (input2 & maskY)) << (lengthX - 1));
+    bitset<32> x(negative);
+    cout << x << endl;
+    negative =  negative + ((signY * (input1 & maskX)) << (lengthY - 1));
     negative = -negative;
     result = positive + negative;
     return result;
