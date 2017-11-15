@@ -6,8 +6,6 @@
 #include "SubMultiplication.h"
 #include "Shift.h"
 
-#include <bitset>
-
 using namespace std;
 
 /*****************************************************************************/
@@ -324,8 +322,6 @@ long long MultiplicationTree::executeMultiplication(long long input1, long long 
     positive = execute(root, input1, input2);
     positive |= ((signX & signY) << (lengthX + lengthY - 2));
     negative = ((signX * (input2 & maskY)) << (lengthX - 1));
-    bitset<32> x(negative);
-    cout << x << endl;
     negative =  negative + ((signY * (input1 & maskX)) << (lengthY - 1));
     negative = -negative;
     result = positive + negative;
