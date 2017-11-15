@@ -89,6 +89,16 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNodes.push_back(operationNode);
             match = true;
         }
+        else if (max > x && min > y)
+        {
+            in1 = make_shared<InputNode>(true, (short) 0, x);
+            in2 = make_shared<InputNode>(false, (short) 0, y);
+            operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+            operationNode->setLeftChild(in1);
+            operationNode->setRightChild(in2);
+            operationNodes.push_back(operationNode);
+            match = true;
+        }
         if (!match)
         {
             // Posiziono il minimo numero di moltiplicatori sulla verticale dall'input di lunghezza minore
@@ -149,7 +159,6 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
             operationNodeShift = makeShift(in1, in2, operationNode);
             operationNodes.push_back(operationNodeShift);
             minh++;
-
             // Posiziono il minimo numero di moltiplicatori sull'orizzontale partendo dai bit 0 dall'input di lunghezza minore
             for(j = minh, i = 0; max + (j * min) <= x; j++)
             {
@@ -180,6 +189,7 @@ MultiplicationTree ProposedTiling::dispose(short x, short y, Multiplier multipli
                 operationNodes.push_back(operationNodeShift);
                 minh++;
             }
+           
             // Aggiungo l'ultimo moltiplicatore dal lato minimo che sforerà la dimensione della moltiplicazione da eseguire
             index1 = checkExist(true, ((short) max + (j-1) * min), ((short) x - max - (j-1)*min), inputNodes);
             if (index1 == -1)
