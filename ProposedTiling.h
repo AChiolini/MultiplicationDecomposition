@@ -10,7 +10,8 @@ class ProposedTiling : public Multiplication
 {
     private:
         vector<Multiplier> multipliers;
-        MultiplicationTree dispose(short, short, Multiplier);
+        MultiplicationTree disposeHorizontal(short, short, Multiplier);
+        MultiplicationTree disposeVertical(short, short, Multiplier);
         shared_ptr<OperationNode> makeShift(shared_ptr<InputNode>, shared_ptr<InputNode>, shared_ptr<OperationNode>);
         short checkExist (bool, short, short, vector<shared_ptr<InputNode>>);
 
