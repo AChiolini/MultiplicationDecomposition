@@ -363,7 +363,6 @@ MultiplicationTree ProposedTiling::disposeHorizontal(short x, short y, Multiplie
                 return MultiplicationTree();   
         }
         // Creo l'albero di somme di moltiplicazioni
-        cout << "size: " << operationNodes.size() << operationNodes[0] << endl;
         while(operationNodes.size() > 0 && operationNodes.size() != 1)
         {	
             for(i = 0; i < operationNodes.size(); i = i + 2)
@@ -392,7 +391,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(short x, short y, Multiplie
             tmpArray.clear();
         }
         
-        return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x + 1, (int) y + 1);
+        return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ") orizzontale", (int) x + 1, (int) y + 1);
     }
     else    
         return MultiplicationTree();
@@ -406,7 +405,7 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
     short min;
     short index1, index2;
     short lX, lY;
-    int i, j, minv, minh, a, b;
+    int i, j, maxv, maxh, a, b;
     bool sub;
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
     vector<shared_ptr<InputNode>> inputNodes;
@@ -418,8 +417,8 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
     dim2 = multiplier.getInputLength2() - 1;
     i = 0;
     j = 0;
-    minv = 0;
-    minh = 0;
+    maxv = 0;
+    maxh = 0;
     x--;
     y--;
 
@@ -441,6 +440,7 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
         {
             if (max >= y)
             {
+                //Se un moltiplicatore in verticale copre l'intera verticale allora cerco di coprire solo l'orizzontale
                 if(x > min)
                 {
                     in1 = make_shared<InputNode>(true, (short) 0, min);
@@ -485,8 +485,141 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
             }
             else
             {
-                cout << "max < y" << endl;
-                return MultiplicationTree();
+                //max < y e faccio la dispsizione verticale
+                /*--- x < min ---*/
+                if(min > x)
+                    lX = x;
+                else
+                    lX = min;
+                for (i = 0; (i * max) + min < y ; i++)
+                {
+                    cout << "metto i verticali a dx" << endl;
+                    in1 = make_shared<InputNode>(true, (short) 0, lX);
+                    in2 = make_shared<InputNode>(false, (short) i * max, max);
+                    operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+                    operationNode->setLeftChild(in1);
+                    operationNode->setRightChild(in2);
+                    operationNodeShift = makeShift(in1, in2, operationNode);
+                    operationNodes.push_back(operationNodeShift);
+                    maxv++;
+                }
+                if(max > x)
+                    lX = x;
+                else
+                    lX = max;
+                
+                in1 = make_shared<InputNode>(true, (short) 0, lX);
+                in2 = make_shared<InputNode>(false, (short) (i * max), (short) min - ((i * max) + min - y));
+                operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+                operationNode->setLeftChild(in1);
+                operationNode->setRightChild(in2);
+                operationNodeShift = makeShift(in1, in2, operationNode);
+                operationNodes.push_back(operationNodeShift);
+                /*--- x < min ---*/
+
+                /*--- x > min && x < max---*/
+                if(x > min && x < max) 
+                {
+                    //Controllo che la parte non coperta sia una LUT
+                    in1 = make_shared<InputNode>(true, (short) 0, (short) x - min);
+                    in2 = make_shared<InputNode>(false, (short) 0, (short) i * max);
+                    if(in1.get()->getLength() < multiplier.getMinInput1() && in2.get()->getLength() < multiplier.getMinInput2())
+                    {
+                        operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>());
+                        operationNode->setLeftChild(in1);
+                        operationNode->setRightChild(in2);
+                        operationNodeShift = makeShift(in1, in2, operationNode);
+                        operationNodes.push_back(operationNodeShift);
+                    }
+                    else
+                    {
+                        //TODO decidere cosa fare se non è una LUT
+                        cout << "La parte da coprire non è una LUT" << endl;
+                        return MultiplicationTree();
+                    }
+                }
+                else if (x > max)
+                {
+                    //cout << "lo provo questo else if?" << endl;
+                    i = 0;
+                    cout << min + ((i+1) * max) << endl;
+                    for(i = 0; min + ((i+1) * max) < x; i++)
+                    {
+                        //Completo parte superiore della moltiplicazione
+                        cout << "Completo parte superiore della moltiplicazione " << min + ((i+1) * max) << endl;
+                        in1 = make_shared<InputNode>(true, min + (i * max), (short) max);
+                        in2 = make_shared<InputNode>(false, (short) 0, min);
+                        operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+                        operationNode->setLeftChild(in1);
+                        operationNode->setRightChild(in2);
+                        operationNodeShift = makeShift(in1, in2, operationNode);
+                        operationNodes.push_back(operationNodeShift);
+                        maxh++;
+                    }
+                    //Aggiungo il mancante troncato della parte superiore
+                    cout << "Aggiungo il mancante troncato della parte superiore" << endl;
+                    in1 = make_shared<InputNode>(true, (short) min + (maxh * max), (short) max - (min + ((maxh + 1) * max) - x));
+                    in2 = make_shared<InputNode>(false, (short) 0, min);
+                    operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+                    operationNode->setLeftChild(in1);
+                    operationNode->setRightChild(in2);
+                    operationNodeShift = makeShift(in1, in2, operationNode);
+                    operationNodes.push_back(operationNodeShift);
+                    maxh++;
+
+                    for (i = 1; ((i+1) * max) + min < x ; i++)
+                    {
+                        //Aggiungo i moltiplicatori sdraiati nella parte inferiore della moltiplicazione
+                        cout << "Aggiungo i moltiplicatori sdraiati nella parte inferiore della moltiplicazione" << endl;
+                        in1 = make_shared<InputNode>(true, (short) i * max, max);
+                        in2 = make_shared<InputNode>(false, (short) maxv * max, (short) min - ((maxv * max) + min - y));
+                        operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+                        operationNode->setLeftChild(in1);
+                        operationNode->setRightChild(in2);
+                        operationNodeShift = makeShift(in1, in2, operationNode);
+                        operationNodes.push_back(operationNodeShift);
+                    }
+                    for(i = maxv-1, j = 0; i > 0; i--, j++)
+                    {
+                        //Aggiungo i moltiplicatori completi sul lato sinistro della moltiplicazione
+                        cout << "Aggiungo i moltiplicatori completi sul lato sinistro della moltiplicazione" << endl;
+                        in1 = make_shared<InputNode>(true, (short) (maxh) * max, (short) min - (min + ((maxh + 1) * max) - x));
+                        in2 = make_shared<InputNode>(false, (short) min + (j * max), max);
+                        operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+                        operationNode->setLeftChild(in1);
+                        operationNode->setRightChild(in2);
+                        operationNodeShift = makeShift(in1, in2, operationNode);
+                        operationNodes.push_back(operationNodeShift);
+                    }
+                    //Aggiungo l'ultimo moltiplicatore troncato sia a sinistra sia in basso
+                    cout << "Aggiungo l'ultimo moltiplicatore troncato sia a sinistra sia in basso" << endl;
+                    in1 = make_shared<InputNode>(true, (short) (maxh) * max, (short) min - (min + ((maxh) * max) - x));
+                    in2 = make_shared<InputNode>(false, (short) min + (j * max), (short) max - ((maxv * max) + min - y));
+                    operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
+                    operationNode->setLeftChild(in1);
+                    operationNode->setRightChild(in2);
+                    operationNodeShift = makeShift(in1, in2, operationNode);
+                    operationNodes.push_back(operationNodeShift);
+
+                    //Verifico che la parte rimanente sia mappabile su una LUT
+                    cout << "LUT? " << ((maxh) * max) << " x " << (maxv * max) - min << endl;
+                    in1 = make_shared<InputNode>(true, min, (short) ((maxh) * max) - min);
+                    in2 = make_shared<InputNode>(false, min, (short) (maxv * max) - min);
+                    if(in1.get()->getLength() < multiplier.getMinInput1() && in2.get()->getLength() < multiplier.getMinInput2())
+                    {
+                        operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>());
+                        operationNode->setLeftChild(in1);
+                        operationNode->setRightChild(in2);
+                        operationNodeShift = makeShift(in1, in2, operationNode);
+                        operationNodes.push_back(operationNodeShift);
+                    }
+                    else
+                    {
+                        //TODO decidere cosa fare se non è una LUT
+                        cout << "La parte da coprire non è una LUT in verticale" << endl;
+                        return MultiplicationTree();
+                    }
+                }
             }
             // Creo l'albero di somme di moltiplicazioni
             while(operationNodes.size() > 0 && operationNodes.size() != 1)
@@ -509,7 +642,7 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
                 tmpArray.clear();
             }
             
-            return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x + 1, (int) y + 1);
+            return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ") verticale", (int) x + 1, (int) y + 1);
         }
         else
             return MultiplicationTree();
