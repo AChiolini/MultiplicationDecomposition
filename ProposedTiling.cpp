@@ -493,7 +493,6 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
                     lX = min;
                 for (i = 0; (i * max) + min < y ; i++)
                 {
-                    cout << "metto i verticali a dx" << endl;
                     in1 = make_shared<InputNode>(true, (short) 0, lX);
                     in2 = make_shared<InputNode>(false, (short) i * max, max);
                     operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
@@ -546,7 +545,6 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
                     for(i = 0; min + ((i+1) * max) < x; i++)
                     {
                         //Completo parte superiore della moltiplicazione
-                        cout << "Completo parte superiore della moltiplicazione " << min + ((i+1) * max) << endl;
                         in1 = make_shared<InputNode>(true, min + (i * max), (short) max);
                         in2 = make_shared<InputNode>(false, (short) 0, min);
                         operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
@@ -557,7 +555,6 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
                         maxh++;
                     }
                     //Aggiungo il mancante troncato della parte superiore
-                    cout << "Aggiungo il mancante troncato della parte superiore" << endl;
                     in1 = make_shared<InputNode>(true, (short) min + (maxh * max), (short) max - (min + ((maxh + 1) * max) - x));
                     in2 = make_shared<InputNode>(false, (short) 0, min);
                     operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
@@ -570,7 +567,6 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
                     for (i = 1; ((i+1) * max) + min < x ; i++)
                     {
                         //Aggiungo i moltiplicatori sdraiati nella parte inferiore della moltiplicazione
-                        cout << "Aggiungo i moltiplicatori sdraiati nella parte inferiore della moltiplicazione" << endl;
                         in1 = make_shared<InputNode>(true, (short) i * max, max);
                         in2 = make_shared<InputNode>(false, (short) maxv * max, (short) min - ((maxv * max) + min - y));
                         operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
@@ -582,7 +578,6 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
                     for(i = maxv-1, j = 0; i > 0; i--, j++)
                     {
                         //Aggiungo i moltiplicatori completi sul lato sinistro della moltiplicazione
-                        cout << "Aggiungo i moltiplicatori completi sul lato sinistro della moltiplicazione" << endl;
                         in1 = make_shared<InputNode>(true, (short) (maxh) * max, (short) min - (min + ((maxh + 1) * max) - x));
                         in2 = make_shared<InputNode>(false, (short) min + (j * max), max);
                         operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
@@ -592,7 +587,6 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
                         operationNodes.push_back(operationNodeShift);
                     }
                     //Aggiungo l'ultimo moltiplicatore troncato sia a sinistra sia in basso
-                    cout << "Aggiungo l'ultimo moltiplicatore troncato sia a sinistra sia in basso" << endl;
                     in1 = make_shared<InputNode>(true, (short) (maxh) * max, (short) min - (min + ((maxh) * max) - x));
                     in2 = make_shared<InputNode>(false, (short) min + (j * max), (short) max - ((maxv * max) + min - y));
                     operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
@@ -602,7 +596,6 @@ MultiplicationTree ProposedTiling::disposeVertical(short x, short y, Multiplier 
                     operationNodes.push_back(operationNodeShift);
 
                     //Verifico che la parte rimanente sia mappabile su una LUT
-                    cout << "LUT? " << ((maxh) * max) << " x " << (maxv * max) - min << endl;
                     in1 = make_shared<InputNode>(true, min, (short) ((maxh) * max) - min);
                     in2 = make_shared<InputNode>(false, min, (short) (maxv * max) - min);
                     if(in1.get()->getLength() < multiplier.getMinInput1() && in2.get()->getLength() < multiplier.getMinInput2())
