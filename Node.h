@@ -3,26 +3,31 @@
 
 #include <stdbool.h>
 
-enum Sign
+/*enum Sign
 {
     POSITIVE = 0,
-    NEGATIVE,
     UNDEFINED
+};*/
+
+enum NodeType
+{
+    INPUT = 0,
+    OPERATION,
+    SHIFT
 };
 
-typedef struct OutputSpecifications 
+/*typedef struct OutputSpecifications 
 {
     Sign sign;
     int MCS;
     int length;
-} OutSpecs;
+} OutSpecs;*/
 
 class Node
 {
     public:
-        virtual bool isLeaf() = 0;
-        virtual int getOutputLength() = 0;
-        virtual OutSpecs getOutputSpecifications() = 0; 
+        virtual NodeType type() = 0;
+        virtual int getLength() = 0;
         virtual ~Node() = default;
 };
 

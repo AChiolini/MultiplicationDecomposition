@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 #include "KaratsubaOfman2.h"
+#include "StandardTiling.h"
+#include "ProposedTiling.h"
 #include "MultiplicationTree.h"
 #include "SubMultiplication.h"
 #include "InputNode.h"
@@ -29,16 +31,30 @@ KaratsubaOfman2::KaratsubaOfman2(vector<Multiplier> multipliers)
 vector <MultiplicationTree> KaratsubaOfman2::dispositions(short lengthX, short lengthY)
 {
     vector <MultiplicationTree> multiplicationTrees;
+    shared_ptr<Multiplication> algorithm;
+    vector <Multiplier> mult;
     MultiplicationTree tmp;
-    int i;
+    int i, j;
 
-    for(i = 0; i < multipliers.size(); i++)
+    for (i = 0; i < multipliers.size(); i++)
     {
-        tmp = dispose (lengthX, lengthY, multipliers[i]);
-        if(tmp.getRoot() != nullptr)
+        mult.push_back(multipliers[i]);
+        for (j = 0; j < 2; j++)
         {
-            multiplicationTrees.push_back(tmp);
+            switch (j)
+            {
+                case 0: algorithm = make_shared<StandardTiling>(mult);
+                        break;
+                case 1: algorithm = make_shared<ProposedTiling>(mult);
+                        break;
+            }
+            tmp = dispose (lengthX, lengthY, algorithm.get(), multipliers[i]);
+            if(tmp.getRoot() != nullptr)
+            {
+                multiplicationTrees.push_back(tmp);
+            }
         }
+        mult.clear();
     }
     return multiplicationTrees;
 }
@@ -48,54 +64,147 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(short lengthX, short l
 /* multiplier.                                                               */
 /*****************************************************************************/
 
-MultiplicationTree KaratsubaOfman2::dispose(short lengthX, short lengthY, Multiplier multiplier)
+MultiplicationTree KaratsubaOfman2::dispose(short lengthX, short lengthY, Multiplication* algorithm, Multiplier multiplier)
 {
     short lm;
+    vector<MultiplicationTree> m0, m1, m2;
+    vector<shared_ptr<Node>> leaves, leaves2;
+    InputNode *tmp;
     shared_ptr<InputNode> x1, x0, y1, y0;
     shared_ptr<OperationNode> dX, dY, dXdY, x0y0, x1y1, halfMiddle, pMiddle, middle, first, last, root;
     string s;
+    int i;
 
-    if (lengthX == lengthY && multiplier.getInputLength1() == multiplier.getInputLength2() && \
-    (multiplier.getInputLength1() * 2) > lengthX && lengthX > multiplier.getInputLength1())
+    if (lengthX == lengthY)
     {
-        lm = lengthX/2;
-        x0 = make_shared<InputNode>(true, 0, lm);
-        x1 = make_shared<InputNode>(true, lm, lengthX - lm - 1);
-        y0 = make_shared<InputNode>(false, 0, lm);
-        y1 = make_shared<InputNode>(false, lm, lengthY - lm - 1);
-        dX = make_shared<OperationNode>(make_shared<Subtraction>());
-        dX->setLeftChild(x1);
-        dX->setRightChild(x0);
-        dY = make_shared<OperationNode>(make_shared<Subtraction>());
-        dY->setLeftChild(y1);
-        dY->setRightChild(y0);
-        dXdY = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-        dXdY->setLeftChild(dX);
-        dXdY->setRightChild(dY);        
-        x1y1 = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-        x1y1->setLeftChild(x1);
-        x1y1->setRightChild(y1);
-        x0y0 = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-        x0y0->setLeftChild(x0);
-        x0y0->setRightChild(y0);
-        halfMiddle = make_shared<OperationNode>(make_shared<Addition>());
-        halfMiddle->setLeftChild(x1y1);
-        halfMiddle->setRightChild(x0y0);
-        pMiddle = make_shared<OperationNode>(make_shared<Subtraction>());
-        pMiddle->setLeftChild(halfMiddle);
-        pMiddle->setRightChild(dXdY);        
-        middle = make_shared<OperationNode>(make_shared<Shift>(lm));
-        middle->setLeftChild(pMiddle);
-        first = make_shared<OperationNode>(make_shared<Shift>(2 * lm));
-        first->setLeftChild(x1y1);
-        last = make_shared<OperationNode>(make_shared<Addition>());
-        last->setLeftChild(first);
-        last->setRightChild(x0y0);
-        root = make_shared<OperationNode>(make_shared<Addition>());
-        root->setLeftChild(middle);
-        root->setRightChild(last);
-        s = "Karatsuba-Ofman 2 way split (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")";
-        return MultiplicationTree(root, s, (int) lengthX, (int) lengthY);
+        // If both lengthX and lengthY are less than the lenghts of the multiplier i don't have to compute the Karatsuba-Ofman
+        if (lengthX > multiplier.getInputLength1() || lengthX > multiplier.getInputLength2())
+        {
+            lm = lengthX/2;
+            // Computing the direct products
+            m0 = algorithm->dispositions(lm + 1, lm + 1);
+            m1 = algorithm->dispositions(lengthX - lm, lengthX - lm);
+            m2 = algorithm->dispositions(lm + 1, lm + 1);
+            if (m1.size() == 1 && m0.size() == 1 && m2.size() == 1)
+            {
+                x0y0 = m0[0].getRoot();
+                x1y1 = m1[0].getRoot();
+                dXdY = m2[0].getRoot();
+                // I have to shift all the x1y1 inputs of lm
+                leaves = x1y1->getLeaves();
+                for (i = 0; i < leaves.size(); i++)
+                {
+                    tmp = InputNode::castToInputNode(leaves[i]);
+                    tmp->setStart(tmp->getStart() + lm);
+                }
+                leaves2 = x0y0->getLeaves();
+                for (i = 0; i < leaves2.size(); i++)
+                {
+                    leaves.push_back(leaves2[i]);
+                }
+                // Substitute all the input nodes of dxdy with subtractions
+                substituteLeaves(dXdY, leaves, lm);     
+                halfMiddle = make_shared<OperationNode>(make_shared<Addition>());
+                halfMiddle->setLeftChild(x1y1);
+                halfMiddle->setRightChild(x0y0);
+                pMiddle = make_shared<OperationNode>(make_shared<Subtraction>());
+                pMiddle->setLeftChild(halfMiddle);
+                pMiddle->setRightChild(dXdY);        
+                middle = make_shared<OperationNode>(make_shared<Shift>(lm));
+                middle->setLeftChild(pMiddle);
+                first = make_shared<OperationNode>(make_shared<Shift>(2 * lm));
+                first->setLeftChild(x1y1);
+                last = make_shared<OperationNode>(make_shared<Addition>());
+                last->setLeftChild(first);
+                last->setRightChild(x0y0);
+                root = make_shared<OperationNode>(make_shared<Addition>());
+                root->setLeftChild(middle);
+                root->setRightChild(last);
+                s = "Karatsuba-Ofman 2 way split";
+                return MultiplicationTree(root, s, (int) lengthX, (int) lengthY);
+            }
+        }
     }
     return MultiplicationTree();
+}
+
+void KaratsubaOfman2::substituteLeaves(shared_ptr<Node> next, vector<shared_ptr<Node>> inputNodes, int lm)
+{
+    OperationNode* operationNode;
+    InputNode *inputNode, *tmp;
+    shared_ptr<OperationNode> sub1, sub2;
+    shared_ptr<Node> d3, d2, d1, d0;
+    int i;
+    bool found;
+
+    if (next->isLeaf() == false)
+    {
+        operationNode = OperationNode::castToOperationNode(next);
+        if (operationNode->getOperation()->getOperationType() == SUBMULTIPLICATION)
+        {
+            inputNode = InputNode::castToInputNode(operationNode->getLeftChild());
+            sub1 = make_shared<OperationNode>(make_shared<Subtraction>());
+            found = false;
+            for (i = 0; i < inputNodes.size() && found == false; i++)
+            {
+                tmp = InputNode::castToInputNode(inputNodes[i]);
+                if ((inputNode->isFirstInput() == tmp->isFirstInput()) && \
+                    (inputNode->getStart() + lm == tmp->getStart()) && \
+                    (inputNode->getLength() == tmp->getLength()))
+                {
+                    found = true;
+                    d1 = inputNodes[i];
+                }
+            }
+            sub1->setLeftChild(d1);
+            found = false;
+            for (i = 0; i < inputNodes.size() && found == false; i++)
+            {
+                tmp = InputNode::castToInputNode(inputNodes[i]);
+                if ((inputNode->isFirstInput() == tmp->isFirstInput()) && \
+                    (inputNode->getStart() == tmp->getStart()) && \
+                    (inputNode->getLength() == tmp->getLength()))
+                {
+                    found = true;
+                    d0 = inputNodes[i];
+                }
+            }
+            sub1->setRightChild(d0);
+            inputNode = InputNode::castToInputNode(operationNode->getRightChild());
+            sub2 = make_shared<OperationNode>(make_shared<Subtraction>());
+            found = false;
+            for (i = 0; i < inputNodes.size() && found == false; i++)
+            {
+                tmp = InputNode::castToInputNode(inputNodes[i]);
+                if ((inputNode->isFirstInput() == tmp->isFirstInput()) && \
+                    (inputNode->getStart() + lm == tmp->getStart()) && \
+                    (inputNode->getLength() == tmp->getLength()))
+                {
+                    found = true;
+                    d3 = inputNodes[i];
+                }
+            }
+            sub2->setLeftChild(d3);
+            found = false;
+            for (i = 0; i < inputNodes.size() && found == false; i++)
+            {
+                tmp = InputNode::castToInputNode(inputNodes[i]);
+                if ((inputNode->isFirstInput() == tmp->isFirstInput()) && \
+                    (inputNode->getStart() == tmp->getStart()) && \
+                    (inputNode->getLength() == tmp->getLength()))
+                {
+                    found = true;
+                    d2 = inputNodes[i];
+                }
+            }
+            sub2->setRightChild(d2);
+	    operationNode->setLeftChild(sub1);
+            operationNode->setRightChild(sub2);
+        }
+        else
+        {
+              substituteLeaves(operationNode->getLeftChild(), inputNodes, lm);
+              substituteLeaves(operationNode->getRightChild(), inputNodes, lm);
+        }
+    }
 }

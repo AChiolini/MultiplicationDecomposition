@@ -15,7 +15,8 @@ class KaratsubaOfman2 : public Multiplication
 {
     private:
         vector<Multiplier> multipliers;
-        MultiplicationTree dispose(short, short, Multiplier);
+        MultiplicationTree dispose(short, short, Multiplication*, Multiplier);
+        void substituteLeaves(shared_ptr<Node>, vector<shared_ptr<Node>>, int);
 
     public: 
         KaratsubaOfman2(vector<Multiplier>);

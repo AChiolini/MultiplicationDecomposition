@@ -6,20 +6,19 @@ using namespace std;
 InputNode::InputNode()
 {
     this->firstInput = true;
-    this->start = 0;
-    this->length = 32;
+    this->length = 0;
 }
 
-InputNode::InputNode(bool firstInput, short start, short length)
+/* Constructor with two parameters:
+ * first_input: 'True' if the node is the first operand of the multiplication.
+                'False' otherwise.
+ * length: the length of the bit string of the operand (Sign included)
+ */
+
+InputNode::InputNode(bool first_input, int length)
 {
-    this->firstInput = firstInput;
-    this->start = start;
+    this->firstInput = first_input;
     this->length = length;
-}
-
-bool InputNode::isLeaf()
-{
-    return true;
 }
 
 bool InputNode::isFirstInput()
@@ -27,42 +26,22 @@ bool InputNode::isFirstInput()
     return this->firstInput;
 }
 
-short InputNode::getStart()
-{
-    return this->start;
-}
-
 short InputNode::getLength()
 {
     return this->length;
 }
 
-int InputNode::getOutputLength()
+void InputNode::setFirstInput(bool first_input)
 {
-    return getOutputSpecifications().length;
-}
-
-OutSpecs InputNode::getOutputSpecifications()
-{
-    OutSpecs specs;
-
-    specs.length = length + 1;
-    specs.sign = POSITIVE;
-    specs.MCS = 0;
-    return specs;
-}
-
-void InputNode::setFirstInput(bool firstInput)
-{
-    this->firstInput = firstInput;
-}
-
-void InputNode::setStart(short start)
-{
-    this->start = start;
+    this->first_input = first_input;
 }
 
 void InputNode::setLength(short length)
 {
     this->length = length;
+}
+
+bool InputNode::type()
+{
+    return INPUT;
 }

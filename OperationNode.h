@@ -4,30 +4,44 @@
 #include <memory>
 #include "Node.h"
 #include "Operation.h"
+#include "Link.h"
 
 using namespace std;
+
+/* This class represents an operation. It could be an addition, a subtraction or
+ * a (sub)multiplication. 
+ * The class also requires the two operand of the operation.
+ * If length is set to -1 it means that the length of the output depends by the
+ * the operation and the operands. However, in some case it's possible to ignore
+ * some bits because the would not be used for some reason.
+ */
 
 class OperationNode : public Node
 {
     private:
         shared_ptr<Operation> operation;
-        shared_ptr<Node> left;
-        shared_ptr<Node> right;
+        Link first_operand;
+        Link second_operand;
+        int length;
         
     public:
         OperationNode();
         OperationNode(shared_ptr<Operation>);
-        OperationNode(shared_ptr<Operation>, shared_ptr<Node>, shared_ptr<Node>);
-        bool isLeaf();
-        int getOutputLength();
-        OutSpecs getOutputSpecifications();
+        OperationNode(shared_ptr<Operation>, Link, Link);
+        OperationNode(shared_ptr<Operation>, Link, Link, int);
         shared_ptr<Operation> getOperation();
-        shared_ptr<Node> getLeftChild();
-        shared_ptr<Node> getRightChild();
+        Link getFirstOperand();
+        Link getSecondOperand();
+        int getLength();
         void setOperation(shared_ptr<Operation>);
-        void setLeftChild(shared_ptr<Node>);
-        void setRightChild(shared_ptr<Node>);
+        void setFirstOperand(Link);
+        void setSecondOperand(Link);
+        void setLength;
+        NodeType type();
         virtual ~OperationNode() = default;
+
+        static OperationNode* castToOperationNode(Node* node) { return static_cast<OperationNode*>(node); }
+        static OperationNode* castToOperationNode(shared_ptr<Node> node) { return static_cast<OperationNode*>(node.get()); }
 };
 
 #endif

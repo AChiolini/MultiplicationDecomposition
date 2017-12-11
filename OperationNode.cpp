@@ -7,32 +7,121 @@
 
 using namespace std;
 
+shared_ptr<Operation> operation;
+shared_ptr<Link> first_operand;
+shared_ptr<Link> second_operand;
+
 OperationNode::OperationNode()
 {
-    this->operation = make_shared<Addition>();
-    this->left = nullptr;
-    this->right = nullptr;
+    this->operation = nullptr;
+    this->first_operand = Link();
+    this->second_operand = Link();
+    this->length = -1
 }
 
 OperationNode::OperationNode(shared_ptr<Operation> operation)
 {
     this->operation = operation;
-    this->left = nullptr;
-    this->right = nullptr;
+    this->first_operand = Link();
+    this->second_operand = Link();
+    this->length = -1
 }
 
-OperationNode::OperationNode(shared_ptr<Operation>operation, shared_ptr<Node> left, shared_ptr<Node> right)
+OperationNode::OperationNode(shared_ptr<Operation>operation, Link first_operand, Link second_operand)
 {
     this->operation = operation;
-    this->left = left;
-    this->right = right;
+    this->first_operand = first_operand;
+    this->second_operand = second_operand;
+    this->length = -1
 }
 
-int OperationNode::getOutputLength()
+OperationNode::OperationNode(shared_ptr<Operation>operation, Link first_operand, Link second_operand, int length)
 {
-    return getOutputSpecifications().length;
+    this->operation = operation;
+    this->first_operand = first_operand;
+    this->second_operand = second_operand;
+    this->length = length;
 }
 
+shared_ptr<Operation> OperationNode::getOperation()
+{
+    return this->operation;
+}
+
+Link OperationNode::getFirstOperand()
+{
+    return this->first_operand;
+}
+
+Link OperationNode::getSecondOperand()
+{
+    return this->second_operand;
+}
+
+int OperationNode::getLength()
+{
+    int l1, l2, max;
+
+    if(this->length != -1)
+    {
+        return this->length;
+    }
+    else
+    {
+        if(first_operand.getNode() != nullptr && second_operand.getNode() != nullptr)
+        {
+            l1 = first_operand.getLength();
+            l2 = second_operand.getLength();
+            if(operation->getOperationType() == SUBMULTIPLICATION)
+            {
+                return l1 + l2;
+            }
+            else
+            {
+                if(l1 > l2)
+                {
+                    max = l1;
+                }
+                else
+                {
+                    max = l2;
+                }
+                return max + 1;
+            }
+        }
+        else
+        {
+            return 0;
+        }
+    }
+}
+
+void OperationNode::setOperation(shared_ptr<Operation> operation)
+{
+    this->operation = operation;
+}
+
+void OperationNode::setFirstOperand(Link first_operand)
+{
+    this->first_operand = first_operand;
+}
+
+void OperationNode::setSecondOperand(Link second_operand)
+{
+    this->second_operand = second_operand;
+}
+
+void OperationNode::setLength(int length)
+{
+    this->length = length;
+}
+
+NodeType OperationNode::type()
+{
+    return OPERATION;
+}
+
+/*
 OutSpecs OperationNode::getOutputSpecifications()
 {
     Shift *shift;
@@ -220,37 +309,6 @@ OutSpecs OperationNode::getOutputSpecifications()
     return specs;
 }
 
-bool OperationNode::isLeaf()
-{
-    return false;
-}
+*/
 
-shared_ptr<Operation> OperationNode::getOperation()
-{
-    return this->operation;
-}
 
-void OperationNode::setOperation(shared_ptr<Operation> operation)
-{
-    this->operation = operation;
-}
-
-shared_ptr<Node> OperationNode::getLeftChild()
-{
-    return this->left;
-}
-
-shared_ptr<Node> OperationNode::getRightChild()
-{
-    return this->right;
-}
-
-void OperationNode::setLeftChild(shared_ptr<Node> n)
-{
-    this->left = n;
-}
-
-void OperationNode::setRightChild(shared_ptr<Node> n)
-{
-    this->right = n;
-}
