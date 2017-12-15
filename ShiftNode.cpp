@@ -28,12 +28,12 @@ ShiftNode::ShiftNode(Link operand, int shift)
 
 Link ShiftNode::getOperand()
 {
-    return operand();
+    return this->operand;
 }
 
 int ShiftNode::getShift()
 {
-    return shift;
+    return this->shift;
 }
 
 void ShiftNode::setOperand(Link operand)
@@ -53,7 +53,7 @@ NodeType ShiftNode::type()
 
 int ShiftNode::getLength()
 {
-    if (operand.getNode != nullptr)
+    if (operand.getNode() != nullptr)
     {
         return operand.getLength() - operand.getStart() + shift;
     }

@@ -6,7 +6,7 @@
 class Subtraction : public Operation
 {
     public:
-        OperationType getOperationType() {return SUBTRACTION;};
+        OperationType type() {return SUBTRACTION;};
         virtual ~Subtraction() = default;
 };
 

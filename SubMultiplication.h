@@ -21,7 +21,7 @@ class SubMultiplication : public Operation
         bool isLUT();
         Multiplier getMultiplier();
         void setMultiplier(Multiplier);
-        OperationType getOperationType() {return SUBMULTIPLICATION;};
+        OperationType type() {return SUBMULTIPLICATION;};
         virtual ~SubMultiplication() = default;
 
         static SubMultiplication* castToSubMultiplication (Operation* operation) { return static_cast<SubMultiplication*>(operation); }

@@ -2,7 +2,6 @@
 #include <iostream>
 #include "OperationNode.h"
 #include "Addition.h"
-#include "Shift.h"
 #include "SubMultiplication.h"
 
 using namespace std;
@@ -16,7 +15,7 @@ OperationNode::OperationNode()
     this->operation = nullptr;
     this->first_operand = Link();
     this->second_operand = Link();
-    this->length = -1
+    this->length = -1;
 }
 
 OperationNode::OperationNode(shared_ptr<Operation> operation)
@@ -24,7 +23,7 @@ OperationNode::OperationNode(shared_ptr<Operation> operation)
     this->operation = operation;
     this->first_operand = Link();
     this->second_operand = Link();
-    this->length = -1
+    this->length = -1;
 }
 
 OperationNode::OperationNode(shared_ptr<Operation>operation, Link first_operand, Link second_operand)
@@ -32,7 +31,7 @@ OperationNode::OperationNode(shared_ptr<Operation>operation, Link first_operand,
     this->operation = operation;
     this->first_operand = first_operand;
     this->second_operand = second_operand;
-    this->length = -1
+    this->length = -1;
 }
 
 OperationNode::OperationNode(shared_ptr<Operation>operation, Link first_operand, Link second_operand, int length)
@@ -60,8 +59,24 @@ Link OperationNode::getSecondOperand()
 
 int OperationNode::getLength()
 {
-    int l1, l2, max;
+    int l1, l2, max, first_sign, second_sign;
 
+    if(this->first_operand.isSignIncluded() == true)
+    {
+        first_sign = 0;
+    }
+    else
+    {
+        first_sign = 1;
+    }
+    if(this->second_operand.isSignIncluded() == true)
+    {
+        second_sign = 0;
+    }
+    else
+    {
+        second_sign = 1;
+    }
     if(this->length != -1)
     {
         return this->length;
@@ -72,19 +87,41 @@ int OperationNode::getLength()
         {
             l1 = first_operand.getLength();
             l2 = second_operand.getLength();
-            if(operation->getOperationType() == SUBMULTIPLICATION)
+            if(operation->type() == SUBMULTIPLICATION)
             {
-                return l1 + l2;
+                if(first_sign == 1 && second_sign == 1)
+                {
+                    return l1 + l2 - 1;
+                }
+                else
+                {
+                    if(first_sign == 0 && second_sign == 0)
+                    {
+                        return l1 + l2 + 1;
+                    }
+                    else
+                    {
+                        return l1 + l2;
+                    }
+                }
             }
             else
             {
                 if(l1 > l2)
                 {
                     max = l1;
+                    if(first_sign == 1)
+                    {
+                        max++;
+                    }
                 }
                 else
                 {
                     max = l2;
+                    if(second_sign == 1)
+                    {
+                        max++;
+                    }
                 }
                 return max + 1;
             }

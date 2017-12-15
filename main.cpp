@@ -4,9 +4,9 @@
 #include <algorithm>
 #include "Multiplication.h"
 #include "StandardTiling.h"
-#include "KaratsubaOfman2.h"
-#include "KaratsubaOfman3.h"
-#include "ProposedTiling.h"
+//#include "KaratsubaOfman2.h"
+//#include "KaratsubaOfman3.h"
+//#include "ProposedTiling.h"
 
 using namespace std;
 
@@ -43,13 +43,13 @@ int main (int argc, char** argv)
             }
         }
         //Karatsuba-Ofman two-part splitting
-        multiplications.push_back(new KaratsubaOfman2(multipliers));
+        //multiplications.push_back(new KaratsubaOfman2(multipliers));
         //Karatsuba-Ofman three-part splitting
-        multiplications.push_back(new KaratsubaOfman3(multipliers));
+        //multiplications.push_back(new KaratsubaOfman3(multipliers));
         //Standard Tiling
         multiplications.push_back(new StandardTiling(multipliers));
         //Proposed Tiling
-        multiplications.push_back(new ProposedTiling(multipliers));
+        //multiplications.push_back(new ProposedTiling(multipliers));
         for (j = 0; j < multiplications.size(); j++)
         {
             multiplicationTrees = (multiplications[j])->dispositions(inputLength1, inputLength2);

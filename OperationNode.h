@@ -36,7 +36,7 @@ class OperationNode : public Node
         void setOperation(shared_ptr<Operation>);
         void setFirstOperand(Link);
         void setSecondOperand(Link);
-        void setLength;
+        void setLength(int);
         NodeType type();
         virtual ~OperationNode() = default;
 

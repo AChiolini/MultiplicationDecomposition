@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include "OperationNode.h"
-#include "InputNode.h"
 
 using namespace std;
 
@@ -25,7 +24,6 @@ class MultiplicationTree
         vector<OperationNode*> cost(shared_ptr<Node>);
         long long execute(shared_ptr<Node>, long long, long long);
 
-    //creare get leaf e modificare get length X che va a vedere direttamente le foglie
     public:
         MultiplicationTree();
         MultiplicationTree(shared_ptr<OperationNode>, string, int, int);

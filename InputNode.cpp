@@ -5,7 +5,7 @@ using namespace std;
 
 InputNode::InputNode()
 {
-    this->firstInput = true;
+    this->first_input = true;
     this->length = 0;
 }
 
@@ -17,16 +17,16 @@ InputNode::InputNode()
 
 InputNode::InputNode(bool first_input, int length)
 {
-    this->firstInput = first_input;
+    this->first_input = first_input;
     this->length = length;
 }
 
 bool InputNode::isFirstInput()
 {
-    return this->firstInput;
+    return this->first_input;
 }
 
-short InputNode::getLength()
+int InputNode::getLength()
 {
     return this->length;
 }
@@ -36,12 +36,12 @@ void InputNode::setFirstInput(bool first_input)
     this->first_input = first_input;
 }
 
-void InputNode::setLength(short length)
+void InputNode::setLength(int length)
 {
     this->length = length;
 }
 
-bool InputNode::type()
+NodeType InputNode::type()
 {
     return INPUT;
 }

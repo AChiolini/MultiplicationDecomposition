@@ -24,7 +24,7 @@ class InputNode : public Node
         bool isFirstInput();
         int getLength();
         void setFirstInput(bool);
-        void setLegth(int)
+        void setLength(int);
         NodeType type();
         virtual ~InputNode() = default;
 

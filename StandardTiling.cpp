@@ -5,7 +5,6 @@
 #include "SubMultiplication.h"
 #include "Subtraction.h"
 #include "Addition.h"
-#include "Shift.h"
 
 using namespace std;
 
@@ -14,7 +13,7 @@ StandardTiling::StandardTiling(vector<Multiplier> multipliers)
     this->multipliers = multipliers;
 }
 
-vector <MultiplicationTree> StandardTiling::dispositions(short lengthX, short lengthY)
+vector <MultiplicationTree> StandardTiling::dispositions(int length_x, int length_y)
 {
     vector <MultiplicationTree> multiplicationTrees;    
     int i;
@@ -22,7 +21,7 @@ vector <MultiplicationTree> StandardTiling::dispositions(short lengthX, short le
 
     for(i = 0; i < multipliers.size(); i++)
     {
-        tmp = dispose (lengthX, lengthY, multipliers[i]);
+        tmp = dispose (length_x, length_y, multipliers[i]);
         if(tmp.getRoot() != nullptr)
         {
             multiplicationTrees.push_back(tmp);
@@ -31,9 +30,131 @@ vector <MultiplicationTree> StandardTiling::dispositions(short lengthX, short le
     return multiplicationTrees;
 }
 
-MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multiplier)
+MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
 {
-    short dim1; 
+    Link first_operand, second_operand;
+    shared_ptr<InputNode> input1, input2;
+    shared_ptr<OperationNode> root;
+
+    // Pre-checks
+    // Both lengths must be greater than 1, otherwise there aren't enough bit for the multiplication.
+    if(x <= 1 || y <= 1)
+    {
+        return MultiplicationTree();
+    }
+    // Both lengths must be greater than both minimum lengths of the multiplier, otherwise it's all mapped in a LUT.
+    // CHIEDERE AL PROFF LA CONDIZIONE SULLA SOGLIA
+    if(((x - 1) < multiplier.getMinInput1() && (y - 1) < multiplier.getMinInput2()) || \
+       ((x - 1) < multiplier.getMinInput2() && (y - 1) < multiplier.getMinInput1()))
+    {
+        input1 = make_shared<InputNode>(true, x);
+        input2 = make_shared<InputNode>(false, y);
+        first_operand = Link(input1, 0, x - 1, false);
+        second_operand = Link(input2, 0, y - 1, false);
+        root = make_shared<OperationNode>(make_shared<SubMultiplication>(), first_operand, second_operand);
+        return MultiplicationTree(root, "LUT multiplication (Standard tiling disposition)", x, y);
+    }
+    // For simplicity we dived the dispose function in 3 function: one for a square multiplier, one for a rectangular multiplier
+    // in a square multiplication and one for a rectangular multiplier in a rectangular multiplication. In this way there will be
+    // more code but simple and modifiable in an easy way.
+    if(multiplier.getInputLength1() == multiplier.getInputLength2())
+    {
+        return disposeSquareSquare(x, y, multiplier);
+    }
+    else
+    {
+        if(x == y)
+        {
+            return disposeRectangleSquare(x, y, multiplier);
+        }
+        else
+        {
+            return disposeRectangleRectangle(x, y, multiplier);
+        }
+    }
+}
+
+MultiplicationTree StandardTiling::disposeSquareSquare(int x, int y, Multiplier multiplier)
+{
+    int i, j, dim, length_x, length_y;
+    shared_ptr<InputNode> input1, input2;
+    Link first_operand, second_operand;
+    vector <shared_ptr<OperationNode>> operation_nodes;
+    
+    input1 = make_shared<InputNode>(true, x);
+    input2 = make_shared<InputNode>(false, y);
+    dim = multiplier.getInputLength1() - 1;
+    for(i = 0; i * dim < (x - 1); i++)
+    {
+        if((i + 1) * dim > (x - 1))
+        {
+            length_x = dim - ((i + 1) * dim) + (x - 1);
+        }
+        else
+        {
+            length_x = dim;
+        }
+        for(j = 0; j * dim < (y - 1); j++)
+        {
+            if((j + 1) * dim > (y - 1))
+            {
+                length_y = dim - ((j + 1) * dim) + (y - 1);
+            }
+            else
+            {
+                length_y = dim;
+            }
+            first_operand = Link(input1, i * dim, length_x, false);
+            second_operand = Link(input2, j * dim, length_y, false);
+            operation_nodes.push_back(make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier), first_operand, second_operand));
+        }
+    }
+    return createTree(operation_nodes, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
+}
+
+MultiplicationTree StandardTiling::disposeRectangleSquare(int x, int y, Multiplier multiplier)
+{
+    // TO DO
+    return MultiplicationTree();
+}
+
+MultiplicationTree StandardTiling::disposeRectangleRectangle(int x, int y, Multiplier multiplier)
+{
+    // TO DO
+    return MultiplicationTree();
+}
+
+MultiplicationTree StandardTiling::createTree(vector <shared_ptr<OperationNode>> operation_nodes, string description, int length_x, int length_y)
+{
+    vector <shared_ptr<OperationNode>> tmp_array;
+    shared_ptr<OperationNode> operation_node;
+    Link first_operand, second_operand;
+    int i;
+
+    while(operation_nodes.size() > 0 && operation_nodes.size() != 1)
+    {	
+        for(i = 0; i < operation_nodes.size(); i = i + 2)
+        {
+            if (i + 1 < operation_nodes.size())
+            {
+                first_operand = Link(operation_nodes[i]);
+                second_operand = Link(operation_nodes[i + 1]);
+                operation_node = make_shared<OperationNode>(make_shared<Addition>(), first_operand, second_operand);
+                tmp_array.push_back(operation_node);
+            }
+            else
+            {
+                tmp_array.push_back(operation_nodes[i]);
+            }
+        }
+        operation_nodes.swap(tmp_array);
+        tmp_array.clear();
+    }
+    return MultiplicationTree(operation_nodes[0], description, length_x, length_y);
+}
+
+
+/*    short dim1; 
     short dim2;
     short max;
     short min;
@@ -386,26 +507,7 @@ MultiplicationTree StandardTiling::dispose(short x, short y, Multiplier multipli
             }
         }
     }
-    while(operationNodes.size() > 0 && operationNodes.size() != 1)
-    {	
-        for(i = 0; i < operationNodes.size(); i = i+2)
-        {
-            if (i + 1 < operationNodes.size())
-            {
-                operationNode = make_shared<OperationNode>(make_shared<Addition>());
-                operationNode->setLeftChild(operationNodes[i]);
-                operationNode->setRightChild(operationNodes[i+1]);
-                tmpArray.push_back(operationNode);
-            }
-            else
-            {
-                tmpArray.push_back(operationNodes[i]);
-            }
-        }
-        operationNodes.swap(tmpArray);
-        tmpArray.clear();
-    }
-    return MultiplicationTree(operationNodes[0], "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", (int) x + 1, (int) y + 1);
+
 }
 
 short StandardTiling::checkExist(bool firstInput, short start, short length, vector<shared_ptr<InputNode>> inputNodes)
@@ -419,4 +521,4 @@ short StandardTiling::checkExist(bool firstInput, short start, short length, vec
         }
     }
     return -1;
-}
+}*/

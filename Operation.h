@@ -3,16 +3,15 @@
 
 enum OperationType
 {
-    ADDITION = 1,
+    ADDITION = 0,
     SUBTRACTION,
     SUBMULTIPLICATION,
-    SHIFT
 };
 
 class Operation 
 {        
     public:
-        virtual OperationType getOperationType() = 0;
+        virtual OperationType type() = 0;
         virtual ~Operation() = default;
 };
 

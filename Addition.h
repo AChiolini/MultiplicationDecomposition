@@ -6,7 +6,7 @@
 class Addition : public Operation
 {
     public:
-    	OperationType getOperationType() {return ADDITION;};
+    	OperationType type() {return ADDITION;};
         virtual ~Addition() = default;
 };
 
