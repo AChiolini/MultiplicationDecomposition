@@ -2,8 +2,8 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
-#include "Multiplication.h"
-#include "StandardTiling.h"
+#include "Algorithm/Algorithm.h"
+#include "Algorithm/StandardTiling.h"
 //#include "KaratsubaOfman2.h"
 //#include "KaratsubaOfman3.h"
 //#include "ProposedTiling.h"
@@ -14,15 +14,14 @@ bool is_number(char*);
 
 int main (int argc, char** argv)
 {
-    int i, j, delay;
-    short input1, input2, minInput1, minInput2;
+    int i, j, delay, input1, input2, output_threshold;
     long long in1, in2;
     int inputLength1, inputLength2;
     MultiplicationTree *ptr;
     vector <Multiplier> multipliers;
-    vector <Multiplication*> multiplications;
+    vector <Algorithm*> algorithms;
     vector <MultiplicationTree> multiplicationTrees;
-    ifstream infile("multipliers");
+    ifstream infile("ArithmeticUnit/MultiplicationUnit/multipliers");
 
     if (argc == 5 && is_number(argv[1]) && is_number(argv[2]) && is_number(argv[3]) && is_number(argv[4]))
     {
@@ -31,11 +30,11 @@ int main (int argc, char** argv)
         inputLength1 = atoi(argv[1]);
         inputLength2 = atoi(argv[2]);
         //Creating multipliers
-        while (infile >> input1 >> input2 >> minInput1 >> minInput2 >> delay)
+        while (infile >> input1 >> input2 >> output_threshold >> delay)
         {	
             try
             {
-                multipliers.push_back(Multiplier (input1, input2, minInput1, minInput2, delay));		
+                multipliers.push_back(Multiplier (input1, input2, output_threshold, delay));		
             }
             catch (const invalid_argument& e)
             {
@@ -43,21 +42,21 @@ int main (int argc, char** argv)
             }
         }
         //Karatsuba-Ofman two-part splitting
-        //multiplications.push_back(new KaratsubaOfman2(multipliers));
+        //algorithms.push_back(new KaratsubaOfman2(multipliers));
         //Karatsuba-Ofman three-part splitting
-        //multiplications.push_back(new KaratsubaOfman3(multipliers));
+        //algorithms.push_back(new KaratsubaOfman3(multipliers));
         //Standard Tiling
-        multiplications.push_back(new StandardTiling(multipliers));
+        algorithms.push_back(new StandardTiling(multipliers));
         //Proposed Tiling
-        //multiplications.push_back(new ProposedTiling(multipliers));
-        for (j = 0; j < multiplications.size(); j++)
+        //algorithms.push_back(new ProposedTiling(multipliers));
+        for (j = 0; j < algorithms.size(); j++)
         {
-            multiplicationTrees = (multiplications[j])->dispositions(inputLength1, inputLength2);
+            multiplicationTrees = (algorithms[j])->dispositions(inputLength1, inputLength2);
             for (i = 0; i < multiplicationTrees.size(); i++)
             {
                 cout << multiplicationTrees[i].getDescription() << endl;
                 cout << "Expression: " << multiplicationTrees[i].getExpression() << endl;
-                cout << "Delay: " << multiplicationTrees[i].getDelay() << endl;
+                cout << "Delay: " << multiplicationTrees[i].getLatency() << endl;
                 cout << "Cost: " << multiplicationTrees[i].getCost() << endl;
                 cout << "Expected value: " << in1 * in2 << endl;
                 cout << "Obtained value: " << multiplicationTrees[i].executeMultiplication(in1, in2) << endl;

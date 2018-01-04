@@ -1,45 +1,42 @@
 #include <stddef.h>
+#include <algorithm>
 #include <iostream>
+#include <stdexcept>
 #include "OperationNode.h"
-#include "Addition.h"
-#include "SubMultiplication.h"
 
 using namespace std;
-
-shared_ptr<Operation> operation;
-shared_ptr<Link> first_operand;
-shared_ptr<Link> second_operand;
 
 OperationNode::OperationNode()
 {
     this->operation = nullptr;
-    this->first_operand = Link();
-    this->second_operand = Link();
     this->length = -1;
 }
 
 OperationNode::OperationNode(shared_ptr<Operation> operation)
 {
     this->operation = operation;
-    this->first_operand = Link();
-    this->second_operand = Link();
     this->length = -1;
 }
 
-OperationNode::OperationNode(shared_ptr<Operation>operation, Link first_operand, Link second_operand)
+OperationNode::OperationNode(shared_ptr<Operation> operation, int length)
 {
     this->operation = operation;
-    this->first_operand = first_operand;
-    this->second_operand = second_operand;
-    this->length = -1;
-}
-
-OperationNode::OperationNode(shared_ptr<Operation>operation, Link first_operand, Link second_operand, int length)
-{
-    this->operation = operation;
-    this->first_operand = first_operand;
-    this->second_operand = second_operand;
     this->length = length;
+}
+
+void OperationNode::checkValidity()
+{
+    string s;
+    int required_operands, n_operands;
+
+    n_operands = this->operands.size();
+    required_operands = this->operation->requiredOperands();
+    if(required_operands != -1 && required_operands != n_operands)
+    {
+        s = "Operand for " + this->operation->description() + " must be ";
+        s = s + to_string(required_operands) + " and not " + to_string(n_operands) + ".";
+        throw length_error (s);
+    }
 }
 
 shared_ptr<Operation> OperationNode::getOperation()
@@ -47,89 +44,17 @@ shared_ptr<Operation> OperationNode::getOperation()
     return this->operation;
 }
 
-Link OperationNode::getFirstOperand()
-{
-    return this->first_operand;
-}
-
-Link OperationNode::getSecondOperand()
-{
-    return this->second_operand;
-}
-
 int OperationNode::getLength()
 {
-    int l1, l2, max, first_sign, second_sign;
+    int length, max, sign;
 
-    if(this->first_operand.isSignIncluded() == true)
-    {
-        first_sign = 0;
-    }
-    else
-    {
-        first_sign = 1;
-    }
-    if(this->second_operand.isSignIncluded() == true)
-    {
-        second_sign = 0;
-    }
-    else
-    {
-        second_sign = 1;
-    }
     if(this->length != -1)
     {
         return this->length;
     }
     else
     {
-        if(first_operand.getNode() != nullptr && second_operand.getNode() != nullptr)
-        {
-            l1 = first_operand.getLength();
-            l2 = second_operand.getLength();
-            if(operation->type() == SUBMULTIPLICATION)
-            {
-                if(first_sign == 1 && second_sign == 1)
-                {
-                    return l1 + l2 - 1;
-                }
-                else
-                {
-                    if(first_sign == 0 && second_sign == 0)
-                    {
-                        return l1 + l2 + 1;
-                    }
-                    else
-                    {
-                        return l1 + l2;
-                    }
-                }
-            }
-            else
-            {
-                if(l1 > l2)
-                {
-                    max = l1;
-                    if(first_sign == 1)
-                    {
-                        max++;
-                    }
-                }
-                else
-                {
-                    max = l2;
-                    if(second_sign == 1)
-                    {
-                        max++;
-                    }
-                }
-                return max + 1;
-            }
-        }
-        else
-        {
-            return 0;
-        }
+        return this->operation->outputLength(operands);
     }
 }
 
@@ -138,19 +63,39 @@ void OperationNode::setOperation(shared_ptr<Operation> operation)
     this->operation = operation;
 }
 
-void OperationNode::setFirstOperand(Link first_operand)
-{
-    this->first_operand = first_operand;
-}
-
-void OperationNode::setSecondOperand(Link second_operand)
-{
-    this->second_operand = second_operand;
-}
-
 void OperationNode::setLength(int length)
 {
     this->length = length;
+}
+
+void OperationNode::insertOperandFirst(Link operand)
+{
+    this->operands.insert(this->operands.begin(), operand);
+}
+
+void OperationNode::insertOperandLast(Link operand)
+{
+    this->operands.push_back(operand);
+}
+
+void OperationNode::removeOperandAt(int index)
+{
+    this->operands.erase(this->operands.begin() + index);
+}
+
+void OperationNode::clearOperands()
+{
+    this->operands.clear();
+}
+
+Link OperationNode::getOperandAt(int index)
+{
+    return this->operands[index];
+}
+
+int OperationNode::size()
+{
+    return this->operands.size();
 }
 
 NodeType OperationNode::type()
@@ -158,6 +103,60 @@ NodeType OperationNode::type()
     return OPERATION;
 }
 
+double OperationNode::getLatency()
+{
+    double max, latency;
+    int i, n_operands;
+
+    this->checkValidity();
+    max = 0;
+    n_operands = this->operands.size();
+    for(i = 0; i < n_operands; i++)
+    {
+        latency = this->operands[i].getNode()->getLatency();
+        if(latency > max)
+        {
+            max = latency;
+        }
+    }
+    return max + this->operation->getLatency();
+}
+
+vector<Node*> OperationNode::getNodes()
+{
+    vector<Node*> nodes, returned_nodes;
+    int i, j, n_operands;
+
+    this->checkValidity();
+    n_operands = this->operands.size();
+    nodes.push_back(this);
+    for(i = 0; i < n_operands; i++)
+    {
+        returned_nodes = this->operands[i].getNode()->getNodes();
+        for(j = 0; j < returned_nodes.size(); j++)
+        {
+            if(find(nodes.begin(), nodes.end(), returned_nodes[j]) == nodes.end())
+            {
+                nodes.push_back(returned_nodes[j]);
+            }
+        }
+    }
+    return nodes;
+}
+
+long long OperationNode::executeNode(long long input1, long long input2)
+{
+    vector<long long> values;
+    int i, n_operands;
+
+    this->checkValidity();
+    n_operands = this->operands.size();
+    for(i = 0; i < n_operands; i++)
+    {
+        values.push_back(this->operands[i].getNode()->executeNode(input1, input2));
+    }
+    return this->operation->executeOperation(this->operands, values);
+}
 /*
 OutSpecs OperationNode::getOutputSpecifications()
 {

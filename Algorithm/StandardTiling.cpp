@@ -1,10 +1,10 @@
 #include <iostream>
 #include <math.h>
 #include "StandardTiling.h"
-#include "InputNode.h"
-#include "SubMultiplication.h"
-#include "Subtraction.h"
-#include "Addition.h"
+#include "../Node/InputNode.h"
+#include "../Operation/Multiplication.h"
+#include "../ArithmeticUnit/MultiplicationUnit/LUT/LUT.h"
+#include "../Operation/Addition.h"
 
 using namespace std;
 
@@ -33,6 +33,7 @@ vector <MultiplicationTree> StandardTiling::dispositions(int length_x, int lengt
 MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
 {
     Link first_operand, second_operand;
+    shared_ptr<MultiplicationUnit> multiplication_unit;
     shared_ptr<InputNode> input1, input2;
     shared_ptr<OperationNode> root;
 
@@ -44,14 +45,16 @@ MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
     }
     // Both lengths must be greater than both minimum lengths of the multiplier, otherwise it's all mapped in a LUT.
     // CHIEDERE AL PROFF LA CONDIZIONE SULLA SOGLIA
-    if(((x - 1) < multiplier.getMinInput1() && (y - 1) < multiplier.getMinInput2()) || \
-       ((x - 1) < multiplier.getMinInput2() && (y - 1) < multiplier.getMinInput1()))
+    if(x + y < multiplier.getOutputThreshold())
     {
         input1 = make_shared<InputNode>(true, x);
         input2 = make_shared<InputNode>(false, y);
-        first_operand = Link(input1, 0, x - 1, false);
-        second_operand = Link(input2, 0, y - 1, false);
-        root = make_shared<OperationNode>(make_shared<SubMultiplication>(), first_operand, second_operand);
+        first_operand = Link(input1, 0, x, true);
+        second_operand = Link(input2, 0, y, true);
+        multiplication_unit = make_shared<LUT>(x, y);
+        root = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
+        root->insertOperandLast(first_operand);
+        root->insertOperandLast(second_operand);
         return MultiplicationTree(root, "LUT multiplication (Standard tiling disposition)", x, y);
     }
     // For simplicity we dived the dispose function in 3 function: one for a square multiplier, one for a rectangular multiplier
@@ -78,7 +81,9 @@ MultiplicationTree StandardTiling::disposeSquareSquare(int x, int y, Multiplier 
 {
     int i, j, dim, length_x, length_y;
     shared_ptr<InputNode> input1, input2;
+    shared_ptr<MultiplicationUnit> multiplication_unit;
     Link first_operand, second_operand;
+    shared_ptr<OperationNode> operation_node;
     vector <shared_ptr<OperationNode>> operation_nodes;
     
     input1 = make_shared<InputNode>(true, x);
@@ -106,7 +111,18 @@ MultiplicationTree StandardTiling::disposeSquareSquare(int x, int y, Multiplier 
             }
             first_operand = Link(input1, i * dim, length_x, false);
             second_operand = Link(input2, j * dim, length_y, false);
-            operation_nodes.push_back(make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier), first_operand, second_operand));
+            if(length_x + length_y + 2 < multiplier.getOutputThreshold())
+            {
+                multiplication_unit = make_shared<LUT>(length_x + 1, length_y + 1);
+            }
+            else
+            {
+                multiplication_unit = make_shared<Multiplier>(multiplier);
+            }
+            operation_node = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
+            operation_node->insertOperandLast(first_operand);
+            operation_node->insertOperandLast(second_operand);
+            operation_nodes.push_back(operation_node);
         }
     }
     return createTree(operation_nodes, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
@@ -139,7 +155,9 @@ MultiplicationTree StandardTiling::createTree(vector <shared_ptr<OperationNode>>
             {
                 first_operand = Link(operation_nodes[i]);
                 second_operand = Link(operation_nodes[i + 1]);
-                operation_node = make_shared<OperationNode>(make_shared<Addition>(), first_operand, second_operand);
+                operation_node = make_shared<OperationNode>(make_shared<Addition>());
+                operation_node->insertOperandLast(first_operand);
+                operation_node->insertOperandLast(second_operand);
                 tmp_array.push_back(operation_node);
             }
             else

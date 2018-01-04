@@ -65,7 +65,7 @@ int Link::getStart()
 
 int Link::getLength()
 {
-    if (start != -1)
+    if (length != -1)
     {
         return this->length;
     }

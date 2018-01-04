@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "OperationNode.h"
+#include "../Node/OperationNode.h"
 
 using namespace std;
 
@@ -12,31 +12,36 @@ using namespace std;
 /* methods that provides information about the tree.                         */
 /*****************************************************************************/
 
+typedef struct
+{
+    Node *ptr;
+    string name;
+} Variable;
+
 class MultiplicationTree
 {
     private:
         int lengthX;
         int lengthY;
-	shared_ptr<OperationNode> root;
+	    shared_ptr<OperationNode> root;
         string description;
-        int delay(shared_ptr<Node>);
         string expression(shared_ptr<Node>);
-        vector<OperationNode*> cost(shared_ptr<Node>);
-        long long execute(shared_ptr<Node>, long long, long long);
+        //vector<Variable> assignment(shared_ptr<Node>);
+        //string getVariableName(int);
 
     public:
         MultiplicationTree();
         MultiplicationTree(shared_ptr<OperationNode>, string, int, int);
         shared_ptr<OperationNode> getRoot();
         string getDescription();
-        int getDelay();
+        int getLatency();
         string getExpression();
         string getCost();
         int getLengthX();
         int getLengthY();
         int getOutputLength();
         void setRoot(shared_ptr<OperationNode>);
-	void setDescription(string);
+        void setDescription(string);
         void setLengthX(int);
         void setLengthY(int);
         long long executeMultiplication(long long, long long);

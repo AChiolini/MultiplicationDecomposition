@@ -1,12 +1,12 @@
 #ifndef STANDARDTILING_H
 #define STANDARDTILING_H
 
-#include "Multiplication.h"
-#include "Multiplier.h"
-#include "MultiplicationTree.h"
+#include "Algorithm.h"
+#include "../MultiplicationTree/MultiplicationTree.h"
+#include "../ArithmeticUnit/MultiplicationUnit/Multiplier/Multiplier.h"
 #include <vector>
 
-class StandardTiling : public Multiplication
+class StandardTiling : public Algorithm
 {
     private:
         vector<Multiplier> multipliers;
