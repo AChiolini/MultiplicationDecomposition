@@ -6,7 +6,13 @@ using namespace std;
 InputNode::InputNode()
 {
     this->first_input = true;
-    this->length = 0;
+    this->length = 2;
+}
+
+InputNode::InputNode(bool first_input)
+{
+    this->first_input = first_input;
+    this->length = 2;
 }
 
 /* Constructor with two parameters:
@@ -44,4 +50,29 @@ void InputNode::setLength(int length)
 NodeType InputNode::type()
 {
     return INPUT;
+}
+
+double InputNode::getLatency()
+{
+    return 0;
+}
+
+vector<Node*> InputNode::getNodes()
+{
+    vector<Node*> nodes;
+
+    nodes.push_back(this);
+    return nodes;
+}
+
+long long InputNode::executeNode(long long input1, long long input2)
+{
+    if(this->first_input == true)
+    {
+        return input1;
+    }
+    else
+    {
+        return input2;
+    }
 }

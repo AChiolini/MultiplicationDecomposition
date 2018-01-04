@@ -2,7 +2,7 @@
 #define LINK_H
 
 #include <memory>
-#include "Node.h"
+#include "../Node/Node.h"
 
 using namespace std;
 

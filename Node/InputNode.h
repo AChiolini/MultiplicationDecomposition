@@ -15,19 +15,28 @@ using namespace std;
 class InputNode : public Node
 {
     private:
+        // Class attributes
         bool first_input;
         int length;
 
     public:
+        // Class constructor
         InputNode();
+        InputNode(bool);
         InputNode(bool, int);
+        // Class methods
         bool isFirstInput();
         int getLength();
         void setFirstInput(bool);
         void setLength(int);
+        // Inherited methods
         NodeType type();
+        double getLatency();
+        vector<Node*> getNodes();
+        long long executeNode(long long, long long);
+        // Class destructor
         virtual ~InputNode() = default;
-
+        // Static methods
         static InputNode* castToInputNode(Node* node) { return static_cast<InputNode*>(node); }
         static InputNode* castToInputNode(shared_ptr<Node> node) { return static_cast<InputNode*>(node.get()); }
 };

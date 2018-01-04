@@ -2,32 +2,24 @@
 #define NODE_H
 
 #include <stdbool.h>
+#include <vector>
 
-/*enum Sign
-{
-    POSITIVE = 0,
-    UNDEFINED
-};*/
+using namespace std;
 
 enum NodeType
 {
     INPUT = 0,
     OPERATION,
-    SHIFT
 };
-
-/*typedef struct OutputSpecifications 
-{
-    Sign sign;
-    int MCS;
-    int length;
-} OutSpecs;*/
 
 class Node
 {
     public:
         virtual NodeType type() = 0;
         virtual int getLength() = 0;
+        virtual double getLatency() = 0;
+        virtual vector<Node*> getNodes() = 0;
+        virtual long long executeNode(long long, long long) = 0;
         virtual ~Node() = default;
 };
 
