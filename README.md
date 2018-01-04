@@ -8,4 +8,4 @@ g++ -o main main.cpp -std=c++11 InputNode.cpp KaratsubaOfman2.cpp KaratsubaOfman
 
 ## Temp compiler command
 
-g++ -o main main.cpp -std=c++11 InputNode.cpp MultiplicationTree.cpp Multiplier.cpp OperationNode.cpp ShiftNode.cpp SubMultiplication.cpp StandardTiling.cpp Link.cpp
+g++ -o main main.cpp -std=c++11 InputNode.cpp MultiplicationTree.cpp Multiplier.cpp OperationNode.cpp ShiftNode.cpp SubMultiplication.cpp StandardTiling.cpp Link.cpp ProposedTiling.cpp
