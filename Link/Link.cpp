@@ -106,3 +106,15 @@ void Link::setSignIncluded(bool sign_included)
 {
     this->sign_included = sign_included;
 }
+
+bool Link::entireLength()
+{
+    if(this->length == -1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

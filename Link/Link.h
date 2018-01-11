@@ -31,6 +31,7 @@ class Link
         void setStart(int);
         void setLength(int);
         void setSignIncluded(bool);
+        bool entireLength();
         virtual ~Link() = default;
 };
 

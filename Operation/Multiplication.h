@@ -33,6 +33,7 @@ class Multiplication : public Operation
         double getLatency();
         string description();
         string costDescription();
+        string getExpression(vector<string>);
         int outputLength(vector<Link>);
         long long executeOperation(vector<Link>, vector<long long>);
         // Class destructor

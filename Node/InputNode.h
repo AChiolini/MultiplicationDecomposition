@@ -29,6 +29,7 @@ class InputNode : public Node
         int getLength();
         void setFirstInput(bool);
         void setLength(int);
+        string getVariableName();
         // Inherited methods
         NodeType type();
         double getLatency();

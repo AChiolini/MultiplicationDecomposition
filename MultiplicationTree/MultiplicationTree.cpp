@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string.h>
 #include "MultiplicationTree.h"
+#include "../Node/InputNode.h"
 
 using namespace std;
 
@@ -88,6 +89,7 @@ void MultiplicationTree::setDescription(string description)
 
 void MultiplicationTree::setLengthX(int lengthX)
 {
+
     this->lengthX = lengthX;
 }
 
@@ -102,130 +104,53 @@ void MultiplicationTree::setLengthY(int lengthY)
 
 string MultiplicationTree::getExpression()
 {
-    return expression(root);
-}
-
-/*****************************************************************************/
-/* Recursive method that construct the mathematical expression of the tree.  */
-/*****************************************************************************/
-
-string MultiplicationTree::expression(shared_ptr<Node>)
-{
-    /*OperationNode *operationNode;
-    InputNode *input_node;
-    Shift *shift;
-    string s;
-
-    if (next == nullptr)
-    {
-        return "";
-    }
-    if (next->type() == INPUT)
-    {
-        input_node = InputNode::castToInputNode(next);
-        if (input_node->isFirstInput() == true)
-        {
-            s = "X";
-	}
-        else
-        {
-            s = "Y";
-        }
-        s = s + "[" + to_string(inputNode->getStart()) + "-" + to_string(inputNode->getStart() + inputNode->getLength() - 1) +"]";
-    }
-    else
-    {
-        operationNode = static_cast<OperationNode*>(next.get());
-	if (operationNode->getOperation()->getOperationType() == SHIFT)
-        {
-            shift = static_cast<Shift*>(operationNode->getOperation().get());
-            s = "(2^" + to_string(shift->getK()) + " * ";
-            s = s + expression(operationNode->getLeftChild()) + expression(operationNode->getRightChild());
-            s = s + ")";
-        }
-        else
-        {
-            s = "(" + expression(operationNode->getLeftChild());
-            switch (operationNode->getOperation()->getOperationType())
-            {
-                case ADDITION: s = s + " + ";
-                               break;
-                case SUBTRACTION: s = s + " - ";
-                                  break;
-                case SUBMULTIPLICATION: s = s + " * ";
-                                        break;
-            }
-            s = s + expression(operationNode->getRightChild()) + ")";
-        }
-    }
-    return s;*/
-    string s = "Da fare";
-    return s;
-}
-
-/*vector<Variable> MultiplicationTree::assignment(shared_ptr<Node> next)
-{
-    ShiftNode shift_node;
-    InputNode input_node;
-    OperationNode operation_node;
-    vector<Variable> array1, array2, tmp;
+    vector<Node*> nodes;
+    vector<InputNode*> inputs;
+    vector<OperationNode*> operations;
+    vector<Variable> variables;
     Variable var;
-    string s;
-    char c;
-    int i, n, letter, number;
+    string expression, s;
+    int i;
 
-    if(next == nullptr)
+    expression = "\n";
+    nodes = this->root->getNodes();
+    for(i = 0; i < nodes.size(); i++)
     {
-        return array;
-    }
-    switch(next->type())
-    {
-        case INPUT: 
-            input_node = InputNode::castToInputNode(next);
-            if (input_node->isFirstInput() == true)
-            {
-                s = "X";
-	    }
-            else
-            {
-                s = "Y";
-            }
-            s = s + " - Input";
-            var.name = s
-            var.ptr = next;
-            break;
-        case OPERATION: 
-            break;
-        case SHIFT: 
-            break;
-        default: 
-            total_delay = 0;
-            break;
-    }
-
-    if(next->type() == INPUT)
-    {
-
-    }
-    else(next->type() == SHIFT)
-    {
-        shift_node = ShiftNode::castToShiftNode(next);
-        array1 = assignment(shift_node->getOperand().getNode());
-        var.name = getVariableName(array1.size() - 2);
-        var.ptr = next;
-    }
-    else
-    {
-        operation_node = OperationNode::castToOperationNode(next);
-        array1 = assignment(operation_node->getFirstOperand().getNode());
-        array2 = assignment(operation_node->getSecondOperand().getNode());
-        if(array1.size() < array2.size())
+        if(nodes[i]->type() == OPERATION)
         {
-            tmp = array1;
-            array1 = array2;
-            array2 = tmp;
+            operations.push_back(OperationNode::castToOperationNode(nodes[i]));
+        }
+        else
+        {
+            inputs.push_back(InputNode::castToInputNode(nodes[i]));
         }
     }
+    for(i = 0; i < inputs.size(); i ++)
+    {
+        s = inputs[i]->getVariableName();
+        var.name = s;
+        var.ptr = inputs[i];
+        variables.push_back(var);
+        expression = expression + s + " = Input\n";
+    }
+    for(i = 0; i < operations.size(); i ++)
+    {
+        var.name = this->getVariableName(i);
+        var.ptr = operations[i];
+        variables.push_back(var);
+    }
+    for(i = 0; i < operations.size(); i ++)
+    {
+        if(operations.size() - 1 != i)
+        {
+            expression = expression + operations[i]->getOperationExpression(variables) + "\n";
+        }
+        else
+        {
+            expression = expression + operations[i]->getOperationExpression(variables);
+        }
+    }
+    return expression;
 }
 
 string MultiplicationTree::getVariableName(int n)
@@ -244,12 +169,12 @@ string MultiplicationTree::getVariableName(int n)
     s = c;
     do
     {
-        c = (char) (number % 10) + 47;
+        c = (char) (number % 10) + 48;
         s = s + c;
         number = number / 10;
     } while(number != 0);
     return s;
-}*/
+}
 
 /*****************************************************************************/
 /* Method that returns the cost in term of components for the multiplication.*/

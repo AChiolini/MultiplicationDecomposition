@@ -47,6 +47,21 @@ void InputNode::setLength(int length)
     this->length = length;
 }
 
+string InputNode::getVariableName()
+{
+    string s;
+
+    if(this->first_input == true)
+    {
+        s = "X";
+    }
+    else
+    {
+        s = "Y";
+    }
+    return s;
+}
+
 NodeType InputNode::type()
 {
     return INPUT;

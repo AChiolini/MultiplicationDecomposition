@@ -12,12 +12,6 @@ using namespace std;
 /* methods that provides information about the tree.                         */
 /*****************************************************************************/
 
-typedef struct
-{
-    Node *ptr;
-    string name;
-} Variable;
-
 class MultiplicationTree
 {
     private:
@@ -25,9 +19,8 @@ class MultiplicationTree
         int lengthY;
 	    shared_ptr<OperationNode> root;
         string description;
-        string expression(shared_ptr<Node>);
-        //vector<Variable> assignment(shared_ptr<Node>);
-        //string getVariableName(int);
+        vector<Variable> assignment(vector<Node*>);
+        string getVariableName(int);
 
     public:
         MultiplicationTree();

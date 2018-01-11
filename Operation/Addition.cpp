@@ -41,6 +41,18 @@ string Addition::costDescription()
     return "Addition(s)";
 }
 
+string Addition::getExpression(vector<string> operands_names)
+{
+    string s;
+
+    if(operands_names.size() != 2)
+    {
+        throw length_error ("Operands for addition must be 2");
+    }
+    s = operands_names[0] + " + " + operands_names[1];
+    return s;
+}
+
 int Addition::outputLength(vector<Link> operands)
 {
     int length1, length2;

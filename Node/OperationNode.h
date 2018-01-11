@@ -17,6 +17,12 @@ using namespace std;
  * some bits because the would not be used for some reason.
  */
 
+typedef struct
+{
+    Node *ptr;
+    string name;
+} Variable;
+
 class OperationNode : public Node
 {
     private:
@@ -43,7 +49,7 @@ class OperationNode : public Node
         void clearOperands();
         int size();
         Link getOperandAt(int);
-        int getCost();
+        string getOperationExpression(vector<Variable>);
         // Inherited methods
         NodeType type();
         double getLatency();

@@ -26,6 +26,7 @@ class Operation
         virtual double getLatency() = 0;
         virtual string description() = 0;
         virtual string costDescription() = 0;
+        virtual string getExpression(vector<string>) = 0;
         virtual int outputLength(vector<Link>) = 0;
         virtual long long executeOperation(vector<Link>, vector<long long>) = 0;
         virtual ~Operation() = default;

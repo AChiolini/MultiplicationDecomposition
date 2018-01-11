@@ -93,6 +93,57 @@ Link OperationNode::getOperandAt(int index)
     return this->operands[index];
 }
 
+string OperationNode::getOperationExpression(vector<Variable> variables)
+{
+    int i, this_position, pos, j;
+    bool found;
+    vector<string> operands_names;
+    string s;
+
+    this->checkValidity();
+    this_position = -1;
+    for(i = 0, found = false; i < variables.size() && found == false; i++)
+    {
+        if(variables[i].ptr == this)
+        {
+            found = true;
+            this_position = i;
+        }
+    }
+    if(this_position == -1)
+    {
+        throw runtime_error("Operation doesn't have a variable.");
+    }
+    for(i = 0; i < this->operands.size(); i++)
+    {
+        pos = -1;
+        for(j = 0, found = false; j < variables.size() && found == false; j++)
+        {
+            if(variables[j].ptr == operands[i].getNode().get())
+            {
+                found = true;
+                pos = j;
+            }
+        }
+        if(pos == -1)
+        {
+            throw runtime_error("Operands doesn't have a variable.");
+        }
+        else
+        {
+            s = variables[pos].name;
+            if(operands[i].entireLength() == false)
+            {
+                s = s + "[" + to_string(operands[i].getStart() + operands[i].getLength());
+                s = s + ":" + to_string(operands[i].getStart()) + "]";
+            }
+            operands_names.push_back(s);
+        }
+    }
+    s = variables[this_position].name + " = " + this->operation->getExpression(operands_names);
+    return s;
+}
+
 int OperationNode::size()
 {
     return this->operands.size();
@@ -129,7 +180,6 @@ vector<Node*> OperationNode::getNodes()
 
     this->checkValidity();
     n_operands = this->operands.size();
-    nodes.push_back(this);
     for(i = 0; i < n_operands; i++)
     {
         returned_nodes = this->operands[i].getNode()->getNodes();
@@ -140,6 +190,10 @@ vector<Node*> OperationNode::getNodes()
                 nodes.push_back(returned_nodes[j]);
             }
         }
+    }
+    if(find(nodes.begin(), nodes.end(), this) == nodes.end())
+    {
+        nodes.push_back(this);
     }
     return nodes;
 }

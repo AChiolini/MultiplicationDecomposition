@@ -48,6 +48,18 @@ string Multiplication::costDescription()
     return "Multiplication(s) with " + this->multiplication_unit->description();
 }
 
+string Multiplication::getExpression(vector<string> operands_names)
+{
+    string s;
+
+    if(operands_names.size() != 2)
+    {
+        throw length_error ("Operands for multiplication must be 2");
+    }
+    s = operands_names[0] + " x " + operands_names[1];
+    return s;
+}
+
 int Multiplication::outputLength(vector<Link> operands)
 {
     int length1, length2;

@@ -66,6 +66,18 @@ string Shift::costDescription()
     return "Shift(s)";
 }
 
+string Shift::getExpression(vector<string> operands_names)
+{
+    string s;
+
+    if(operands_names.size() != 1)
+    {
+        throw length_error ("Operand for shift must be 1");
+    }
+    s = operands_names[0] + "->" + to_string(this->shift);
+    return s;
+}
+
 int Shift::outputLength(vector<Link> operands)
 {
     int length1;

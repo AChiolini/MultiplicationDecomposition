@@ -66,6 +66,18 @@ string C2::costDescription()
     return "Two's complement(s)";
 }
 
+string C2::getExpression(vector<string> operands_names)
+{
+    string s;
+
+    if(operands_names.size() != 1)
+    {
+        throw length_error ("Operand for two's complement must be 1");
+    }
+    s = "-" + operands_names[0];
+    return s;
+}
+
 int C2::outputLength(vector<Link> operands)
 {
     int length1;

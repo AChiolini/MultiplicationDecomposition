@@ -3,6 +3,7 @@
 #include "StandardTiling.h"
 #include "../Node/InputNode.h"
 #include "../Operation/Multiplication.h"
+#include "../Operation/Shift.h"
 #include "../ArithmeticUnit/MultiplicationUnit/LUT/LUT.h"
 #include "../Operation/Addition.h"
 
@@ -82,8 +83,8 @@ MultiplicationTree StandardTiling::disposeSquareSquare(int x, int y, Multiplier 
     int i, j, dim, length_x, length_y;
     shared_ptr<InputNode> input1, input2;
     shared_ptr<MultiplicationUnit> multiplication_unit;
-    Link first_operand, second_operand;
-    shared_ptr<OperationNode> operation_node;
+    Link first_operand, second_operand, shifted_operand;
+    shared_ptr<OperationNode> operation_node, shift_node;
     vector <shared_ptr<OperationNode>> operation_nodes;
     
     input1 = make_shared<InputNode>(true, x);
@@ -122,6 +123,13 @@ MultiplicationTree StandardTiling::disposeSquareSquare(int x, int y, Multiplier 
             operation_node = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
             operation_node->insertOperandLast(first_operand);
             operation_node->insertOperandLast(second_operand);
+            if((i * dim) + (j * dim) > 0)
+            {
+                shifted_operand = Link(operation_node);
+                shift_node = make_shared<OperationNode>(make_shared<Shift>((i * dim) + (j * dim)));
+                shift_node->insertOperandLast(shifted_operand);
+                operation_node = shift_node;
+            }
             operation_nodes.push_back(operation_node);
         }
     }
