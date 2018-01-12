@@ -1,24 +1,23 @@
 #ifndef PROPOSEDTILING_H
 #define PROPOSEDTILING_H
 
-#include "Multiplication.h"
-#include "Multiplier.h"
-#include "MultiplicationTree.h"
-#include "ShiftNode.h"
+#include "Algorithm.h"
+#include "../Operation/Multiplication.h"
+#include "../ArithmeticUnit/MultiplicationUnit/Multiplier/Multiplier.h"
+#include "../MultiplicationTree/MultiplicationTree.h"
 #include <vector>
 
-class ProposedTiling : public Multiplication
+class ProposedTiling : public Algorithm
 {
     private:
         vector<Multiplier> multipliers;
-        MultiplicationTree disposeHorizontal(short, short, Multiplier);
-        MultiplicationTree disposeVertical(short, short, Multiplier);
-        shared_ptr<Node> makeShift(Link, Link, shared_ptr<OperationNode>);
-        //short checkExist (bool, short, short, vector<shared_ptr<InputNode>>);
+        MultiplicationTree disposeHorizontal(int, int, Multiplier);
+        MultiplicationTree disposeVertical(int, int, Multiplier);
+        shared_ptr<OperationNode> makeShift(Link, Link, shared_ptr<OperationNode>);
 
     public: 
         ProposedTiling(vector<Multiplier>);
-        vector<MultiplicationTree> dispositions(short, short);
+        vector<MultiplicationTree> dispositions(int, int);
         virtual ~ProposedTiling() = default;
 };
 
