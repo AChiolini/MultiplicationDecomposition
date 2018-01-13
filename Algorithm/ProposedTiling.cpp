@@ -5,6 +5,7 @@
 #include "../ArithmeticUnit/MultiplicationUnit/LUT/LUT.h"
 #include "../Operation/Addition.h"
 #include "../Operation/Shift.h"
+#include "../Operation/C2.h"
 
 using namespace std;
 
@@ -43,7 +44,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
     bool match;
     bool sub;
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
-    shared_ptr<OperationNode> operationNode, operationNodeShift;
+    shared_ptr<OperationNode> operationNode, operationNodeShift, negator;
     shared_ptr<InputNode> in1, in2;
     shared_ptr<MultiplicationUnit> multiplicationUnit, lut;
     Link firstOperand, secondOperand;
@@ -263,7 +264,10 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
                 {
                     if (i + 1 == operationNodes.size() - 1 && ((minh * min > max && minv * min < max) || (minh*min < max && minv * min > max)) && operationNodes.size() % 2 == 0 && sub == false)
                     {
-                        //TODO Subtraction
+                        //Subtraction
+                        negator = make_shared<OperationNode>(make_shared<C2>());
+                        negator->insertOperandLast(operationNodes[i+1]);
+                        operationNodes[i+1] = negator;
                         operationNode = make_shared<OperationNode>(make_shared<Addition>());
                         sub = true;
                     }
