@@ -266,15 +266,11 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
                     {
                         //Subtraction
                         negator = make_shared<OperationNode>(make_shared<C2>());
-                        negator->insertOperandLast(operationNodes[i+1]);
+                        negator->insertOperandLast(Link(operationNodes[i+1]));
                         operationNodes[i+1] = negator;
-                        operationNode = make_shared<OperationNode>(make_shared<Addition>());
                         sub = true;
                     }
-                    else
-                    {
-                        operationNode = make_shared<OperationNode>(make_shared<Addition>());
-                    }
+                    operationNode = make_shared<OperationNode>(make_shared<Addition>());
                     operationNode->insertOperandLast(Link(operationNodes[i]));
                     operationNode->insertOperandLast(Link(operationNodes[i+1]));
                     tmpArray.push_back(operationNode);
