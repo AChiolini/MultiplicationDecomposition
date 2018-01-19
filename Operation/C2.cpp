@@ -100,7 +100,8 @@ int C2::outputLength(vector<Link> operands)
 
 long long C2::executeOperation(vector<Link> operands, vector<long long> values)
 {
-    long long value1, copy1, mask1;
+    long long value1, copy1, mask1, sign_bit;
+    int lenght1;
 
     if(operands.size() != 1)
     {
@@ -124,8 +125,10 @@ long long C2::executeOperation(vector<Link> operands, vector<long long> values)
     // Checking sign extension
     if(operands[0].isSignIncluded() == true)
     {
-        copy1 &= 0x8000000000000000;
-        copy1 >>= 64 -(operands[0].getLength() + 1);
+        sign_bit = 1 << (operands[0].getLength() - 1);
+        copy1 &= sign_bit;
+        copy1 <<= 64 - operands[0].getLength();
+        copy1 >>= 64 - (operands[0].getLength() + 1);
         value1 |= copy1;
     }
     value1 = ~value1;

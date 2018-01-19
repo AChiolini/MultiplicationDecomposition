@@ -7,38 +7,18 @@ Multiplier::Multiplier()
 {
     this->input_length1 = 18;
     this->input_length2 = 18;
-    this->output_threshold = 24;
+    this->input_threshold1 = 6;
+    this->input_threshold2 = 6;
     this->latency = 1;
 }
 
-Multiplier::Multiplier(int input_length1, int input_length2, int output_threshold, double latency)
+Multiplier::Multiplier(int input_length1, int input_length2, int input_threshold1, int input_threshold2, double latency)
 {
-    //TO DO USARE SET PER EVITARE CODICE IDENTICO
-    if(input_length1 > 1 && input_length2 > 1)
-    {
-        this->input_length1 = input_length1;
-        this->input_length2 = input_length2;
-    }
-    else
-    {
-        throw invalid_argument ("Error creating multiplier: input length must be greater than 1");
-    }
-    if(output_threshold > 1)
-    {
-        this->output_threshold = output_threshold;
-    }
-    else
-    {
-        throw invalid_argument ("Error creating multiplier: output threshold must be greater than 1");
-    }
-    if(latency >= 0)
-    {
-        this->latency = latency;
-    }
-    else
-    {
-        throw invalid_argument ("Error creating multiplier: latency must be greater or equal to 0");
-    }
+    setInputLenght1(input_length1);
+    setInputLenght2(input_length2);
+    setInputThreshold1(input_threshold1);
+    setInputThreshold2(input_threshold2);
+    setLatency(latency);
 }
 
 int Multiplier::getInputLength1()
@@ -51,9 +31,14 @@ int Multiplier::getInputLength2()
     return this->input_length2;
 }
 
-int Multiplier::getOutputThreshold()
+int Multiplier::getInputThreshold1()
 {
-    return this->output_threshold;
+    return this->input_threshold1;
+}
+
+int Multiplier::getInputThreshold2()
+{
+    return this->input_threshold2;
 }
 
 double Multiplier::getLatency()
@@ -63,7 +48,7 @@ double Multiplier::getLatency()
 
 void Multiplier::setInputLenght1(int input_length1)
 {
-    if(input_length1 > 0)
+    if(input_length1 > 1)
     {
         this->input_length1 = input_length1;
     }
@@ -75,7 +60,7 @@ void Multiplier::setInputLenght1(int input_length1)
 
 void Multiplier::setInputLenght2(int input_length2)
 {
-    if(input_length2 > 0)
+    if(input_length2 > 1)
     {
         this->input_length2 = input_length2;
     }
@@ -85,15 +70,27 @@ void Multiplier::setInputLenght2(int input_length2)
     }
 }
 
-void Multiplier::setOutputThreshold(int output_threshold)
+void Multiplier::setInputThreshold1(int input_threshold1)
 {
-    if(output_threshold > 0)
+    if(input_threshold1 >= 0)
     {
-        this->output_threshold = output_threshold;
+        this->input_threshold1 = input_threshold1;
     }
     else
     {
-        throw invalid_argument ("Error creating multiplier: output threshold must be greater than 1");
+        throw invalid_argument ("Error creating multiplier: input threshold must be positive");
+    }
+}
+
+void Multiplier::setInputThreshold2(int input_threshold2)
+{
+    if(input_threshold2 >= 0)
+    {
+        this->input_threshold2 = input_threshold2;
+    }
+    else
+    {
+        throw invalid_argument ("Error creating multiplier: input threshold must be positive");
     }
 }
 
@@ -105,7 +102,7 @@ void Multiplier::setLatency(double latency)
     }
     else
     {
-        throw invalid_argument ("Error creating multiplier: latency must be greater or equal to 0");
+        throw invalid_argument ("Error creating multiplier: latency must be positive");
     }
 }
 

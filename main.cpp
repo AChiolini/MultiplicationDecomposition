@@ -16,7 +16,7 @@ int main (int argc, char** argv)
 {
     int i, j, delay, input1, input2, output_threshold;
     long long in1, in2;
-    int inputLength1, inputLength2;
+    int inputLength1, inputLength2, inpu1_threshold, input2_threshold;
     MultiplicationTree *ptr;
     vector <Multiplier> multipliers;
     vector <Algorithm*> algorithms;
@@ -30,11 +30,11 @@ int main (int argc, char** argv)
         inputLength1 = atoi(argv[1]);
         inputLength2 = atoi(argv[2]);
         //Creating multipliers
-        while (infile >> input1 >> input2 >> output_threshold >> delay)
+        while (infile >> input1 >> input2 >> inpu1_threshold >> input2_threshold >> delay)
         {	
             try
             {
-                multipliers.push_back(Multiplier (input1, input2, output_threshold, delay));		
+                multipliers.push_back(Multiplier (input1, input2, inpu1_threshold, input2_threshold, delay));
             }
             catch (const invalid_argument& e)
             {

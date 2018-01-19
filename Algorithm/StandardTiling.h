@@ -1,10 +1,11 @@
 #ifndef STANDARDTILING_H
 #define STANDARDTILING_H
 
+#include <vector>
 #include "Algorithm.h"
 #include "../MultiplicationTree/MultiplicationTree.h"
+#include "../Node/InputNode.h"
 #include "../ArithmeticUnit/MultiplicationUnit/Multiplier/Multiplier.h"
-#include <vector>
 
 class StandardTiling : public Algorithm
 {
@@ -14,8 +15,9 @@ class StandardTiling : public Algorithm
         MultiplicationTree disposeSquareSquare(int, int, Multiplier);
         MultiplicationTree disposeRectangleSquare(int, int, Multiplier);
         MultiplicationTree disposeRectangleRectangle(int, int, Multiplier);
-        MultiplicationTree createTree(vector <shared_ptr<OperationNode>>, string, int, int);
-        //short checkExist (bool, short, short, vector<shared_ptr<InputNode>>);
+        shared_ptr<OperationNode> createTree(vector <shared_ptr<OperationNode>>);
+        bool isLUTMapped(int, int, Multiplier);
+        shared_ptr<OperationNode> addSignedOperation(shared_ptr<OperationNode>, int, int, shared_ptr<InputNode>, shared_ptr<InputNode>);
 
     public: 
         StandardTiling(vector<Multiplier>);

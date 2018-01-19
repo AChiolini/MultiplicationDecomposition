@@ -134,7 +134,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
                 {
                     firstOperand = Link(in1, min, x - min, false);
                     secondOperand = Link(in2, minv * min, y - (minv * min), false);
-                    if(firstOperand.getLength() + secondOperand.getLength() <= multiplier.getOutputThreshold())
+                    if(isLUTMapped(firstOperand.getLength(), secondOperand.getLength(), multiplier) == true)
                     {
                         lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -239,7 +239,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
                         secondOperand = Link(in2, min, max - min, false);
                     }
 
-                    if(firstOperand.getLength() + secondOperand.getLength() <= multiplier.getOutputThreshold())
+                    if(isLUTMapped(firstOperand.getLength(), secondOperand.getLength(), multiplier) == true)
                     {
                         lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -371,7 +371,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
 
                     firstOperand = Link(in1, min, x - min, false);
                     secondOperand = Link(in2, min, y - min, false);
-                    if(firstOperand.getLength() + secondOperand.getLength() <= multiplier.getOutputThreshold())
+                    if(isLUTMapped(firstOperand.getLength(), secondOperand.getLength(), multiplier) == true)
                     {
                         lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -423,7 +423,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     //Controllo che la parte non coperta sia una LUT
                     firstOperand = Link(in1, 0, x - min, false);
                     secondOperand = Link(in2, 0, i * max, false);
-                    if(firstOperand.getLength() + secondOperand.getLength() <= multiplier.getOutputThreshold())
+                    if(isLUTMapped(firstOperand.getLength(), secondOperand.getLength(), multiplier) == true)
                     {
                         lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -500,7 +500,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     //Verifico che la parte rimanente sia mappabile su una LUT
                     firstOperand = Link(in1, min, maxh * max - min, false);
                     secondOperand = Link(in2, min, (maxv * max) - min, false);
-                    if(firstOperand.getLength() + secondOperand.getLength() <= multiplier.getOutputThreshold())
+                    if(isLUTMapped(firstOperand.getLength(), secondOperand.getLength(), multiplier) == true)
                     {
                         lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -560,4 +560,40 @@ shared_ptr<OperationNode> ProposedTiling::makeShift(Link firstOperand, Link seco
     {
         return operationNode;
     }
+}
+
+bool ProposedTiling::isLUTMapped(int x, int y, Multiplier multiplier)
+{
+    int min_input, max_input, min_threshold, max_threshold;
+    bool result;
+
+    if(multiplier.getInputThreshold1() > multiplier.getInputThreshold2())
+    {
+        min_threshold = multiplier.getInputThreshold2();
+        max_threshold = multiplier.getInputThreshold1();
+    }
+    else
+    {
+        min_threshold = multiplier.getInputThreshold1();
+        max_threshold = multiplier.getInputThreshold2();
+    }
+    if(x > y)
+    {
+        min_input = y;
+        max_input = x;
+    }
+    else
+    {
+        min_input = x;
+        max_input = y;
+    }
+    if(min_input < min_threshold || max_input < max_threshold)
+    {
+        result = true;
+    }
+    else
+    {
+        result = false;
+    }
+    return result;
 }

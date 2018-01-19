@@ -83,7 +83,7 @@ int Multiplication::outputLength(vector<Link> operands)
 
 long long Multiplication::executeOperation(vector<Link> operands, vector<long long> values)
 {
-    long long value1, value2, copy1, copy2, mask1, mask2;
+    long long value1, value2, copy1, copy2, mask1, mask2, sign_bit;
 
     if(operands.size() != 2)
     {
@@ -114,14 +114,18 @@ long long Multiplication::executeOperation(vector<Link> operands, vector<long lo
     // Checking sign extension
     if(operands[0].isSignIncluded() == true)
     {
-        copy1 &= 0x8000000000000000;
-        copy1 >>= 64 -(operands[0].getLength() + 1);
+        sign_bit = 1 << (operands[0].getLength() - 1);
+        copy1 &= sign_bit;
+        copy1 <<= 64 - operands[0].getLength();
+        copy1 >>= 64 - (operands[0].getLength() + 1);
         value1 |= copy1;
     }
     if(operands[1].isSignIncluded() == true)
     {
-        copy2 &= 0x8000000000000000;
-        copy2 >>= 64 -(operands[1].getLength() + 1);
+        sign_bit = 1 << (operands[1].getLength() - 1);
+        copy2 &= sign_bit;
+        copy2 <<= 64 - operands[1].getLength();
+        copy2 >>= 64 - (operands[1].getLength() + 1);
         value2 |= copy2;
     }
     return value1 * value2;

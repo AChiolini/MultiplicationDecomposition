@@ -10,20 +10,23 @@ class Multiplier : public MultiplicationUnit
     private:
         int input_length1;
         int input_length2;
-        int output_threshold;
+        int input_threshold1;
+        int input_threshold2;
         int latency;
 
     public:
         Multiplier();
         Multiplier(const Multiplier&) = default;
-        Multiplier(int, int, int, double);
+        Multiplier(int, int, int, int, double);
         int getInputLength1();
         int getInputLength2();
-        int getOutputThreshold();
+        int getInputThreshold1();
+        int getInputThreshold2();
         double getLatency();
         void setInputLenght1(int);
         void setInputLenght2(int);
-        void setOutputThreshold(int);
+        void setInputThreshold1(int);
+        void setInputThreshold2(int);
         void setLatency(double);
         string description();
         virtual ~Multiplier() = default;

@@ -135,7 +135,7 @@ string OperationNode::getOperationExpression(vector<Variable> variables)
             if(operands[i].entireLength() == false)
             {
                 s = s + "[" + to_string(operands[i].getStart());
-                s = s + ":" + to_string(operands[i].getStart() + operands[i].getLength()) + "]";
+                s = s + ":" + to_string(operands[i].getStart() + operands[i].getLength() - 1) + "]";
             }
             operands_names.push_back(s);
         }
