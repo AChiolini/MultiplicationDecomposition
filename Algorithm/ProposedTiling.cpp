@@ -1,11 +1,13 @@
 #include <iostream>
 #include <math.h>
 #include "ProposedTiling.h"
-#include "../Node/InputNode.h"
 #include "../ArithmeticUnit/MultiplicationUnit/LUT/LUT.h"
 #include "../Operation/Addition.h"
 #include "../Operation/Shift.h"
 #include "../Operation/C2.h"
+#include "../Operation/And.h"
+#include "../Operation/Or.h"
+#include "../Operation/Fanout.h"
 
 using namespace std;
 
@@ -44,8 +46,8 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
     bool match;
     bool sub;
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
-    shared_ptr<OperationNode> operationNode, operationNodeShift, negator;
-    shared_ptr<InputNode> in1, in2;
+    shared_ptr<OperationNode> operationNode, operationNodeShift, negator, root;
+    shared_ptr<InputNode> in1, in2, in1WSign, in2WSign;
     shared_ptr<MultiplicationUnit> multiplicationUnit, lut;
     Link firstOperand, secondOperand;
     Multiplication *tmp;
@@ -56,8 +58,6 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
     j = 0;
     minv = 0;
     minh = 0;
-    x--;
-    y--;
     match = false;
     sub = false;
     multiplicationUnit = make_shared<Multiplier>(multiplier);
@@ -77,21 +77,35 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
             min = dim1;
         }
 
-        in1 = make_shared<InputNode>(true, x);
-        in2 = make_shared<InputNode>(false, y);
+        in1WSign = make_shared<InputNode>(true, x);
+        in2WSign = make_shared<InputNode>(false, y);
 
-        if((min >= x && max >= y) || (max >= x && min >= y))
+        if (isLUTMapped(x, y, multiplier) == true)
         {
-            firstOperand = Link(in1, 0, x, false);
-            secondOperand = Link(in2, 0, y, false);
+            firstOperand = Link(in1WSign, 0, x, true);
+            secondOperand = Link(in2WSign, 0, y, true);
+            multiplicationUnit = make_shared<LUT>(x, y);
+            operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
+            operationNode->insertOperandLast(firstOperand);
+            operationNode->insertOperandLast(secondOperand);
+            return MultiplicationTree(operationNode, "LUT multiplication (Proposed tiling disposition)", x, y);
+        }
+        else if((min >= x && max >= y) || (max >= x && min >= y))
+        {
+            firstOperand = Link(in1WSign, 0, x, true);
+            secondOperand = Link(in2WSign, 0, y, true);
             operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
             operationNode->insertOperandLast(firstOperand);
             operationNode->insertOperandLast(secondOperand);
             operationNodes.push_back(operationNode);
-            match = true;
+            return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x++, y++);
         }
-        if (match == false)
+        else //if (match == false)
         {
+            x--;
+            y--;
+            in1 = make_shared<InputNode>(true, x);
+            in2 = make_shared<InputNode>(false, y);
             //Parto dall'orizzontale e creo l'array
             if(max < y) 
             {
@@ -283,8 +297,8 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
             operationNodes.swap(tmpArray);
             tmpArray.clear();
         }
-        
-        return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ") orizzontale", (int) x + 1, (int) y + 1);
+        root = addSignedOperation(operationNodes[0], x + 1, y + 1, in1WSign, in2WSign);
+        return MultiplicationTree(root, "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ") orizzontale", (int) x + 1, (int) y + 1);
     }
     else    
         return MultiplicationTree();
@@ -301,8 +315,8 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
     int i, j, maxv, maxh, a, b;
     bool sub;
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
-    shared_ptr<OperationNode> operationNode, operationNodeShift;
-    shared_ptr<InputNode> in1, in2;
+    shared_ptr<OperationNode> operationNode, operationNodeShift, root;
+    shared_ptr<InputNode> in1, in2, in1WSign, in2WSign;
     shared_ptr<MultiplicationUnit> multiplicationUnit, lut;
     Link firstOperand, secondOperand;
     Multiplication *tmp;
@@ -313,6 +327,10 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
     j = 0;
     maxv = 0;
     maxh = 0;
+
+    in1WSign = make_shared<InputNode>(true, x);
+    in2WSign = make_shared<InputNode>(false, y);
+
     x--;
     y--;
     multiplicationUnit = make_shared<Multiplier>(multiplier);
@@ -537,8 +555,8 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                 operationNodes.swap(tmpArray);
                 tmpArray.clear();
             }
-            
-            return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ") verticale", (int) x + 1, (int) y + 1);
+            root = addSignedOperation(operationNodes[0], x + 1, y + 1, in1WSign, in2WSign);
+            return MultiplicationTree(root, "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ") verticale", (int) x + 1, (int) y + 1);
         }
         else
             return MultiplicationTree();
@@ -596,4 +614,73 @@ bool ProposedTiling::isLUTMapped(int x, int y, Multiplier multiplier)
         result = false;
     }
     return result;
+}
+
+shared_ptr<OperationNode> ProposedTiling::addSignedOperation(shared_ptr<OperationNode> root, int x, int y, shared_ptr<InputNode> input1, shared_ptr<InputNode> input2)
+{
+    shared_ptr<OperationNode> operation1, operation2, operation3;
+    Link operand1, operand2;
+
+    // First of all the positive part
+    // If the sign of x and y is 1, then i have a 1 in the (lengthX + lengthY - 2) position
+    operation1 = make_shared<OperationNode>(make_shared<And>());
+    operand1 = Link(input1, x - 1, 1);
+    operand2 = Link(input2, y - 1, 1);
+    operation1->insertOperandLast(operand1);
+    operation1->insertOperandLast(operand2);
+    operation2 = make_shared<OperationNode>(make_shared<Shift>(x + y - 2), x + y);
+    operand1 = Link(operation1);
+    operand1.setSignIncluded(false);
+    operation2->insertOperandLast(operand1);
+    // Then the negative part: sign of x must be fanouted by length y and then anded with y. Finally shifted of length of x and then complemented.
+    operation1 = make_shared<OperationNode>(make_shared<Fanout>(y - 1));
+    operand1 = Link(input1, x - 1, 1);
+    operation1->insertOperandLast(operand1);
+    operation3 = make_shared<OperationNode>(make_shared<And>());
+    operand1 = Link(operation1);
+    operand2 = Link(input2, 0, y - 1, false);
+    operation3->insertOperandLast(operand1);
+    operation3->insertOperandLast(operand2);
+    operation1 = make_shared<OperationNode>(make_shared<Shift>(x - 1));
+    operand1 = Link(operation3);
+    operand1.setSignIncluded(false);
+    operation1->insertOperandLast(operand1);
+    operation3 = make_shared<OperationNode>(make_shared<C2>());
+    operand1 = Link(operation1);
+    operation3->insertOperandLast(operand1);
+    // This is summed with the positive part
+    operation1 = make_shared<OperationNode>(make_shared<Addition>());
+    operand1 = Link(operation2);
+    operand2 = Link(operation3);
+    operation1->insertOperandLast(operand1);
+    operation1->insertOperandLast(operand2);
+    // The last negative part is made by the past negative part with x and y inverted
+    operation2 = make_shared<OperationNode>(make_shared<Fanout>(x - 1));
+    operand1 = Link(input2, y - 1, 1);
+    operation2->insertOperandLast(operand1);
+    operation3 = make_shared<OperationNode>(make_shared<And>());
+    operand1 = Link(operation2);
+    operand2 = Link(input1, 0, x - 1, false);
+    operation3->insertOperandLast(operand1);
+    operation3->insertOperandLast(operand2);
+    operation2 = make_shared<OperationNode>(make_shared<Shift>(y - 1));
+    operand1 = Link(operation3);
+    operand1.setSignIncluded(false);
+    operation2->insertOperandLast(operand1);
+    operation3 = make_shared<OperationNode>(make_shared<C2>());
+    operand1 = Link(operation2);
+    operation3->insertOperandLast(operand1);
+    // This part is summed to the past part
+    operation2 = make_shared<OperationNode>(make_shared<Addition>());
+    operand1 = Link(operation1);
+    operand2 = Link(operation3);
+    operation2->insertOperandLast(operand1);
+    operation2->insertOperandLast(operand2);
+    // Finally summed with root
+    operation1 = make_shared<OperationNode>(make_shared<Addition>());
+    operand1 = Link(root);
+    operand2 = Link(operation2);
+    operation1->insertOperandLast(operand1);
+    operation1->insertOperandLast(operand2);
+    return operation1;
 }
