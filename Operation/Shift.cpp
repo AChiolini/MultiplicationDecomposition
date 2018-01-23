@@ -1,10 +1,6 @@
 #include <stdexcept>
 #include "Shift.h"
 
-
-#include <iostream>
-#include <bitset>
-
 Shift::Shift()
 {
     this->shift = 0;
@@ -101,6 +97,7 @@ int Shift::outputLength(vector<Link> operands)
 long long Shift::executeOperation(vector<Link> operands, vector<long long> values)
 {
     long long value1, copy1, mask1, sign_bit;
+    int shift_value;
 
     if(operands.size() != 1)
     {
@@ -124,7 +121,9 @@ long long Shift::executeOperation(vector<Link> operands, vector<long long> value
     // Checking sign extension
     if(operands[0].isSignIncluded() == true)
     {
-        sign_bit = 1 << (operands[0].getLength() - 1);
+    	shift_value = (operands[0].getLength() - 1);
+    	sign_bit = 1;
+    	sign_bit <<= shift_value;
         copy1 &= sign_bit;
         copy1 <<= 64 - operands[0].getLength();
         copy1 >>= 64 - (operands[0].getLength() + 1);
