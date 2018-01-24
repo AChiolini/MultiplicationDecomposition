@@ -81,22 +81,15 @@ MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
     // more code but simple and modifiable in an easy way.
     if(multiplier.getInputLength1() == multiplier.getInputLength2())
     {
-        return disposeSquareSquare(x, y, multiplier);
+        return disposeSquare(x, y, multiplier);
     }
     else
     {
-        if(x == y)
-        {
-            return disposeRectangleSquare(x, y, multiplier);
-        }
-        else
-        {
-            return disposeRectangleRectangle(x, y, multiplier);
-        }
+        return disposeRectangle(x, y, multiplier);
     }
 }
 
-MultiplicationTree StandardTiling::disposeSquareSquare(int x, int y, Multiplier multiplier)
+MultiplicationTree StandardTiling::disposeSquare(int x, int y, Multiplier multiplier)
 {
     int i, j, dim, length_x, length_y;
     shared_ptr<InputNode> input1, input2;
@@ -156,16 +149,175 @@ MultiplicationTree StandardTiling::disposeSquareSquare(int x, int y, Multiplier 
     return MultiplicationTree(root, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
 }
 
-MultiplicationTree StandardTiling::disposeRectangleSquare(int x, int y, Multiplier multiplier)
+MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier multiplier)
 {
-    // TO DO
-    return MultiplicationTree();
-}
+    int min_dim, max_dim, nmax, nmin, nbit, nmax2, nmin2, nbit2, i, j, axe_length, length_x, length_y;
+    shared_ptr<InputNode> input1, input2;
+    bool inverted;
+    shared_ptr<MultiplicationUnit> multiplication_unit;
+    Link first_operand, second_operand, shifted_operand;
+    shared_ptr<OperationNode> operation_node, shift_node, root;
+    vector <shared_ptr<OperationNode>> operation_nodes;
 
-MultiplicationTree StandardTiling::disposeRectangleRectangle(int x, int y, Multiplier multiplier)
-{
-    // TO DO
-    return MultiplicationTree();
+    x--;
+    y--;
+    input1 = make_shared<InputNode>(true, x);
+    input2 = make_shared<InputNode>(false, y);
+    if(multiplier.getInputLength1() > multiplier.getInputLength2())
+    {
+        max_dim = multiplier.getInputLength1();
+        min_dim = multiplier.getInputLength2();
+    }
+    else
+    {
+        min_dim = multiplier.getInputLength1();
+        max_dim = multiplier.getInputLength2();
+    }
+    nbit = disposeOnAxe(&nmax, &nmin, x, multiplier);
+    if(x != y)
+    {
+        nbit2 = disposeOnAxe(&nmax2, &nmin2, y, multiplier);
+        inverted = false;
+        if(nbit > 0)
+        {
+            if(nbit2 == 0 || nbit2 < nbit)
+            {
+                inverted = true;
+                nmax = nmax2;
+                nmin = nmin2;
+            }
+        }
+        else if(nbit < 0)
+        {
+            if(nbit2 >= 0 || nbit2 > nbit)
+            {
+                inverted = true;
+                nmax = nmax2;
+                nmin = nmin2;
+            }
+        }
+    }
+    if(inverted == true)
+    {
+        std::cout << "Inverted" << endl;
+    }
+    std::cout << "nmax = " << nmax << endl;
+    std::cout << "nmin = " << nmin << endl;
+    // Disposing the multiplications. I know how many multiplier and in which way they are disposed along an axe.
+    // Filling the other axe with the same multiplier in the same disposition.
+    if(inverted == true)
+    {
+        axe_length = x;
+    }
+    else
+    {
+        axe_length = y;
+    }
+    for(i = 0; i < nmax; i++)
+    {
+        if(i == nmax - 1 && nmin == 0)
+        {
+            length_x = max_dim;
+        }
+        else
+        {
+            length_x = axe_length - (max_dim * i);
+        }
+        for(j = 0; j * min_dim < axe_length; j++)
+        {
+            if((j + 1) * min_dim > axe_length)
+            {
+                length_y = min_dim - ((j + 1) * min_dim) + axe_length;
+            }
+            else
+            {
+                length_y = min_dim;
+            }
+            if(inverted == true)
+            {
+                second_operand = Link(input2, i * max_dim, length_x, false);
+                first_operand = Link(input1, j * min_dim, length_y, false);
+            }
+            else
+            {
+                first_operand = Link(input1, i * max_dim, length_x, false);
+                second_operand = Link(input2, j * min_dim, length_y, false);
+            }
+            if(isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            {
+                multiplication_unit = make_shared<LUT>(length_x + 1, length_y + 1);
+            }
+            else
+            {
+                multiplication_unit = make_shared<Multiplier>(multiplier);
+            }
+            operation_node = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
+            operation_node->insertOperandLast(first_operand);
+            operation_node->insertOperandLast(second_operand);
+            if((i * max_dim) + (j * min_dim) > 0)
+            {
+                shifted_operand = Link(operation_node);
+                shift_node = make_shared<OperationNode>(make_shared<Shift>((i * max_dim) + (j * min_dim)));
+                shift_node->insertOperandLast(shifted_operand);
+                operation_node = shift_node;
+            }
+            operation_nodes.push_back(operation_node);
+        }
+    }
+    for(i = 0; i < nmin; i++)
+    {
+        if(i == nmin - 1)
+        {
+            length_x = min_dim;
+        }
+        else
+        {
+            length_x = axe_length - (min_dim * i);
+        }
+        for(j = 0; j * max_dim < axe_length; j++)
+        {
+            if((j + 1) * max_dim > axe_length)
+            {
+                length_y = max_dim - ((j + 1) * max_dim) + axe_length;
+            }
+            else
+            {
+                length_y = max_dim;
+            }
+            if(inverted == true)
+            {
+                second_operand = Link(input2, i * min_dim, length_x, false);
+                first_operand = Link(input1, j * max_dim, length_y, false);
+            }
+            else
+            {
+                first_operand = Link(input1, i * min_dim, length_x, false);
+                second_operand = Link(input2, j * max_dim, length_y, false);
+            }
+            if(isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            {
+                multiplication_unit = make_shared<LUT>(length_x + 1, length_y + 1);
+            }
+            else
+            {
+                multiplication_unit = make_shared<Multiplier>(multiplier);
+            }
+            operation_node = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
+            operation_node->insertOperandLast(first_operand);
+            operation_node->insertOperandLast(second_operand);
+            if((nmax * max_dim) + (i * min_dim) + (j * max_dim) > 0)
+            {
+                shifted_operand = Link(operation_node);
+                shift_node = make_shared<OperationNode>(make_shared<Shift>((nmax * max_dim) + (i * min_dim) + (j * max_dim)));
+                shift_node->insertOperandLast(shifted_operand);
+                operation_node = shift_node;
+            }
+            operation_nodes.push_back(operation_node);
+        }
+    }
+    root = createTree(operation_nodes);
+    root = addSignedOperation(root, x, y, input1, input2);
+    return MultiplicationTree(root, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
 }
 
 shared_ptr<OperationNode> StandardTiling::createTree(vector <shared_ptr<OperationNode>> operation_nodes)
@@ -197,42 +349,6 @@ shared_ptr<OperationNode> StandardTiling::createTree(vector <shared_ptr<Operatio
         tmp_array.clear();
     }
     return operation_nodes[0];
-}
-
-bool StandardTiling::isLUTMapped(int x, int y, Multiplier multiplier)
-{
-    int min_input, max_input, min_threshold, max_threshold;
-    bool result;
-
-    if(multiplier.getInputThreshold1() > multiplier.getInputThreshold2())
-    {
-        min_threshold = multiplier.getInputThreshold2();
-        max_threshold = multiplier.getInputThreshold1();
-    }
-    else
-    {
-        min_threshold = multiplier.getInputThreshold1();
-        max_threshold = multiplier.getInputThreshold2();
-    }
-    if(x > y)
-    {
-        min_input = y;
-        max_input = x;
-    }
-    else
-    {
-        min_input = x;
-        max_input = y;
-    }
-    if(min_input < min_threshold || max_input < max_threshold)
-    {
-        result = true;
-    }
-    else
-    {
-        result = false;
-    }
-    return result;
 }
 
 shared_ptr<OperationNode> StandardTiling::addSignedOperation(shared_ptr<OperationNode> root, int x, int y, shared_ptr<InputNode> input1, shared_ptr<InputNode> input2)
@@ -304,371 +420,144 @@ shared_ptr<OperationNode> StandardTiling::addSignedOperation(shared_ptr<Operatio
     return operation1;
 }
 
-/*    short dim1; 
-    short dim2;
-    short max;
-    short min;
-    short index1, index2;
-    int nmaxv, nminv, countv, nmaxh, nminh, counth, i, j, k, n, nmaxtmp, lX, lY;
-    int w;
-    bool match;
-    vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
-    vector<shared_ptr<InputNode>> inputNodes;
-    shared_ptr<OperationNode> operationNode, operationNode2;
-    shared_ptr<InputNode> in1, in2;
+bool StandardTiling::isLUTMapped(int x, int y, Multiplier multiplier)
+{
+    int min_input, max_input, min_threshold, max_threshold;
+    bool result;
 
-    dim1 = multiplier.getInputLength1() - 1;
-    dim2 = multiplier.getInputLength2() - 1;
-    match = false;
-    x--;
-    y--;
-    //Occorre controllare se la moltiplicazione è abbastanza grande per un moltiplicatore (SOGLIE)
-    if (dim1 > dim2)
+    if(multiplier.getInputThreshold1() > multiplier.getInputThreshold2())
     {
-        max = dim1;
-        min = dim2;
+        min_threshold = multiplier.getInputThreshold2();
+        max_threshold = multiplier.getInputThreshold1();
     }
     else
     {
-        max = dim2;
-        min = dim1;
-    }	
-    if (max == min)
+        min_threshold = multiplier.getInputThreshold1();
+        max_threshold = multiplier.getInputThreshold2();
+    }
+    if(x > y)
     {
-        //se il moltiplicatore è un quadrato mappo tutto fino a che non copro tutta la moltiplicazione
-        for (i = 0; i * max < x; i++)
-        {
-            if ((i + 1) * max > x)
-            {
-                lX = max - ((i + 1) * max) + x;
-            }			
-            else
-            {
-                lX = max;
-            }
-            for (j = 0; j * max < y; j++)
-            {
-                if ((j + 1) * max > y)
-                {		
-                    lY = max - ((j + 1) * max) + y;
-                }
-                else
-                {
-                    lY = max;
-                }
-                index1 = checkExist(true, ((short) (i * max)), (short) lX, inputNodes);
-                if(index1 == -1)
-                {
-                    in1 = make_shared<InputNode>(true, ((short) (i * max)), (short) lX);
-                    inputNodes.push_back(in1);
-                }
-                else
-                {
-                    in1 = inputNodes[index1];
-                }
-                index2 = checkExist(false, ((short) (j * max)), (short) lY, inputNodes);
-                if(index2 == -1)
-                {
-                in2 = make_shared<InputNode>(false, ((short) (j * max)), (short) lY);
-                inputNodes.push_back(in2);
-                }
-                else
-                {
-                    in2 = inputNodes[index2];
-                }
-                operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-                operationNode->setLeftChild(in1);
-                operationNode->setRightChild(in2);
-                if (in1->getStart() + in2->getStart() > 0)
-		        {
-                    operationNode2 = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-                    operationNode2->setLeftChild(operationNode);
-                    operationNodes.push_back(operationNode2);
-                }
-                else
-                {
-                    operationNodes.push_back(operationNode);
-                }
-            }
-        }
+        min_input = y;
+        max_input = x;
     }
     else
     {
-        if (x != y)
-        {
-            //se la moltiplicazione ha due ingressi di lunghezza diversa controllo prima se posso matchare la verticale
-            for (countv = 0, nmaxv = 0; countv < y; countv = countv + max, nmaxv++);
-            do
-            {
-                nmaxv--;
-                for (countv = nmaxv * max, nminv = 0; countv < y;  countv = countv + min, nminv++);
-                if (countv == y)
-		        {
-                    match = true;
-                }
-            } while (match == false && nmaxv > 0);
-        }
-        if (match == false)
-        {
-            //se non posso mappo l'orizzontale
-            for (counth = 0, nmaxh = 0; counth < x; counth = counth + max, nmaxh++);
-            nmaxtmp = nmaxh;
-            do
-            {
-                nmaxh--;
-                for (counth = nmaxh * max, nminh = 0; counth < x;  counth = counth + min, nminh++);
-                if (counth == x)
-                {
-                    match = true;
-                }
-            } while (match == false && nmaxh > 0);
-            if (match == false)
-            {
-                nmaxh = nmaxtmp;
-                nminh = 0;
-            }
-            for (i = 0; i < nmaxh; i++)
-            {
-                if ((i + 1) * max > x)
-                {
-                    lX = max - ((i + 1) * max) + x;
-                }
-                else
-                {
-                    lX = max;
-                }
-                for (j = 0; j * min < y; j++)
-                {
-                    if ((j + 1) * min > y)
-                    {
-                        lY = min - ((j + 1) * min) + y;
-                    }
-                    else
-                    {
-                        lY = min;
-                    }
-                    index1 = checkExist(true, ((short) (i * max)), (short) lX, inputNodes);
-                    if (index1 == -1)
-                    {
-                    in1 = make_shared<InputNode>(true, ((short) (i * max)), (short) lX);
-                    inputNodes.push_back(in1);
-                    }
-                    else
-                    {
-                        in1 = inputNodes[index1];
-                    }
-                    index2 = checkExist(false, ((short) (j * max)), (short) lY, inputNodes);
-                    if (index2 == -1)
-                    {
-                    in2 = make_shared<InputNode>(false, ((short) (j * max)), (short) lY);
-                    inputNodes.push_back(in2);
-                    }
-                    else
-                    {
-                        in2 = inputNodes[index2];
-                    }
-                    operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-                    operationNode->setLeftChild(in1);
-                    operationNode->setRightChild(in2);
-                    if (in1->getStart() + in2->getStart() > 0)
-		            {
-                        operationNode2 = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-                        operationNode2->setLeftChild(operationNode);
-                        operationNodes.push_back(operationNode2);
-                    }
-                    else
-                    {
-                        operationNodes.push_back(operationNode);
-                    }
-                }
-            }
-            for (k = 0; k < nminh; k++)
-            {
-                if ((i * max) + ((k + 1) * min) > x)
-                {
-                    lX = min - ((i * max) + ((k + 1) * min)) + x;
-                }
-                else
-                {
-                    lX = min;
-                }
-                for (j = 0; j * max < y; j++)
-                {
-                    if ((j + 1) * max > y)
-                    {
-                        lY = max - ((j + 1) * max) + y;
-                    }
-                    else
-                    {
-                        lY = max;
-                    }
-			//NOTA BENE
-			//NOTA BENE
-			//NOTA BENE
-            //Creare una funzione per questa parte in modo da semplificare il codice
-                    index1 = checkExist(true, ((short) ((i * max) + (k * min))), (short) lX, inputNodes);
-                    if (index1 == -1)
-                    {
-                    in1 = make_shared<InputNode>(true, ((short) ((i * max) + (k * min))), (short) lX);
-                    inputNodes.push_back(in1);
-                    }
-                    else
-                    {
-                        in1 = inputNodes[index1];
-                    }
-                    index2 = checkExist(false, ((short) (j * max)), (short) lY, inputNodes);
-                    if (index2 == -1)
-                    {
-                    in2 = make_shared<InputNode>(false, ((short) (j * max)), (short) lY);
-                    inputNodes.push_back(in2);
-                    }
-                    else
-                    {
-                        in2 = inputNodes[index2];
-                    }
-                    operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-                    operationNode->setLeftChild(in1);
-                    operationNode->setRightChild(in2);
-                    if (in1->getStart() + in2->getStart() > 0)
-		    {
-                        operationNode2 = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-                        operationNode2->setLeftChild(operationNode);
-                        operationNodes.push_back(operationNode2);
-                    }
-                    else
-                    {
-                        operationNodes.push_back(operationNode);
-                    }
-                } 
-            }	
-        }
-        else
-        {
-            //match verticale
-            for (i = 0; i < nmaxv; i++)
-            {
-                if ((i + 1) * max > y)
-                {
-                    lY = max - ((i + 1) * max) + y;
-                }
-                else
-                {
-                    lY = max;
-                }
-                for (j = 0; j * min < x; j++)
-                {
-                    if ((j + 1) * min > x)
-                    {
-                        lX = min - ((j + 1) * min) + x;
-                    }
-                    else
-                    {
-                    	lX = min;
-                    }
-                    index1 = checkExist(true, ((short) (j * min)), (short) lX, inputNodes);
-                    if (index1 == -1)
-                    {
-                    in1 = make_shared<InputNode>(true, ((short) (j * min)), (short) lX);
-                    inputNodes.push_back(in1);
-                    }
-                    else
-                    {
-                        in1 = inputNodes[index1];
-                    }
-                    index2 = checkExist(false, ((short) (i * max)), (short) lY, inputNodes);
-                    if (index2 == -1)
-                    {
-                    in2 = make_shared<InputNode>(false, ((short) (i * max)), (short) lY);
-                    inputNodes.push_back(in2);
-                    }
-                    else
-                    {
-                        in2 = inputNodes[index2];
-                    }
-                    operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-                    operationNode->setLeftChild(in1);
-                    operationNode->setRightChild(in2);
-                    if (in1->getStart() + in2->getStart() > 0)
-		    {
-                        operationNode2 = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-                        operationNode2->setLeftChild(operationNode);
-                        operationNodes.push_back(operationNode2);
-                    }
-                    else
-                    {
-                        operationNodes.push_back(operationNode);
-                    }
-                }
-            }
-            for (k = 0; k < nminv; k++)
-            {
-                if ((i * max) + ((k + 1) * min) > y)
-                {
-                    lY = min - ((i * max) + ((k + 1) * min)) + y;
-                }
-                else
-                {
-                    lY = min;
-                }
-                for (j = 0; j * max < x; j++)
-                {
-                    if ((j + 1) * max > x)
-                    {
-                        lX = max - ((j + 1) * max) + x;
-                    }
-                    else
-                    {
-                        lX = max;
-                    }
-                    index1 = checkExist(true, ((short) (j * max)), (short) lX, inputNodes);
-                    if(index1 == -1)
-                    {
-                    in1 = make_shared<InputNode>(true, ((short) (j * max)), (short) lX);
-                    inputNodes.push_back(in1);
-                    }
-                    else
-                    {
-                        in1 = inputNodes[index1];
-                    }
-                    index2 = checkExist(false, ((short) ((i * max) + (k * min))), (short) lY, inputNodes);
-                    if(index2 == -1)
-                    {
-                    in2 = make_shared<InputNode>(false, ((short) ((i * max) + (k * min))), (short) lY);
-                    inputNodes.push_back(in2);
-                    }
-                    else
-                    {
-                        in2 = inputNodes[index2];
-                    }
-                    operationNode = make_shared<OperationNode>(make_shared<SubMultiplication>(multiplier));
-                    operationNode->setLeftChild(in1);
-                    operationNode->setRightChild(in2);
-                    if (in1->getStart() + in2->getStart() > 0)
-		    {
-                        operationNode2 = make_shared<OperationNode>(make_shared<Shift>(in1->getStart() + in2->getStart()));
-                        operationNode2->setLeftChild(operationNode);
-                        operationNodes.push_back(operationNode2);
-                    }
-                    else
-                    {
-                        operationNodes.push_back(operationNode);
-                    }
-                }		    
-            }
-        }
+        min_input = x;
+        max_input = y;
     }
-
+    if(min_input < min_threshold || max_input < max_threshold)
+    {
+        result = true;
+    }
+    else
+    {
+        result = false;
+    }
+    return result;
 }
 
-short StandardTiling::checkExist(bool firstInput, short start, short length, vector<shared_ptr<InputNode>> inputNodes)
+int StandardTiling::disposeOnAxe(int *nmax, int *nmin, int axe_length, Multiplier multiplier)
 {
-    short i;
-    for (i = 0; i < inputNodes.size(); i++)
+    int i, j, min_dim, max_dim, current_bit, nbit;
+
+    nbit = -1;
+    if(multiplier.getInputLength1() > multiplier.getInputLength2())
     {
-        if (inputNodes[i].get()->isFirstInput() == firstInput && inputNodes[i].get()->getStart() == start && inputNodes[i].get()->getLength() == length)
+        max_dim = multiplier.getInputLength1();
+        min_dim = multiplier.getInputLength2();
+    }
+    else
+    {
+        min_dim = multiplier.getInputLength1();
+        max_dim = multiplier.getInputLength2();
+    }
+    // Trying to figure out the best disposition of rectangular multiplier
+    // Firstly tried to use only multipliers. Retrieve the disposition with the minimum number of bit that exceed
+    // over the axe length.
+    for(i = 0; i * max_dim < axe_length && nbit != 0; i++)
+    {
+        for(j = 0; (i * max_dim) + (j * min_dim) < axe_length && nbit != 0; j++);
+        if(j > 0)
         {
-            return i;
+            if(isLUTMapped(max_dim + 1, axe_length - ((i * max_dim) + ((j - 1) * min_dim)) + 1, multiplier) == false)
+            {
+                current_bit = (((i * max_dim) + (j * min_dim)) - axe_length) * max_dim;
+                if(nbit < 0 || (nbit >= 0 && current_bit < nbit))
+                {
+                    nbit = current_bit;
+                    *nmax = i;
+                    *nmin = j;
+                }
+            }
         }
     }
-    return -1;
-}*/
+    if(j == 0 && nbit != 0)
+    {
+        if(isLUTMapped(min_dim + 1, axe_length - ((i - 1) * max_dim) + 1, multiplier) == false)
+        {
+            current_bit = ((i * max_dim) - axe_length) * max_dim;
+            if(nbit < 0 || (nbit >= 0 && current_bit < nbit))
+            {
+                nbit = current_bit;
+                *nmax = i;
+                *nmin = 0;
+            }
+        }
+    }
+    // If nbit = -1 it means that i didn't found a solution with multipliers, so i need to minimize the number og
+    // LUT needed.
+    if(nbit == -1)
+    {
+        nbit = 1;
+        for(i = 0; i * max_dim < axe_length && nbit != 0; i++)
+        {
+            for(j = 0; (i * max_dim) + (j * min_dim) < axe_length && nbit != 0; j++);
+            if(j > 0)
+            {
+                if(isLUTMapped(max_dim + 1, axe_length - ((i * max_dim) + ((j - 1) * min_dim)) + 1, multiplier) == true)
+                {
+                    current_bit = (((i * max_dim) + (j * min_dim)) - axe_length) * max_dim;
+                    current_bit = -current_bit;
+                    if(nbit > 0 || (nbit < 0 && current_bit > nbit))
+                    {
+                        nbit = current_bit;
+                        *nmax = i;
+                        *nmin = j;
+                    }
+                }
+            }
+        }
+        if(j == 0 && nbit != 0)
+        {
+            if(isLUTMapped(min_dim + 1, axe_length - ((i - 1) * max_dim) + 1, multiplier) == true)
+            {
+                current_bit = ((i * max_dim) - axe_length) * max_dim;
+                current_bit = -current_bit;
+                if(nbit > 0 || (nbit < 0 && current_bit > nbit))
+                {
+                    nbit = current_bit;
+                    *nmax = i;
+                    *nmin = 0;
+                }
+            }
+        }
+    }
+    return nbit;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
