@@ -25,6 +25,11 @@ def func():
             #os.system(c)
             print((output))
             #print(output.split('Obtained value: ')[1])
+            if (output.find('Error creating multiplier') != -1):
+                f = open('error.log', 'a')
+                f.write('Error creating multiplier\n' + c + '\n\n\n\n\n')
+                f.close()
+                continue
             parts = output.split('Output Length:')
             for part in parts:
                 if part.find('Expected value: ')!= -1:
