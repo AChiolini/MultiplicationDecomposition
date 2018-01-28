@@ -9,11 +9,11 @@ f.write('')
 f.close()
 
 def func():
-    for i in range(3, 63):
+    for i in range(2, 63):
         commands = []
-        for j in range(3, 63-i):
-            rand1 = rand.randint(0, 2^(i-1)-1)
-            rand2 = rand.randint(0, 2^(j-1)-1)
+        for j in range(2, 63-i):
+            rand1 = (int(rand.random() * (2^(i-1)-1))) ^ 2
+            rand2 = (int(rand.random() * (2^(j-1)-1))) ^ 2
             commands.append('./main %d %d %d %d' % (i, j, rand1, rand2))
             commands.append('./main %d %d -%d %d' % (i, j, rand1, rand2))
             commands.append('./main %d %d %d -%d' % (i, j, rand1, rand2))
@@ -25,11 +25,10 @@ def func():
             #os.system(c)
             print((output))
             #print(output.split('Obtained value: ')[1])
-            if (output.find('Error creating multiplier') != -1):
+            if (output.find('Error') != -1):
                 f = open('error.log', 'a')
-                f.write('Error creating multiplier\n' + c + '\n\n\n\n\n')
+                f.write('Error creating multiplier\n' + c + '\n\n\n')
                 f.close()
-                continue
             parts = output.split('Output Length:')
             for part in parts:
                 if part.find('Expected value: ')!= -1:

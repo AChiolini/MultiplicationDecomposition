@@ -47,7 +47,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
     bool sub;
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
     shared_ptr<OperationNode> operationNode, operationNodeShift, negator, root;
-    shared_ptr<InputNode> in1, in2, in1WSign, in2WSign;
+    shared_ptr<InputNode> in1, in2;
     shared_ptr<MultiplicationUnit> multiplicationUnit, lut;
     Link firstOperand, secondOperand;
     Multiplication *tmp;
@@ -62,6 +62,8 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
     sub = false;
     multiplicationUnit = make_shared<Multiplier>(multiplier);
 
+    in1 = make_shared<InputNode>(true, x);
+    in2 = make_shared<InputNode>(false, y);
 
     // Proposed tiling is possible only with rectangular multipliers
     if(multiplier.getInputLength1() != multiplier.getInputLength2())
@@ -77,13 +79,10 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
             min = dim1;
         }
 
-        in1WSign = make_shared<InputNode>(true, x);
-        in2WSign = make_shared<InputNode>(false, y);
-
         if (isLUTMapped(x, y, multiplier) == true)
         {
-            firstOperand = Link(in1WSign, 0, x, true);
-            secondOperand = Link(in2WSign, 0, y, true);
+            firstOperand = Link(in1, 0, x, true);
+            secondOperand = Link(in2, 0, y, true);
             multiplicationUnit = make_shared<LUT>(x, y);
             operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
             operationNode->insertOperandLast(firstOperand);
@@ -92,20 +91,20 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
         }
         else if((min >= x && max >= y) || (max >= x && min >= y))
         {
-            firstOperand = Link(in1WSign, 0, x, true);
-            secondOperand = Link(in2WSign, 0, y, true);
+            firstOperand = Link(in1, 0, x, true);
+            secondOperand = Link(in2, 0, y, true);
             operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
             operationNode->insertOperandLast(firstOperand);
             operationNode->insertOperandLast(secondOperand);
             operationNodes.push_back(operationNode);
-            return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x++, y++);
+            return MultiplicationTree(operationNodes[0], "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
         }
         else //if (match == false)
         {
             x--;
             y--;
-            in1 = make_shared<InputNode>(true, x);
-            in2 = make_shared<InputNode>(false, y);
+            /*in1 = make_shared<InputNode>(true, x);
+            in2 = make_shared<InputNode>(false, y);*/
             //Parto dall'orizzontale e creo l'array
             if(max < y) 
             {
@@ -146,6 +145,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
 
                 if(max >= x)
                 {
+                    cout << x - min << ", " << y - (minv * min) << endl;
                     firstOperand = Link(in1, min, x - min, false);
                     secondOperand = Link(in2, minv * min, y - (minv * min), false);
                     if(isLUTMapped(firstOperand.getLength(), secondOperand.getLength(), multiplier) == true)
@@ -269,6 +269,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
             else
                 return MultiplicationTree();   
         }
+        cout << "Arrivo all'albero" << endl;
         // Creo l'albero di somme di moltiplicazioni
         while(operationNodes.size() > 0 && operationNodes.size() != 1)
         {	
@@ -276,9 +277,12 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
             {
                 if (i + 1 < operationNodes.size())
                 {
-                    if (i + 1 == operationNodes.size() - 1 && ((minh * min > max && minv * min < max) || (minh*min < max && minv * min > max)) && operationNodes.size() % 2 == 0 && sub == false)
+                    if (i + 1 == operationNodes.size() - 1 && \
+                        (((minh * min > max && minv * min < max) || (minh*min < max && minv * min > max)) && x > max) && \
+                        operationNodes.size() % 2 == 0 && sub == false)
                     {
                         //Subtraction
+                        cout << "Creo la sottrazione" << endl;
                         negator = make_shared<OperationNode>(make_shared<C2>());
                         negator->insertOperandLast(Link(operationNodes[i+1]));
                         operationNodes[i+1] = negator;
@@ -297,7 +301,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
             operationNodes.swap(tmpArray);
             tmpArray.clear();
         }
-        root = addSignedOperation(operationNodes[0], x + 1, y + 1, in1WSign, in2WSign);
+        root = addSignedOperation(operationNodes[0], x + 1, y + 1, in1, in2);
         return MultiplicationTree(root, "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ") orizzontale", (int) x + 1, (int) y + 1);
     }
     else    
@@ -316,7 +320,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
     bool sub;
     vector <shared_ptr<OperationNode>> operationNodes, tmpArray;
     shared_ptr<OperationNode> operationNode, operationNodeShift, root;
-    shared_ptr<InputNode> in1, in2, in1WSign, in2WSign;
+    shared_ptr<InputNode> in1, in2;
     shared_ptr<MultiplicationUnit> multiplicationUnit, lut;
     Link firstOperand, secondOperand;
     Multiplication *tmp;
@@ -328,11 +332,10 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
     maxv = 0;
     maxh = 0;
 
-    in1WSign = make_shared<InputNode>(true, x);
-    in2WSign = make_shared<InputNode>(false, y);
+    in1 = make_shared<InputNode>(true, x);
+    in2 = make_shared<InputNode>(false, y);
 
-    x--;
-    y--;
+    
     multiplicationUnit = make_shared<Multiplier>(multiplier);
 
     // Proposed tiling is possible only with rectangular multipliers
@@ -349,15 +352,17 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
             min = dim1;
         }
 
-        in1 = make_shared<InputNode>(true, x);
-        in2 = make_shared<InputNode>(false, y);
 
         //Il match è già stato trovato con la disposizione in orizzontale. È inutile ripetere la soluzione
-        if(((min >= x && max >= y) || (max >= x && min >= y)) == false)
+        if(((min >= x && max >= y) || (max >= x && min >= y)) == false && isLUTMapped(x, y, multiplier) == false)
         {
+            x--;
+            y--;
+            // Un moltiplicatore in verticale copre l'intera moltiplicazione
             if (max >= y)
             {
-                //Se un moltiplicatore in verticale copre l'intera verticale allora cerco di coprire solo l'orizzontale
+                //Se un moltiplicatore in verticale copre l'intera verticale allora cerco di coprire solo l'orizzontale. 
+                //Solo nel caso x > min, altrimenti sta in un solo moltiplicatore ed è un caso coperto dal proposed orizzontale
                 if(x > min)
                 {
                     firstOperand = Link(in1, 0, min, false);
@@ -368,10 +373,15 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     operationNodeShift = makeShift(firstOperand, secondOperand, operationNode);
                     operationNodes.push_back(operationNodeShift);
 
-                    for(i = 1; min + (i * max) < x; i++)
+                    if (y < min)
+                        lY = y;
+                    else
+                        lY = min;
+
+                    for(i = 0; min + ((i + 1) * max) < x; i++)
                     {
                         firstOperand = Link(in1, min + (i * max), max, false);
-                        secondOperand = Link(in2, 0, min, false);
+                        secondOperand = Link(in2, 0, lY, false);
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
                         operationNode->insertOperandLast(firstOperand);
                         operationNode->insertOperandLast(secondOperand);
@@ -379,38 +389,45 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                         operationNodes.push_back(operationNodeShift);
                     }
 
-                    firstOperand = Link(in1, min + ((i - 1) * max), max - (min + (i * max) - y), false);
-                    secondOperand = Link(in2, 0, min, false);
+                    
+                    firstOperand = Link(in1, min + (i * max), max - (min + ((i + 1) * max) - x), false);
+                    secondOperand = Link(in2, 0, lY, false);
                     operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
                     operationNode->insertOperandLast(firstOperand);
                     operationNode->insertOperandLast(secondOperand);
                     operationNodeShift = makeShift(firstOperand, secondOperand, operationNode);
                     operationNodes.push_back(operationNodeShift);
 
-                    firstOperand = Link(in1, min, x - min, false);
-                    secondOperand = Link(in2, min, y - min, false);
-                    if(isLUTMapped(firstOperand.getLength(), secondOperand.getLength(), multiplier) == true)
+                    if (lY != y)
                     {
-                        lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
-                        operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
-                        operationNode->insertOperandLast(firstOperand);
-                        operationNode->insertOperandLast(secondOperand);
-                        operationNodeShift = makeShift(firstOperand, secondOperand, operationNode);
-                        operationNodes.push_back(operationNodeShift);
+                        firstOperand = Link(in1, min, x - min, false);
+                        secondOperand = Link(in2, min, y - min, false);
+                        if(isLUTMapped(firstOperand.getLength(), secondOperand.getLength(), multiplier) == true)
+                        {
+                            lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
+                            operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
+                            operationNode->insertOperandLast(firstOperand);
+                            operationNode->insertOperandLast(secondOperand);
+                            operationNodeShift = makeShift(firstOperand, secondOperand, operationNode);
+                            operationNodes.push_back(operationNodeShift);
+                        }
+                        else
+                            return MultiplicationTree();
                     }
-                    else
-                        return MultiplicationTree();
                 }
+                
             }
             else
             {
                 //max < y e faccio la dispsizione verticale
-                /*--- x < min ---*/
-                if(min > x)
+                /*--- Copro la parete destra ---*/
+                if(min >= x)
                     lX = x;
                 else
                     lX = min;
-                for (i = 0; (i * max) + min < y ; i++)
+                
+                //Copro la verticale destra
+                for (i = 0; (i + 1) * max + min < y ; i++)
                 {
                     firstOperand = Link(in1, 0, lX, false);
                     secondOperand = Link(in2, i * max, max, false);
@@ -419,28 +436,44 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     operationNode->insertOperandLast(secondOperand);
                     operationNodeShift = makeShift(firstOperand, secondOperand, operationNode);
                     operationNodes.push_back(operationNodeShift);
+                    //Conto quanti moltiplicatori in verticale ho messo effettivamente
                     maxv++;
                 }
+
+                //Se la moltiplicazione viene coperta da soli moltiplicatori verticali sono in uno standard in realtà quindi ritorno un albero vuoto.
+                if (maxv * max >= y)
+                {
+                    return MultiplicationTree();
+                }
+
                 if(max > x)
                     lX = x;
                 else
-                    lX = max;
-                
-                firstOperand = Link(in1, 0, lX, false);
-                secondOperand = Link(in2, i * max, min - ((i * max) + min - y), false);
-                operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
-                operationNode->insertOperandLast(firstOperand);
-                operationNode->insertOperandLast(secondOperand);
-                operationNodeShift = makeShift(firstOperand, secondOperand, operationNode);
-                operationNodes.push_back(operationNodeShift);
+                    lX = max;   
+
+                if (maxv * max < y) //&& maxv * max + min >=y)
+                {
+                    cout << "maxv * max < y, " << lX << ", " << min - ((maxv * max) + min - y) << endl;
+                    firstOperand = Link(in1, 0, lX, false);
+                    secondOperand = Link(in2, maxv * max, min - ((maxv * max) + min - y), false);
+                    operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
+                    operationNode->insertOperandLast(firstOperand);
+                    operationNode->insertOperandLast(secondOperand);
+                    operationNodeShift = makeShift(firstOperand, secondOperand, operationNode);
+                    operationNodes.push_back(operationNodeShift);
+                }
                 /*--- x < min ---*/
 
                 /*--- x > min && x < max---*/
+                //Se non ho messo almeno uno in verticale allora sono in un proposed orizzonatale, quindi scarto la soluzione
+                if (maxv == 0)
+                    return MultiplicationTree();
                 if(x > min && x < max) 
                 {
+                    cout << "x > min && x < max, " << x - min << ", " << maxv * max << endl;
                     //Controllo che la parte non coperta sia una LUT
-                    firstOperand = Link(in1, 0, x - min, false);
-                    secondOperand = Link(in2, 0, i * max, false);
+                    firstOperand = Link(in1, min, x - min, false);
+                    secondOperand = Link(in2, 0, maxv * max, false);
                     if(isLUTMapped(firstOperand.getLength(), secondOperand.getLength(), multiplier) == true)
                     {
                         lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
@@ -459,9 +492,10 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                 }
                 else if (x > max)
                 {
-                    //cout << "lo provo questo else if?" << endl;
-                    i = 0;
-                    cout << min + ((i+1) * max) << endl;
+                    //Questo è il caso più generale in cui mappo tutto il contorno della moltiplicazione
+                    cout << "else" << endl;
+                    //i = 0;
+                    //cout << min + ((i+1) * max) << endl;
                     for(i = 0; min + ((i+1) * max) < x; i++)
                     {
                         //Completo parte superiore della moltiplicazione
@@ -555,7 +589,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                 operationNodes.swap(tmpArray);
                 tmpArray.clear();
             }
-            root = addSignedOperation(operationNodes[0], x + 1, y + 1, in1WSign, in2WSign);
+            root = addSignedOperation(operationNodes[0], x + 1, y + 1, in1, in2);
             return MultiplicationTree(root, "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ") verticale", (int) x + 1, (int) y + 1);
         }
         else
