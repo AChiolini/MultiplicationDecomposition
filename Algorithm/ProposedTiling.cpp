@@ -6,7 +6,6 @@
 #include "../Operation/Shift.h"
 #include "../Operation/C2.h"
 #include "../Operation/And.h"
-#include "../Operation/Or.h"
 #include "../Operation/Fanout.h"
 
 using namespace std;

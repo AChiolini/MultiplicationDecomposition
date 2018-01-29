@@ -6,7 +6,6 @@
 #include "../ArithmeticUnit/MultiplicationUnit/LUT/LUT.h"
 #include "../Operation/Addition.h"
 #include "../Operation/And.h"
-#include "../Operation/Or.h"
 #include "../Operation/C2.h"
 #include "../Operation/Fanout.h"
 
