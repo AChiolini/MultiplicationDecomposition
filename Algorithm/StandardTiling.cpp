@@ -144,14 +144,14 @@ MultiplicationTree StandardTiling::disposeSquare(int x, int y, Multiplier multip
             operation_nodes.push_back(operation_node);
         }
     }
+    operation_nodes.push_back(addSignedOperation(x, y, input1, input2));
     root = createTree(operation_nodes);
-    root = addSignedOperation(root, x, y, input1, input2);
     return MultiplicationTree(root, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
 }
 
 MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier multiplier)
 {
-    int min_dim, max_dim, nmax, nmin, nbit, nmax2, nmin2, nbit2, i, j, axe_length_x, axe_length_y, length_x, length_y;
+    int min_dim, max_dim, nmax, nmin, i, j, axe_length_x, axe_length_y, length_x, length_y;
     shared_ptr<InputNode> input1, input2;
     bool inverted;
     shared_ptr<MultiplicationUnit> multiplication_unit;
@@ -161,6 +161,8 @@ MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier mul
 
     input1 = make_shared<InputNode>(true, x);
     input2 = make_shared<InputNode>(false, y);
+    x--;
+    y--;
     if(multiplier.getInputLength1() > multiplier.getInputLength2())
     {
         max_dim = multiplier.getInputLength1() - 1;
@@ -171,39 +173,7 @@ MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier mul
         min_dim = multiplier.getInputLength1() - 1;
         max_dim = multiplier.getInputLength2() - 1;
     }
-    nbit = disposeOnAxe(&nmax, &nmin, x, multiplier);
-    cout << "Disposizione 1" << endl;
-    cout << nbit << " " << nmax << " " << nmin << endl;
-    if(x != y)
-    {
-        nbit2 = disposeOnAxe(&nmax2, &nmin2, y, multiplier);
-        cout << nbit2 << " " << nmax2 << " " << nmin2 << endl;
-        inverted = false;
-        if(nbit > 0)
-        {
-            if(nbit2 == 0 || (nbit2 < nbit && nbit2 > 0))
-            {
-                inverted = true;
-                nmax = nmax2;
-                nmin = nmin2;
-            }
-        }
-        else if(nbit < 0)
-        {
-            if(nbit2 >= 0 || (nbit2 > nbit && nbit2 < 0))
-            {
-                inverted = true;
-                nmax = nmax2;
-                nmin = nmin2;
-            }
-        }
-    }
-    if(inverted == true)
-    {
-        std::cout << "Inverted" << endl;
-    }
-    std::cout << "nmax = " << nmax << endl;
-    std::cout << "nmin = " << nmin << endl;
+    inverted = getBestConfiguration(&nmax, &nmin, x, y, multiplier);
     // Disposing the multiplications. I know how many multiplier and in which way they are disposed along an axe.
     // Filling the other axe with the same multiplier in the same disposition.
     if(inverted == true)
@@ -318,8 +288,8 @@ MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier mul
             operation_nodes.push_back(operation_node);
         }
     }
+    operation_nodes.push_back(addSignedOperation(x + 1, y + 1, input1, input2));
     root = createTree(operation_nodes);
-    root = addSignedOperation(root, x + 1, y + 1, input1, input2);
     return MultiplicationTree(root, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
 }
 
@@ -354,7 +324,7 @@ shared_ptr<OperationNode> StandardTiling::createTree(vector <shared_ptr<Operatio
     return operation_nodes[0];
 }
 
-shared_ptr<OperationNode> StandardTiling::addSignedOperation(shared_ptr<OperationNode> root, int x, int y, shared_ptr<InputNode> input1, shared_ptr<InputNode> input2)
+shared_ptr<OperationNode> StandardTiling::addSignedOperation(int x, int y, shared_ptr<InputNode> input1, shared_ptr<InputNode> input2)
 {
     shared_ptr<OperationNode> operation1, operation2, operation3;
     Link operand1, operand2;
@@ -414,13 +384,7 @@ shared_ptr<OperationNode> StandardTiling::addSignedOperation(shared_ptr<Operatio
     operand2 = Link(operation3);
     operation2->insertOperandLast(operand1);
     operation2->insertOperandLast(operand2);
-    // Finally summed with root
-    operation1 = make_shared<OperationNode>(make_shared<Addition>());
-    operand1 = Link(root);
-    operand2 = Link(operation2);
-    operation1->insertOperandLast(operand1);
-    operation1->insertOperandLast(operand2);
-    return operation1;
+    return operation2;
 }
 
 bool StandardTiling::isLUTMapped(int x, int y, Multiplier multiplier)
@@ -467,9 +431,10 @@ bool StandardTiling::isLUTMapped(int x, int y, Multiplier multiplier)
  * along the "x" axe, false otherwise(on the "y" axe)
  */
 
-bool getBestConfiguration(int *nmax, int *nmin, int x, int y, Multiplier multiplier)
+bool StandardTiling::getBestConfiguration(int *nmax, int *nmin, int x, int y, Multiplier multiplier)
 {
-    int max_dim, min_dim, i;
+    int max_dim, min_dim, i, j;
+    bool inverted;
     Score best_score, score;
 
 	if(multiplier.getInputLength1() > multiplier.getInputLength2())
@@ -484,10 +449,48 @@ bool getBestConfiguration(int *nmax, int *nmin, int x, int y, Multiplier multipl
     }
     // Genereting the initial score with just multipliers disposed along the greatest side
 	// and along the "x" axe
+	inverted = false;
 	for(i = 0; i * max_dim < x; i++);
     best_score = configurationScore(i, 0, x, y, multiplier);
     *nmax = i;
     *nmin = 0;
+    for(i = i - 1; i >= 0; i--)
+    {
+    	for(j = 1; (i * max_dim) + (j * min_dim) < x; j++);
+    	score = configurationScore(i, j, x, y, multiplier);
+    	if(isBestScore(best_score, score) == false)
+    	{
+    		best_score = score;
+    	    *nmax = i;
+    	    *nmin = j;
+    	}
+    }
+    if(x != y)
+    {
+    	for(i = 0; i * max_dim < y; i++);
+    	score = configurationScore(i, 0, y, x, multiplier);
+    	if(isBestScore(best_score, score) == false)
+    	{
+    		best_score = score;
+    	    *nmax = i;
+    	    *nmin = 0;
+    	    inverted = true;
+    	}
+    	for(i = i - 1; i >= 0; i--)
+    	{
+    		for(j = 1; (i * max_dim) + (j * min_dim) < y; j++);
+    	    score = configurationScore(i, j, y, x, multiplier);
+    	    if(isBestScore(best_score, score) == false)
+    	    {
+    	    	best_score = score;
+    	    	*nmax = i;
+    	    	*nmin = j;
+        	    inverted = true;
+    	    }
+    	}
+    }
+    return inverted;
+
 }
 
 /*
@@ -501,7 +504,7 @@ bool getBestConfiguration(int *nmax, int *nmin, int x, int y, Multiplier multipl
  * using LUTs and that minimize the number of bit's not used in the multipliers.
  */
 
-Score configurationScore(int nmax, int nmin, int x, int y, Multiplier multiplier)
+Score StandardTiling::configurationScore(int nmax, int nmin, int x, int y, Multiplier multiplier)
 {
     int max_dim, min_dim, i, j, nunits, length_x, length_y;
     Score score;
@@ -598,113 +601,39 @@ Score configurationScore(int nmax, int nmin, int x, int y, Multiplier multiplier
         }
     }
     // Calculating the levels
+    nunits++;
+    for(i = 1, score.levels = 0; i < nunits; i = i * 2, score.levels++);
+    return score;
 }
 
-int StandardTiling::disposeOnAxe(int *nmax, int *nmin, int axe_length, Multiplier multiplier)
+bool StandardTiling::isBestScore(Score best_score, Score score)
 {
-    int i, j, min_dim, max_dim, current_bit, nbit;
+	bool is_best;
 
-    nbit = -1;
-    if(multiplier.getInputLength1() > multiplier.getInputLength2())
-    {
-        max_dim = multiplier.getInputLength1() - 1;
-        min_dim = multiplier.getInputLength2() - 1;
-    }
-    else
-    {
-        min_dim = multiplier.getInputLength1() - 1;
-        max_dim = multiplier.getInputLength2() - 1;
-    }
-    // Trying to figure out the best disposition of rectangular multiplier
-    // Firstly tried to use only multipliers. Retrieve the disposition with the minimum number of bit that exceed
-    // over the axe length.
-    for(i = 0; i * max_dim < axe_length && nbit != 0; i++)
-    {
-        for(j = 1; (i * max_dim) + (j * min_dim) < axe_length && nbit != 0; j++);
-        if(isLUTMapped(max_dim + 1, axe_length - ((i * max_dim) + ((j - 1) * min_dim)) + 1, multiplier) == false)
-        {
-        	current_bit = (((i * max_dim) + (j * min_dim)) - axe_length) * max_dim;
-            if(nbit < 0 || (nbit >= 0 && current_bit < nbit))
-            {
-            	nbit = current_bit;
-                *nmax = i;
-                *nmin = j;
-            }
-        }
-    }
-    if(axe_length - (i * max_dim) == 0)
-    {
-    	current_bit = 0;
-    	*nmax = i;
-    	*nmin = 0;
-    }
-    else
-    {
-		if(isLUTMapped(min_dim + 1, axe_length - (i * max_dim) + 1, multiplier) == false)
-		{
-			current_bit = (((i * max_dim) + (j * min_dim)) - axe_length) * max_dim;
-			if(nbit < 0 || (nbit >= 0 && current_bit < nbit))
-			{
-				nbit = current_bit;
-				*nmax = i;
-				*nmin = 0;
-			}
-		}
-    }
-    if(j == 0 && nbit != 0)
-    {
-        if(isLUTMapped(min_dim + 1, axe_length - ((i - 1) * max_dim) + 1, multiplier) == false)
-        {
-            current_bit = ((i * max_dim) - axe_length) * max_dim;
-            if(nbit < 0 || (nbit >= 0 && current_bit < nbit))
-            {
-                nbit = current_bit;
-                *nmax = i;
-                *nmin = 0;
-            }
-        }
-    }
-    // If nbit = -1 it means that i didn't found a solution with multipliers, so i need to minimize the number og
-    // LUT needed.
-    if(nbit == -1)
-    {
-        nbit = 1;
-        for(i = 0; i * max_dim < axe_length && nbit != 0; i++)
-        {
-            for(j = 0; (i * max_dim) + (j * min_dim) < axe_length && nbit != 0; j++);
-            if(j > 0)
-            {
-                if(isLUTMapped(max_dim + 1, axe_length - ((i * max_dim) + ((j - 1) * min_dim)) + 1, multiplier) == true)
-                {
-                    current_bit = (((i * max_dim) + (j * min_dim)) - axe_length) * max_dim;
-                    current_bit = -current_bit;
-                    if(nbit > 0 || (nbit < 0 && current_bit > nbit))
-                    {
-                        nbit = current_bit;
-                        *nmax = i;
-                        *nmin = j;
-                    }
-                }
-            }
-        }
-        if(j == 0 && nbit != 0)
-        {
-            if(isLUTMapped(min_dim + 1, axe_length - ((i - 1) * max_dim) + 1, multiplier) == true)
-            {
-                current_bit = ((i * max_dim) - axe_length) * max_dim;
-                current_bit = -current_bit;
-                if(nbit > 0 || (nbit < 0 && current_bit > nbit))
-                {
-                    nbit = current_bit;
-                    *nmax = i;
-                    *nmin = 0;
-                }
-            }
-        }
-    }
-    return nbit;
+	is_best = true;
+	if(score.levels < best_score.levels)
+	{
+		best_score = score;
+		is_best = false;
+	}
+	else if(score.levels == best_score.levels)
+	{
+		if(score.LUTs_bits < best_score.LUTs_bits)
+	    {
+			best_score = score;
+			is_best = false;
+	    }
+	    else if(score.LUTs_bits == best_score.LUTs_bits)
+	    {
+	    	if(score.not_used_multipliers_bits < best_score.not_used_multipliers_bits)
+	    	{
+	    		best_score = score;
+	    		is_best = false;
+	    	}
+	    }
+	}
+	return is_best;
 }
-
 
 
 

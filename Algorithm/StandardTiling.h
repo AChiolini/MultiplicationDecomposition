@@ -22,10 +22,11 @@ class StandardTiling : public Algorithm
         MultiplicationTree disposeSquare(int, int, Multiplier);
         MultiplicationTree disposeRectangle(int, int, Multiplier);
         shared_ptr<OperationNode> createTree(vector <shared_ptr<OperationNode>>);
-        shared_ptr<OperationNode> addSignedOperation(shared_ptr<OperationNode>, int, int, shared_ptr<InputNode>, shared_ptr<InputNode>);
+        shared_ptr<OperationNode> addSignedOperation(int, int, shared_ptr<InputNode>, shared_ptr<InputNode>);
         bool isLUTMapped(int, int, Multiplier);
         bool getBestConfiguration(int*, int*, int, int, Multiplier);
         Score configurationScore(int, int, int, int, Multiplier);
+        bool isBestScore(Score, Score);
 
     public: 
         StandardTiling(vector<Multiplier>);

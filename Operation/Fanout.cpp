@@ -38,7 +38,7 @@ void Fanout::setFanValue(int fan_value)
     }
     else
     {
-        throw invalid_argument("Shift must be greater than 0");
+        throw invalid_argument("Fanout must be greater than 0");
     }
 }
 
@@ -80,7 +80,7 @@ string Fanout::getExpression(vector<string> operands_names)
     {
         throw invalid_argument("Operand for fanout must be 1");
     }
-    s = operands_names[0] + "fanout of " + to_string(this->fan_value) + " bits";
+    s = operands_names[0] + " fanout of " + to_string(this->fan_value) + " bits";
     return s;
 }
 
@@ -106,11 +106,11 @@ long long Fanout::executeOperation(vector<Link> operands, vector<long long> valu
 
     if(operands.size() != 1)
     {
-        throw invalid_argument("Operand for shift must be 1");
+        throw invalid_argument("Operand for fanout must be 1");
     }
     if(values.size() != 1)
     {
-        throw invalid_argument("Value for shift must be 1");
+        throw invalid_argument("Value for fanout must be 1");
     }
     if(operands[0].getLength() != 1)
     {
