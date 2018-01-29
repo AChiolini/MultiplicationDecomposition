@@ -61,6 +61,7 @@ int Addition::outputLength(vector<Link> operands)
     {
         throw length_error ("Operands for addition must be 2");
     }
+    Operation::checkLinks(operands);
     length1 = operands[0].getLength();
     length2 = operands[1].getLength();
     if(operands[0].isSignIncluded() == false)
@@ -90,6 +91,7 @@ long long Addition::executeOperation(vector<Link> operands, vector<long long> va
     {
         throw length_error ("Operands for addition must be 2");
     }
+    Operation::checkLinks(operands);
     if(values.size() != 2)
     {
         throw length_error ("Values for addition must be 2");

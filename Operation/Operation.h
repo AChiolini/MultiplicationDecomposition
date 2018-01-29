@@ -30,6 +30,19 @@ class Operation
         virtual int outputLength(vector<Link>) = 0;
         virtual long long executeOperation(vector<Link>, vector<long long>) = 0;
         virtual ~Operation() = default;
+
+        static void checkLinks(vector<Link> operands)
+        {
+            int i;
+
+            for(i = 0; i < operands.size(); i++)
+            {
+                if(operands[i].getNode()->getLength() < operands[i].getStart() + operands[i].getLength())
+                {
+                    throw invalid_argument("Link length out of range");
+                }
+            }
+        }
 };
 
 #endif

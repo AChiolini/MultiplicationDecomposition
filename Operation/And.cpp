@@ -113,6 +113,7 @@ int And::outputLength(vector<Link> operands)
     {
         throw length_error ("Operands for and must be 2");
     }
+    Operation::checkLinks(operands);
     length1 = operands[0].getLength();
     length2 = operands[1].getLength();
     if(length1 > length2)
@@ -135,6 +136,7 @@ long long And::executeOperation(vector<Link> operands, vector<long long> values)
     {
         throw invalid_argument("Operands for and must be 2");
     }
+    Operation::checkLinks(operands);
     if(values.size() != 2)
     {
         throw invalid_argument("Values for and must be 2");

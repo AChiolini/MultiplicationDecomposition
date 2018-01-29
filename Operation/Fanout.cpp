@@ -92,6 +92,7 @@ int Fanout::outputLength(vector<Link> operands)
     {
         throw invalid_argument("Operand for fanout must be 1");
     }
+    Operation::checkLinks(operands);
     if(operands[0].getLength() != 1)
     {
         throw invalid_argument("Impossible to fanout more than 1 bit");
@@ -108,6 +109,7 @@ long long Fanout::executeOperation(vector<Link> operands, vector<long long> valu
     {
         throw invalid_argument("Operand for fanout must be 1");
     }
+    Operation::checkLinks(operands);
     if(values.size() != 1)
     {
         throw invalid_argument("Value for fanout must be 1");

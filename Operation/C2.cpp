@@ -86,6 +86,7 @@ int C2::outputLength(vector<Link> operands)
     {
         throw length_error ("Operand for two's complement must be 1");
     }
+    Operation::checkLinks(operands);
     length1 = operands[0].getLength();
     if(operands[0].isSignIncluded() == false)
     {
@@ -107,6 +108,7 @@ long long C2::executeOperation(vector<Link> operands, vector<long long> values)
     {
         throw length_error ("Operand for two's complement must be 1");
     }
+    Operation::checkLinks(operands);
     if(values.size() != 1)
     {
         throw length_error ("Value for two's complement must be 1");

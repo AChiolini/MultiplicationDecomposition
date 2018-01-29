@@ -68,6 +68,7 @@ int Multiplication::outputLength(vector<Link> operands)
     {
         throw length_error ("Operands for multiplication must be 2");
     }
+    Operation::checkLinks(operands);
     length1 = operands[0].getLength();
     length2 = operands[1].getLength();
     if(operands[0].isSignIncluded() == false)
@@ -90,6 +91,7 @@ long long Multiplication::executeOperation(vector<Link> operands, vector<long lo
     {
         throw length_error ("Operands for multiplication must be 2");
     }
+    Operation::checkLinks(operands);
     if(values.size() != 2)
     {
         throw length_error ("Values for multiplication must be 2");

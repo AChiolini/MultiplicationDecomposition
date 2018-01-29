@@ -86,6 +86,7 @@ int Shift::outputLength(vector<Link> operands)
     {
         throw length_error ("Operand for shift must be 1");
     }
+    Operation::checkLinks(operands);
     length1 = operands[0].getLength();
     if(operands[0].isSignIncluded() == false)
     {
@@ -103,6 +104,7 @@ long long Shift::executeOperation(vector<Link> operands, vector<long long> value
     {
         throw length_error ("Operand for shift must be 1");
     }
+    Operation::checkLinks(operands);
     if(values.size() != 1)
     {
         throw length_error ("Value for shift must be 1");
