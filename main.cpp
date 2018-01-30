@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <time.h>
 #include "Algorithm/Algorithm.h"
 #include "Algorithm/StandardTiling.h"
 //#include "KaratsubaOfman2.h"
@@ -22,7 +23,9 @@ int main (int argc, char** argv)
     vector <Algorithm*> algorithms;
     vector <MultiplicationTree> multiplicationTrees;
     ifstream infile("ArithmeticUnit/MultiplicationUnit/multipliers");
+    clock_t t_start;
 
+    t_start = clock();
     if (argc == 5 && is_number(argv[1]) && is_number(argv[2]) && is_number(argv[3]) && is_number(argv[4]))
     {
         in1 = atoll(argv[3]);
@@ -48,7 +51,7 @@ int main (int argc, char** argv)
         //Standard Tiling
         algorithms.push_back(new StandardTiling(multipliers));
         //Proposed Tiling
-        algorithms.push_back(new ProposedTiling(multipliers));
+        //algorithms.push_back(new ProposedTiling(multipliers));
         for (j = 0; j < algorithms.size(); j++)
         {
             multiplicationTrees = (algorithms[j])->dispositions(inputLength1, inputLength2);
@@ -70,6 +73,7 @@ int main (int argc, char** argv)
     {
         cout << "usage: <input length 1> <input length 2> <first factor> <second factor>" << endl;
     }
+    printf("Execution time: %.2fs\n", (double)(clock() - t_start)/CLOCKS_PER_SEC);
 }
 
 bool is_number(char* s)
