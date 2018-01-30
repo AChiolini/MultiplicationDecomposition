@@ -2,3 +2,5 @@
 main
 error.log
 .vscode
+.project
+.pydevproject

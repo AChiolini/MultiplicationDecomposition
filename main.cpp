@@ -51,7 +51,7 @@ int main (int argc, char** argv)
         //Standard Tiling
         algorithms.push_back(new StandardTiling(multipliers));
         //Proposed Tiling
-        //algorithms.push_back(new ProposedTiling(multipliers));
+        algorithms.push_back(new ProposedTiling(multipliers));
         for (j = 0; j < algorithms.size(); j++)
         {
             multiplicationTrees = (algorithms[j])->dispositions(inputLength1, inputLength2);
