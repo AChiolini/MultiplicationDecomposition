@@ -15,6 +15,7 @@
 
 using namespace std;
 
+
 /*****************************************************************************/
 /* Constructor that accepts the multipliers available.                       */
 /*****************************************************************************/
@@ -28,9 +29,17 @@ KaratsubaOfman2::KaratsubaOfman2(vector<Multiplier> multipliers)
 /* Method that provides all the dispositions available.                      */
 /*****************************************************************************/
 
-vector <MultiplicationTree> KaratsubaOfman2::dispositions(short lengthX, short lengthY)
+vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
 {
-    vector <MultiplicationTree> multiplicationTrees;
+
+
+
+
+
+
+
+
+    /*vector <MultiplicationTree> multiplicationTrees;
     shared_ptr<Multiplication> algorithm;
     vector <Multiplier> mult;
     MultiplicationTree tmp;
@@ -56,7 +65,7 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(short lengthX, short l
         }
         mult.clear();
     }
-    return multiplicationTrees;
+    return multiplicationTrees;*/
 }
 
 /*****************************************************************************/
@@ -64,9 +73,51 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(short lengthX, short l
 /* multiplier.                                                               */
 /*****************************************************************************/
 
-MultiplicationTree KaratsubaOfman2::dispose(short lengthX, short lengthY, Multiplication* algorithm, Multiplier multiplier)
+vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier multiplier)
 {
-    short lm;
+    vector<MultiplicationTree> dispositions;
+    // First of all, pre checks
+    // Both lengths must be greater than 1, otherwise there aren't enough bit for the multiplication.
+    if(x <= 1 || y <= 1)
+    {
+        dispositions.push_back(MultiplicationTree());
+        return dispositions;
+    }
+    // Checking if the multiplier is squared
+    if(multiplier.getInputLength1() != multiplier.getInputLength2())
+    {
+        dispositions.push_back(MultiplicationTree());
+        return dispositions;
+    }
+    // Checking if the multiplication can be mapped in one LUT
+    if(Algorithm::isLUTMapped(x, y, multiplier) == true)
+    {
+        dispositions.push_back(MultiplicationTree());
+        return dispositions;
+    }
+    else
+    {
+        //Checking if can be done with just a multiplier
+        if(multiplier.getInputLength1() >= x)
+        {
+            dispositions.push_back(MultiplicationTree());
+            return dispositions;
+        }
+    }
+    // Checking if it can be splitted in two parts in which each part is covered just by a multiplier
+    // If it is, then call not_recursive disposition, otherwise call recursive_disposition
+    if()
+
+
+
+
+
+
+
+
+
+
+    /*short lm;
     vector<MultiplicationTree> m0, m1, m2;
     vector<shared_ptr<Node>> leaves, leaves2;
     InputNode *tmp;
@@ -125,7 +176,7 @@ MultiplicationTree KaratsubaOfman2::dispose(short lengthX, short lengthY, Multip
             }
         }
     }
-    return MultiplicationTree();
+    return MultiplicationTree();*/
 }
 
 void KaratsubaOfman2::substituteLeaves(shared_ptr<Node> next, vector<shared_ptr<Node>> inputNodes, int lm)

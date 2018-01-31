@@ -1,8 +1,8 @@
 #ifndef KARATSUBAOFMAN2_H
 #define KARATSUBAOFMAN2_H
 
-#include "Multiplication.h"
-#include "Multiplier.h"
+#include "Algorithm.h"
+#include "../ArithmeticUnit/Multiplier/Multiplier.h"
 
 using namespace std;
 
@@ -15,12 +15,12 @@ class KaratsubaOfman2 : public Multiplication
 {
     private:
         vector<Multiplier> multipliers;
-        MultiplicationTree dispose(short, short, Multiplication*, Multiplier);
-        void substituteLeaves(shared_ptr<Node>, vector<shared_ptr<Node>>, int);
+        vector <MultiplicationTree> dispose(int, int, Multiplier);
+        //void substituteLeaves(shared_ptr<Node>, vector<shared_ptr<Node>>, int);
 
     public: 
         KaratsubaOfman2(vector<Multiplier>);
-        vector <MultiplicationTree> dispositions(short, short);
+        vector <MultiplicationTree> dispositions(int, int);
         virtual ~KaratsubaOfman2() = default;
 };
 

@@ -23,7 +23,6 @@ class StandardTiling : public Algorithm
         MultiplicationTree disposeRectangle(int, int, Multiplier);
         shared_ptr<OperationNode> createTree(vector <shared_ptr<OperationNode>>);
         shared_ptr<OperationNode> addSignedOperation(int, int, shared_ptr<InputNode>, shared_ptr<InputNode>);
-        bool isLUTMapped(int, int, Multiplier);
         bool getBestConfiguration(int*, int*, int, int, Multiplier);
         Score configurationScore(int, int, int, int, Multiplier);
         bool isBestScore(Score, Score);
