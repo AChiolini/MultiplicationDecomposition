@@ -15,6 +15,7 @@ class KaratsubaOfman2 : public Multiplication
 {
     private:
         vector<Multiplier> multipliers;
+        bool LUT_solution;
         vector <MultiplicationTree> dispose(int, int, Multiplier);
         //void substituteLeaves(shared_ptr<Node>, vector<shared_ptr<Node>>, int);
 

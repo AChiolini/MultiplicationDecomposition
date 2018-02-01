@@ -83,12 +83,6 @@ vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier mul
         dispositions.push_back(MultiplicationTree());
         return dispositions;
     }
-    // Checking if the multiplier is squared
-    if(multiplier.getInputLength1() != multiplier.getInputLength2())
-    {
-        dispositions.push_back(MultiplicationTree());
-        return dispositions;
-    }
     // Checking if the multiplication can be mapped in one LUT
     if(Algorithm::isLUTMapped(x, y, multiplier) == true)
     {
@@ -98,7 +92,8 @@ vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier mul
     else
     {
         //Checking if can be done with just a multiplier
-        if(multiplier.getInputLength1() >= x)
+        if((multiplier.getInputLength1() >= x && multiplier.getInputLength2() >= y) ||\
+           (multiplier.getInputLength1() >= y && multiplier.getInputLength2() >= x))
         {
             dispositions.push_back(MultiplicationTree());
             return dispositions;
@@ -106,8 +101,15 @@ vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier mul
     }
     // Checking if it can be splitted in two parts in which each part is covered just by a multiplier
     // If it is, then call not_recursive disposition, otherwise call recursive_disposition
-    if()
+    if(((multiplier.getInputLength1() * 2) - 1 <= x && (multiplier.getInputLength2() * 2) - 1 <= y) ||\
+       ((multiplier.getInputLength2() * 2) - 1 <= x && (multiplier.getInputLength1() * 2) - 1 <= y))
+    {
 
+    }
+    else
+    {
+
+    }
 
 
 
