@@ -37,7 +37,7 @@ def test_function():
             #os.system(c)
             #print((output))
             #print(output.split('Obtained value: ')[1])
-            if (output.find('Execution time') != -1):
+            if (output.find('Execution time') == -1):
                 f = open('error.log', 'a')
                 f.write("Program doesn't run correctly.\n" + c + '\n\n\n')
                 f.close()
