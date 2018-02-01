@@ -16,7 +16,7 @@ class ProposedTiling : public Algorithm
         MultiplicationTree disposeVertical(int, int, Multiplier);
         shared_ptr<OperationNode> makeShift(Link, Link, shared_ptr<OperationNode>);
         bool isLUTMapped(int, int, Multiplier);
-        shared_ptr<OperationNode> addSignedOperation(shared_ptr<OperationNode>, int, int, shared_ptr<InputNode>, shared_ptr<InputNode>);
+        shared_ptr<OperationNode> addSignedOperation(int, int, shared_ptr<InputNode>, shared_ptr<InputNode>);
 
 
     public: 
