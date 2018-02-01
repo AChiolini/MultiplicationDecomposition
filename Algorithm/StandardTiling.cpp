@@ -46,7 +46,8 @@ MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
     {
         return MultiplicationTree();
     }
-    if(isLUTMapped(x, y, multiplier) == true)
+    // Checking if the multiplication can be mapped in one LUT
+    if(Algorithm::isLUTMapped(x, y, multiplier) == true)
     {
         input1 = make_shared<InputNode>(true, x);
         input2 = make_shared<InputNode>(false, y);
@@ -60,7 +61,7 @@ MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
     }
     else
     {
-        //Checks if can be done with just a multiplier
+        //Checking if can be done with just a multiplier
         if((multiplier.getInputLength1() >= x && multiplier.getInputLength2() >= y) ||\
            (multiplier.getInputLength1() >= y && multiplier.getInputLength2() >= x))
         {
@@ -122,7 +123,7 @@ MultiplicationTree StandardTiling::disposeSquare(int x, int y, Multiplier multip
             }
             first_operand = Link(input1, i * dim, length_x, false);
             second_operand = Link(input2, j * dim, length_y, false);
-            if(isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
                 multiplication_unit = make_shared<LUT>(length_x + 1, length_y + 1);
             }
@@ -215,7 +216,7 @@ MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier mul
                 first_operand = Link(input1, i * max_dim, length_x, false);
                 second_operand = Link(input2, j * min_dim, length_y, false);
             }
-            if(isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
                 multiplication_unit = make_shared<LUT>(length_x + 1, length_y + 1);
             }
@@ -266,7 +267,7 @@ MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier mul
                 first_operand = Link(input1, (i * min_dim) + (nmax * max_dim), length_x, false);
                 second_operand = Link(input2, (j * max_dim), length_y, false);
             }
-            if(isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
                 multiplication_unit = make_shared<LUT>(length_x + 1, length_y + 1);
             }
@@ -384,42 +385,6 @@ shared_ptr<OperationNode> StandardTiling::addSignedOperation(int x, int y, share
     operation2->insertOperandLast(operand1);
     operation2->insertOperandLast(operand2);
     return operation2;
-}
-
-bool StandardTiling::isLUTMapped(int x, int y, Multiplier multiplier)
-{
-    int min_input, max_input, min_threshold, max_threshold;
-    bool result;
-
-    if(multiplier.getInputThreshold1() > multiplier.getInputThreshold2())
-    {
-        min_threshold = multiplier.getInputThreshold2();
-        max_threshold = multiplier.getInputThreshold1();
-    }
-    else
-    {
-        min_threshold = multiplier.getInputThreshold1();
-        max_threshold = multiplier.getInputThreshold2();
-    }
-    if(x > y)
-    {
-        min_input = y;
-        max_input = x;
-    }
-    else
-    {
-        min_input = x;
-        max_input = y;
-    }
-    if(min_input < min_threshold || max_input < max_threshold)
-    {
-        result = true;
-    }
-    else
-    {
-        result = false;
-    }
-    return result;
 }
 
 /*
@@ -542,7 +507,7 @@ Score StandardTiling::configurationScore(int nmax, int nmin, int x, int y, Multi
             {
                 length_y = min_dim;
             }
-            if(isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
                 // LUT mapped, so i have to update the score of the LUTs
             	score.LUTs_bits += (length_x * length_y);
@@ -581,7 +546,7 @@ Score StandardTiling::configurationScore(int nmax, int nmin, int x, int y, Multi
             {
                 length_y = max_dim;
             }
-            if(isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
             	// LUT mapped, so i have to update the score of the LUTs
             	score.LUTs_bits += (length_x * length_y);
