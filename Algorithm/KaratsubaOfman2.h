@@ -17,6 +17,7 @@ class KaratsubaOfman2 : public Multiplication
         vector<Multiplier> multipliers;
         bool LUT_solution;
         vector <MultiplicationTree> dispose(int, int, Multiplier);
+        MultiplicationTree notRecursiveDisposition(int, int, Multiplier);
         //void substituteLeaves(shared_ptr<Node>, vector<shared_ptr<Node>>, int);
 
     public: 

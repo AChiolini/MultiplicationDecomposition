@@ -47,7 +47,7 @@ MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
         return MultiplicationTree();
     }
     // Checking if the multiplication can be mapped in one LUT
-    if(Algorithm::isLUTMapped(x, y, multiplier) == true)
+    if(Multiplier::isLUTMapped(x, y, multiplier) == true)
     {
         input1 = make_shared<InputNode>(true, x);
         input2 = make_shared<InputNode>(false, y);
@@ -123,7 +123,7 @@ MultiplicationTree StandardTiling::disposeSquare(int x, int y, Multiplier multip
             }
             first_operand = Link(input1, i * dim, length_x, false);
             second_operand = Link(input2, j * dim, length_y, false);
-            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Multiplier::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
                 multiplication_unit = make_shared<LUT>(length_x + 1, length_y + 1);
             }
@@ -216,7 +216,7 @@ MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier mul
                 first_operand = Link(input1, i * max_dim, length_x, false);
                 second_operand = Link(input2, j * min_dim, length_y, false);
             }
-            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Multiplier::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
                 multiplication_unit = make_shared<LUT>(length_x + 1, length_y + 1);
             }
@@ -267,7 +267,7 @@ MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier mul
                 first_operand = Link(input1, (i * min_dim) + (nmax * max_dim), length_x, false);
                 second_operand = Link(input2, (j * max_dim), length_y, false);
             }
-            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Multiplier::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
                 multiplication_unit = make_shared<LUT>(length_x + 1, length_y + 1);
             }
@@ -507,7 +507,7 @@ Score StandardTiling::configurationScore(int nmax, int nmin, int x, int y, Multi
             {
                 length_y = min_dim;
             }
-            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Multiplier::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
                 // LUT mapped, so i have to update the score of the LUTs
             	score.LUTs_bits += (length_x * length_y);
@@ -546,7 +546,7 @@ Score StandardTiling::configurationScore(int nmax, int nmin, int x, int y, Multi
             {
                 length_y = max_dim;
             }
-            if(Algorithm::isLUTMapped(length_x + 1, length_y + 1, multiplier))
+            if(Multiplier::isLUTMapped(length_x + 1, length_y + 1, multiplier))
             {
             	// LUT mapped, so i have to update the score of the LUTs
             	score.LUTs_bits += (length_x * length_y);
