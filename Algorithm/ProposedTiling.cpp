@@ -79,7 +79,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
             min = dim1;
         }
 
-        if (isLUTMapped(x, y, multiplier) == true)
+        if (Multiplier::isLUTMapped(x, y, multiplier) == true)
         {
             firstOperand = Link(in1, 0, x, true);
             secondOperand = Link(in2, 0, y, true);
@@ -151,7 +151,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
                     //cout << "Ho aggiunto i moltiplicatori sulla parete destra. Controllo se il rimanente va su una LUT, altrimenti aggiungo un moltiplicatore sull'orizzontale bassa" << x - min << ", " << y - (minv * min) << endl;
                 firstOperand = Link(in1, min, x - min, false);
                 secondOperand = Link(in2, minv * min, lY, false);
-                if(isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true)
+                if(Multiplier::isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true)
                 {
                     lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                     operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -269,7 +269,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
 
                     operationNodes.push_back(addSignedOperation(x + 1, y + 1, in1, in2));
 
-                    if(isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true && firstOperand.getLength() > 1 && secondOperand.getLength() > 1)
+                    if(Multiplier::isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true && firstOperand.getLength() > 1 && secondOperand.getLength() > 1)
                     {
                         lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -350,6 +350,8 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
     maxv = 0;
     maxh = 0;
 
+    cout << "verticale" << endl;
+
     in1 = make_shared<InputNode>(true, x);
     in2 = make_shared<InputNode>(false, y);
 
@@ -372,13 +374,16 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
 
 
         //Il match è già stato trovato con la disposizione in orizzontale. È inutile ripetere la soluzione
-        if(((min >= x && max >= y) || (max >= x && min >= y)) == false || isLUTMapped(x, y, multiplier) == false)
+        if(((min >= x && max >= y) || (max >= x && min >= y)) || Multiplier::isLUTMapped(x, y, multiplier))
+            return MultiplicationTree();
+        else
         {
             x--;
             y--;
-            // Un moltiplicatore in verticale copre l'intera moltiplicazione
+            // Un moltiplicatore in verticale copre l'intera moltiplicazione. Allora sono in uno standard tiling.
             if (max >= y)
             {
+                return MultiplicationTree();
                 //Se un moltiplicatore in verticale copre l'intera verticale allora cerco di coprire solo l'orizzontale. 
                 //Solo nel caso x > min, altrimenti sta in un solo moltiplicatore ed è un caso coperto dal proposed orizzontale
                 if(x > min)
@@ -420,7 +425,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     {
                         firstOperand = Link(in1, min, x - min, false);
                         secondOperand = Link(in2, min, y - min, false);
-                        if(isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true)
+                        if(Multiplier::isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true)
                         {
                             lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                             operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -435,12 +440,12 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                 }
                 
             }
-            else
+            else //Più moltiplicatori coprono la verticale
             {
                 //max < y e faccio la dispsizione verticale
                 /*--- Copro la parete destra ---*/
-                if(min >= x)
-                    lX = x;
+                if(min >= x) //Sono in un caso dello standard tiling
+                    return MultiplicationTree();
                 else
                     lX = min;
                 
@@ -460,7 +465,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
 
                 //Se la moltiplicazione viene coperta da soli moltiplicatori verticali sono in uno standard in realtà quindi ritorno un albero vuoto.
                 //Se non ho messo almeno uno in verticale allora sono in un proposed orizzonatale, quindi scarto la soluzione
-                if (maxv * max >= y || maxv == 0)
+                if (maxv * max >= y || maxv == 0 || y - maxv * max <= 1)
                 {
                     return MultiplicationTree();
                 }
@@ -472,9 +477,9 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
 
                 if (maxv * max < y) //&& maxv * max + min >=y)
                 {
-                    cout << "aqui maxv * max < y, " << lX << ", " << min - ((maxv * max) + min - y) << endl;
+                    //cout << "aqui maxv * max < y, " << lX << ", " << min - ((maxv * max) + min - y) << endl;
                     firstOperand = Link(in1, 0, lX, false);
-                    secondOperand = Link(in2, maxv * max, min - ((maxv * max) + min - y), false);
+                    secondOperand = Link(in2, maxv * max, y - maxv * max, false);
                     operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
                     operationNode->insertOperandLast(firstOperand);
                     operationNode->insertOperandLast(secondOperand);
@@ -483,14 +488,17 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                 }
                 /*--- x < min ---*/
 
+                if (x - min <= 1)
+                    return MultiplicationTree();
+
                 /*--- x > min && x < max---*/               
-                if(x > min && x < max) 
+                if(x > min && x <= max) 
                 {
                     cout << "x > min && x < max, " << x - min << ", " << maxv * max << endl;
                     //Controllo che la parte non coperta sia una LUT
                     firstOperand = Link(in1, min, x - min, false);
                     secondOperand = Link(in2, 0, maxv * max, false);
-                    if(isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true)
+                    if(Multiplier::isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true)
                     {
                         lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -538,7 +546,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     {
                         //Aggiungo i moltiplicatori sdraiati nella parte inferiore della moltiplicazione
                         firstOperand = Link(in1, i * max, max, false);
-                        secondOperand = Link(in2, maxv * max, min - ((maxv * max) + min - y), false);
+                        secondOperand = Link(in2, maxv * max, y - maxv * max, false);
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
                         operationNode->insertOperandLast(firstOperand);
                         operationNode->insertOperandLast(secondOperand);
@@ -548,7 +556,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     for(i = maxv-1, j = 0; i > 0; i--, j++)
                     {
                         //Aggiungo i moltiplicatori completi sul lato sinistro della moltiplicazione
-                        firstOperand = Link(in1, maxh * max, min - (min + ((maxh + 1) * max) - x), false);
+                        firstOperand = Link(in1, maxh * max, x - (maxh + 1) * max, false);
                         secondOperand = Link(in2, min + (j * max), max, false);
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
                         operationNode->insertOperandLast(firstOperand);
@@ -557,7 +565,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                         operationNodes.push_back(operationNodeShift);
                     }
                     //Aggiungo l'ultimo moltiplicatore troncato sia a sinistra sia in basso
-                    firstOperand = Link(in1, maxh * max, min - (min + ((maxh) * max) - x), false);
+                    firstOperand = Link(in1, maxh * max, x - maxh * max, false);
                     secondOperand = Link(in2, min + (j * max), max - ((maxv * max) + min - y), false);
                     operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
                     operationNode->insertOperandLast(firstOperand);
@@ -567,8 +575,8 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
 
                     //Verifico che la parte rimanente sia mappabile su una LUT
                     firstOperand = Link(in1, min, maxh * max - min, false);
-                    secondOperand = Link(in2, min, (maxv * max) - min, false);
-                    if(isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true)
+                    secondOperand = Link(in2, min, maxv * max - min, false);
+                    if(Multiplier::isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true)
                     {
                         lut = make_shared<LUT>(firstOperand.getLength(), secondOperand.getLength());
                         operationNode = make_shared<OperationNode>(make_shared<Multiplication>(lut));
@@ -609,8 +617,6 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
             root = operationNodes[0];
             return MultiplicationTree(root, "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ") verticale", (int) x + 1, (int) y + 1);
         }
-        else
-            return MultiplicationTree();
     }
     else
         return MultiplicationTree();
