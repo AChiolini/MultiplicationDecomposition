@@ -18,6 +18,11 @@ MultiplicationTree::MultiplicationTree()
     this->lengthY = 0;
 }
 
+MultiplicationTree::MultiplicationTree(const MultiplicationTree &multiplication_tree)
+{
+    this->lengthX = multiplication_tree.lengthX;
+}
+
 /*****************************************************************************/
 /* Constructor that required the root operation node of the tree and a       */
 /* description.                                                              */
@@ -230,22 +235,6 @@ string MultiplicationTree::getCost()
 
 long long MultiplicationTree::executeMultiplication(long long input1, long long input2)
 {
-    /*long long signX, signY, maskX, maskY, positive, negative, result, test;
-
-    signX = ((input1 >> 63) & 1);
-    signY = ((input2 >> 63) & 1);
-    maskX = 1;
-    maskY = 1;
-    maskX <<= lengthX - 1;
-    maskY <<= lengthY - 1;
-    maskX = maskX - 1;
-    maskY = maskY - 1;
-    positive = ;
-    positive |= ((signX & signY) << (lengthX + lengthY - 2));
-    negative = ((signX * (input2 & maskY)) << (lengthX - 1));
-    negative =  negative + ((signY * (input1 & maskX)) << (lengthY - 1));
-    negative = -negative;
-    result = positive + negative;*/
     return root->executeNode(input1, input2);
 }
 

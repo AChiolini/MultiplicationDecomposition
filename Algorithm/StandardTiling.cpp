@@ -18,6 +18,16 @@ StandardTiling::StandardTiling(vector<Multiplier> multipliers, bool sign_operati
     this->sign_operations_included = sign_operations_included;
 }
 
+bool StandardTiling::isSignOperationsIncluded()
+{
+    return this->sign_operations_included;
+}
+
+void StandardTiling::setSignOperationsIncluded(bool sign_operations_included)
+{
+    this->sign_operations_included = sign_operations_included;
+}
+
 vector <MultiplicationTree> StandardTiling::dispositions(int length_x, int length_y)
 {
     vector <MultiplicationTree> multiplicationTrees;    

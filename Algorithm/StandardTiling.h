@@ -29,6 +29,8 @@ class StandardTiling : public Algorithm
     public: 
         StandardTiling(vector<Multiplier>);
         StandardTiling(vector<Multiplier>, bool);
+        bool isSignOperationsIncluded();
+        void setSignOperationsIncluded(bool);
         vector<MultiplicationTree> dispositions(int, int);
         virtual ~StandardTiling() = default;
 };

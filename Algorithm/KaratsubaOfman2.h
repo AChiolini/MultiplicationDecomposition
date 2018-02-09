@@ -24,6 +24,8 @@ class KaratsubaOfman2 : public Algorithm
     public: 
         KaratsubaOfman2(vector<Multiplier>);
         KaratsubaOfman2(vector<Multiplier>, bool);
+        bool isSignOperationsIncluded();
+        void setSignOperationsIncluded(bool);
         vector<MultiplicationTree> dispositions(int, int);
         virtual ~KaratsubaOfman2() = default;
 };

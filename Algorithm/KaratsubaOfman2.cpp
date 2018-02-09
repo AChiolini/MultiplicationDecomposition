@@ -25,6 +25,16 @@ KaratsubaOfman2::KaratsubaOfman2(vector<Multiplier> multipliers, bool sign_opera
     this->sign_operations_included = sign_operations_included;
 }
 
+bool KaratsubaOfman2::isSignOperationsIncluded()
+{
+    return this->sign_operations_included;
+}
+
+void KaratsubaOfman2::setSignOperationsIncluded(bool sign_operations_included)
+{
+    this->sign_operations_included = sign_operations_included;
+}
+
 /*****************************************************************************/
 /* Method that provides all the dispositions available.                      */
 /*****************************************************************************/
@@ -244,10 +254,33 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
 
 vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, Multiplier multiplier)
 {
-    vector<MultiplicationTree> multiplication_trees;
+    vector<MultiplicationTree> multiplication_trees, returned_treesx0y0, returned_treesx1y1, returned_treesdxdy;
     vector<shared_ptr<Algorithm>> algorithms;
-    vector<Multiplier> multiplier;
+    vector<Multiplier> multipliers;
+    int part0, part1, i;
+    shared_ptr<InputNode> input1, input2;
+    shared_ptr<OperationNode> x0y0, x1y1, dx, dy, dxdy, operation1, operation2, operation3, root;
+    Link first_operand, second_operand, first_operand2, second_operand2;
+    shared_ptr<MultiplicationUnit> multiplication_unit;
 
-    algorithms.push_back(make_shared<StandardTiling>())
+    // Preparing algorithms
+    multipliers.push_back(multiplier);
+    algorithms.push_back(make_shared<StandardTiling>(multipliers));
+    algorithms.push_back(make_shared<ProposedTiling>(multipliers));
+    algorithms.push_back(make_shared<KaratsubaOfman2>(multipliers));
+    // Preparing lengths
+    part1 = (x - 1) / 2;
+    part0 = x - 1 - part1;
+    input1 = make_shared<InputNode>(true, x);
+    input2 = make_shared<InputNode>(false, y);
+    for(i = 0; i < algorithms.size(); i++)
+    {
+
+    }
+
+
+
+
+
     return multiplication_trees;
 }

@@ -22,8 +22,8 @@ class ProposedTiling : public Algorithm
     public: 
         ProposedTiling(vector<Multiplier>);
         ProposedTiling(vector<Multiplier>, bool);
-        bool isSignOperationIncluded();
-        void setSignOperationIncluded(bool);
+        bool isSignOperationsIncluded();
+        void setSignOperationsIncluded(bool);
         vector<MultiplicationTree> dispositions(int, int);
         virtual ~ProposedTiling() = default;
 };

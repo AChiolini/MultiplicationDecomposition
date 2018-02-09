@@ -14,6 +14,8 @@
 class Algorithm
 {
     public:
+        virtual bool isSignOperationsIncluded() = 0;
+        virtual void setSignOperationsIncluded(bool) = 0;
         virtual vector <MultiplicationTree> dispositions (int, int) = 0;
         virtual ~Algorithm () = default;
 

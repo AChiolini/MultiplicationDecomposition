@@ -22,12 +22,12 @@ ProposedTiling::ProposedTiling(vector<Multiplier> multipliers, bool signOperatio
     this->multipliers = multipliers;
 }
 
-bool ProposedTiling::isSignOperationIncluded()
+bool ProposedTiling::isSignOperationsIncluded()
 {
     return this->signOperationIncluded;
 }
 
-void ProposedTiling::setSignOperationIncluded(bool signOperationIncluded)
+void ProposedTiling::setSignOperationsIncluded(bool signOperationIncluded)
 {
     this->signOperationIncluded = signOperationIncluded;
 }
