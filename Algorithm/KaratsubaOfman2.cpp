@@ -5,13 +5,6 @@
 #include "KaratsubaOfman2.h"
 #include "StandardTiling.h"
 #include "ProposedTiling.h"
-#include "MultiplicationTree.h"
-#include "SubMultiplication.h"
-#include "InputNode.h"
-#include "OperationNode.h"
-#include "Subtraction.h"
-#include "Addition.h"
-#include "Shift.h"
 
 using namespace std;
 
@@ -49,7 +42,7 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
     // Getting disposition
     for(i = 0; i < multipliers.size(); i++)
     {
-        returned_trees = dispose (length_x, length_y, multipliers[i]);
+        returned_trees = dispose (x, y, multipliers[i]);
         for(j = 0; j < returned_trees.size(); j++)
         {
             if(returned_trees[j].getRoot() != nullptr)
@@ -58,7 +51,7 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
             }
         }
     }
-    return multiplicationTrees;
+    return multiplication_trees;
 
 
 
@@ -210,9 +203,9 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
 {
     int part0, part1;
     shared_ptr<InputNode> input1, input2;
-    shared_ptr<OperationNode> x1y1, dx, dy, dxdy, operation1, operation2, operation3;
+    shared_ptr<OperationNode> x0y0, x1y1, dx, dy, dxdy, operation1, operation2, operation3;
     Link first_operand, second_operand, first_operand2, second_operand2;
-    MultiplicationUnit multiplication_unit;
+    shared_ptr<MultiplicationUnit> multiplication_unit;
 
     // Preparings lengths
     part1 = (x - 1) / 2;
@@ -221,7 +214,7 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     input2 = make_shared<InputNode>(false, y);
     // Prechecks
     // x0 is greater or equal than x1, so if x0y0 is mapped on A LUT then also x1y1 is mapped in a LUT
-    if(Multiplier::isLUTMapped(part0 + 1, part0 + 1, multiplier) == true && this->LUT_Solution == true)
+    if(Multiplier::isLUTMapped(part0 + 1, part0 + 1, multiplier) == true && this->LUT_solution == true)
     {
         // We want to return just a solution with just LUTs
         return MultiplicationTree();
@@ -327,7 +320,7 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
 
 }
 
-void KaratsubaOfman2::substituteLeaves(shared_ptr<Node> next, vector<shared_ptr<Node>> inputNodes, int lm)
+/*void KaratsubaOfman2::substituteLeaves(shared_ptr<Node> next, vector<shared_ptr<Node>> inputNodes, int lm)
 {
     OperationNode* operationNode;
     InputNode *inputNode, *tmp;
@@ -407,3 +400,4 @@ void KaratsubaOfman2::substituteLeaves(shared_ptr<Node> next, vector<shared_ptr<
         }
     }
 }
+*/

@@ -2,7 +2,7 @@
 #define KARATSUBAOFMAN2_H
 
 #include "Algorithm.h"
-#include "../ArithmeticUnit/Multiplier/Multiplier.h"
+#include "../ArithmeticUnit/MultiplicationUnit/Multiplier/Multiplier.h"
 
 using namespace std;
 
@@ -11,7 +11,7 @@ using namespace std;
 /* idea. Multiplication trees follow the two-part splitting.                 */
 /*****************************************************************************/
 
-class KaratsubaOfman2 : public Multiplication
+class KaratsubaOfman2 : public Algorithm
 {
     private:
         vector<Multiplier> multipliers;

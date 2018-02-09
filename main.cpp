@@ -5,7 +5,7 @@
 #include <time.h>
 #include "Algorithm/Algorithm.h"
 #include "Algorithm/StandardTiling.h"
-//#include "KaratsubaOfman2.h"
+#include "Algorithm/KaratsubaOfman2.h"
 //#include "KaratsubaOfman3.h"
 #include "Algorithm/ProposedTiling.h"
 
@@ -45,7 +45,7 @@ int main (int argc, char** argv)
             }
         }
         //Karatsuba-Ofman two-part splitting
-        //algorithms.push_back(new KaratsubaOfman2(multipliers));
+        algorithms.push_back(new KaratsubaOfman2(multipliers));
         //Karatsuba-Ofman three-part splitting
         //algorithms.push_back(new KaratsubaOfman3(multipliers));
         //Standard Tiling

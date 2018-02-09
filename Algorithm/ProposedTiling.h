@@ -17,6 +17,7 @@ class ProposedTiling : public Algorithm
         shared_ptr<OperationNode> makeShift(Link, Link, shared_ptr<OperationNode>);
         bool isLUTMapped(int, int, Multiplier);
         shared_ptr<OperationNode> addSignedOperation(int, int, shared_ptr<InputNode>, shared_ptr<InputNode>);
+        vector<OperationNode> fillCenter(int, int, int, int, shared_ptr<InputNode>, shared_ptr<InputNode>);
 
 
     public: 
