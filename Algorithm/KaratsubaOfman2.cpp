@@ -31,7 +31,19 @@ KaratsubaOfman2::KaratsubaOfman2(vector<Multiplier> multipliers)
 
 vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
 {
+    vector <MultiplicationTree> multiplication_trees;
 
+    // Pre-Checks
+    // X must be equal to y
+    if(x != y)
+    {
+        return multiplication_trees;
+    }
+    // Both lengths must be greater than 1, otherwise there aren't enough bit for the multiplication.
+    if(x <= 1 || y <= 1)
+    {
+        return multiplication_trees;
+    }
 
 
 
@@ -79,12 +91,6 @@ vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier mul
     int min_dim;
 
     // First of all, pre checks
-    // Both lengths must be greater than 1, otherwise there aren't enough bit for the multiplication.
-    if(x <= 1 || y <= 1)
-    {
-        dispositions.push_back(MultiplicationTree());
-        return dispositions;
-    }
     // Checking if the multiplication can be mapped in one LUT
     if(Multiplier::isLUTMapped(x, y, multiplier) == true)
     {
@@ -203,27 +209,6 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     input1 = make_shared<InputNode>(true, x + 1);
     input2 = make_shared<InputNode>(false, y + 1);
     // Prechecks
-    // The split has to be performed equally, so x0 has to be equal to y0, otherwise the karatsuba ofman algorithm
-    // can't be applied.
-    if(x0 > y0)
-    {
-        y0 = x0;
-        y1 = x1;
-        // If the split makes x1*y1 equal to 0 then the karatsuba-ofman algorithm can't be applied
-        if(y - y0 <= 0)
-        {
-            return MultiplicationTree();
-        }
-    }
-    else if(y0 > x0)
-    {
-        x0 = y0;
-        x1 = y1;
-        if(x - x0 <= 0)
-        {
-            return MultiplicationTree();
-        }
-    }
     // x0 is greater or equal than x1, so if x0y0 is mapped on A LUT then also x1y1 is mapped in a LUT
     if(Multiplier::isLUTMapped(x0 + 1, y0 + 1, multiplier) == true && this->LUT_Solution == true)
     {

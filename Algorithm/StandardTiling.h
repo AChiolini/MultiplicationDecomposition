@@ -4,7 +4,6 @@
 #include <vector>
 #include "Algorithm.h"
 #include "../MultiplicationTree/MultiplicationTree.h"
-#include "../Node/InputNode.h"
 #include "../ArithmeticUnit/MultiplicationUnit/Multiplier/Multiplier.h"
 
 typedef struct score_t
@@ -22,7 +21,6 @@ class StandardTiling : public Algorithm
         MultiplicationTree disposeSquare(int, int, Multiplier);
         MultiplicationTree disposeRectangle(int, int, Multiplier);
         shared_ptr<OperationNode> createTree(vector <shared_ptr<OperationNode>>);
-        shared_ptr<OperationNode> addSignedOperation(int, int, shared_ptr<InputNode>, shared_ptr<InputNode>);
         bool getBestConfiguration(int*, int*, int, int, Multiplier);
         Score configurationScore(int, int, int, int, Multiplier);
         bool isBestScore(Score, Score);
