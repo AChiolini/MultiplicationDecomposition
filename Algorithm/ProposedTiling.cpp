@@ -13,6 +13,23 @@ using namespace std;
 ProposedTiling::ProposedTiling(vector<Multiplier> multipliers)
 {
     this->multipliers = multipliers;
+    this->signOperationIncluded = true;
+}
+
+ProposedTiling::ProposedTiling(vector<Multiplier> multipliers, bool signOperationIncluded)
+{
+    this->signOperationIncluded = signOperationIncluded;
+    this->multipliers = multipliers;
+}
+
+bool ProposedTiling::isSignOperationIncluded()
+{
+    return this->signOperationIncluded;
+}
+
+void ProposedTiling::setSignOperationIncluded(bool signOperationIncluded)
+{
+    this->signOperationIncluded = signOperationIncluded;
 }
 
 vector<MultiplicationTree> ProposedTiling::dispositions(int lengthX, int lengthY)
@@ -85,6 +102,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
             operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
             operationNode->insertOperandLast(firstOperand);
             operationNode->insertOperandLast(secondOperand);
+            return MultiplicationTree();
             return MultiplicationTree(operationNode, "LUT multiplication (Proposed tiling disposition)", x, y);
         }
         else if((min >= x && max >= y) || (max >= x && min >= y))
@@ -96,6 +114,7 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
             operationNode->insertOperandLast(firstOperand);
             operationNode->insertOperandLast(secondOperand);
             //operationNodes.push_back(operationNode);
+            return MultiplicationTree();
             return MultiplicationTree(operationNode, "Proposed tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
         }
         else
@@ -113,13 +132,8 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
                 // Posiziono il minimo numero di moltiplicatori sulla VERTICALE dall'input di lunghezza minore
                 for(i = 0; (i * min) + max <= y; i++)
                 {
-
-
                     firstOperand = Link(in1, 0, (lX), false);
-                    
-                    
                     secondOperand = Link(in2, (i * min), min, false);
-
                     operationNode = make_shared<OperationNode>(make_shared<Multiplication>(multiplicationUnit));
                     operationNode->insertOperandLast(firstOperand);
                     operationNode->insertOperandLast(secondOperand);
@@ -263,7 +277,8 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
                         secondOperand = Link(in2, min, max - min, false);
                     }
 
-                    operationNodes.push_back(Algorithm::addSignedOperation(x + 1, y + 1, in1, in2));
+                    if(this->signOperationIncluded)
+                        operationNodes.push_back(Algorithm::addSignedOperation(x + 1, y + 1, in1, in2));
 
                     if(Multiplier::isLUTMapped(firstOperand.getLength() + 1, secondOperand.getLength() + 1, multiplier) == true && firstOperand.getLength() > 1 && secondOperand.getLength() > 1)
                     {
@@ -277,7 +292,6 @@ MultiplicationTree ProposedTiling::disposeHorizontal(int x, int y, Multiplier mu
                     else
                         return MultiplicationTree();
                 }
-
             }
             else
                 return MultiplicationTree();   
@@ -524,7 +538,9 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     }
                 }
             }
-            operationNodes.push_back(Algorithm::addSignedOperation(x + 1, y + 1, in1, in2));
+            if(this->signOperationIncluded)
+                operationNodes.push_back(Algorithm::addSignedOperation(x + 1, y + 1, in1, in2));
+
             // Creo l'albero di somme di moltiplicazioni
             while(operationNodes.size() > 0 && operationNodes.size() != 1)
             {   
@@ -566,9 +582,4 @@ shared_ptr<OperationNode> ProposedTiling::makeShift(Link firstOperand, Link seco
     {
         return operationNode;
     }
-}
-
-vector<OperationNode> ProposedTiling::fillCenter(int lengthX, int lengthY, int startX, int startY, shared_ptr<InputNode> in1, shared_ptr<InputNode> in2)
-{
-    
 }
