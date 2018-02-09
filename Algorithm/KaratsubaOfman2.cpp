@@ -218,7 +218,7 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     operation3->insertOperandLast(first_operand);
     operation3->insertOperandLast(second_operand);
     // Adding signed operation
-    if(this->sign_operation_included == true)
+    if(this->sign_operations_included == true)
     {
         operation1 = make_shared<OperationNode>(make_shared<Addition>());
         first_operand = Link(operation3);
@@ -228,7 +228,7 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     }
     // Creating root
     root = make_shared<OperationNode>(make_shared<Addition>());
-    if(this->sign_operation_included == true)
+    if(this->sign_operations_included == true)
     {
         first_operand = Link(operation1);
     }
