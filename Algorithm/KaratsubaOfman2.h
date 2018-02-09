@@ -18,7 +18,6 @@ class KaratsubaOfman2 : public Algorithm
         bool LUT_solution;
         vector <MultiplicationTree> dispose(int, int, Multiplier);
         MultiplicationTree notRecursiveDisposition(int, int, Multiplier);
-        //void substituteLeaves(shared_ptr<Node>, vector<shared_ptr<Node>>, int);
 
     public: 
         KaratsubaOfman2(vector<Multiplier>);
