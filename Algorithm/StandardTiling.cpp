@@ -9,6 +9,13 @@ using namespace std;
 StandardTiling::StandardTiling(vector<Multiplier> multipliers)
 {
     this->multipliers = multipliers;
+    this->sign_operations_included = true;
+}
+
+StandardTiling::StandardTiling(vector<Multiplier> multipliers, bool sign_operations_included)
+{
+    this->multipliers = multipliers;
+    this->sign_operations_included = sign_operations_included;
 }
 
 vector <MultiplicationTree> StandardTiling::dispositions(int length_x, int length_y)
@@ -46,8 +53,16 @@ MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
     {
         input1 = make_shared<InputNode>(true, x);
         input2 = make_shared<InputNode>(false, y);
-        first_operand = Link(input1, 0, x, true);
-        second_operand = Link(input2, 0, y, true);
+        if(this->sign_operations_included == true)
+        {
+            first_operand = Link(input1, 0, x, true);
+            second_operand = Link(input2, 0, y, true);
+        }
+        else
+        {
+            first_operand = Link(input1, 0, x - 1, true);
+            second_operand = Link(input2, 0, y - 1, true);
+        }
         multiplication_unit = make_shared<LUT>(x, y);
         root = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
         root->insertOperandLast(first_operand);
@@ -62,8 +77,16 @@ MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
         {
             input1 = make_shared<InputNode>(true, x);
             input2 = make_shared<InputNode>(false, y);
-            first_operand = Link(input1, 0, x, true);
-            second_operand = Link(input2, 0, y, true);
+            if(this->sign_operations_included == true)
+            {
+                first_operand = Link(input1, 0, x, true);
+                second_operand = Link(input2, 0, y, true);
+            }
+            else
+            {
+                first_operand = Link(input1, 0, x - 1, false);
+                second_operand = Link(input2, 0, y - 1, false);
+            }
             multiplication_unit = make_shared<Multiplier>(multiplier);
             root = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
             root->insertOperandLast(first_operand);
@@ -139,7 +162,10 @@ MultiplicationTree StandardTiling::disposeSquare(int x, int y, Multiplier multip
             operation_nodes.push_back(operation_node);
         }
     }
-    operation_nodes.push_back(Algorithm::addSignedOperation(x, y, input1, input2));
+    if(this->sign_operations_included == true)
+    {
+        operation_nodes.push_back(Algorithm::addSignedOperation(x, y, input1, input2));
+    }
     root = createTree(operation_nodes);
     return MultiplicationTree(root, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
 }
@@ -283,7 +309,10 @@ MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier mul
             operation_nodes.push_back(operation_node);
         }
     }
-    operation_nodes.push_back(Algorithm::addSignedOperation(x + 1, y + 1, input1, input2));
+    if(this->sign_operations_included == true)
+    {
+        operation_nodes.push_back(Algorithm::addSignedOperation(x, y, input1, input2));
+    }
     root = createTree(operation_nodes);
     return MultiplicationTree(root, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
 }
@@ -530,7 +559,6 @@ bool StandardTiling::isBestScore(Score best_score, Score score)
 	}
 	return is_best;
 }
-
 
 
 

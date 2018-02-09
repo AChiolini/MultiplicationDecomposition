@@ -17,6 +17,7 @@ class StandardTiling : public Algorithm
 {
     private:
         vector<Multiplier> multipliers;
+        bool sign_operations_included;
         MultiplicationTree dispose(int, int, Multiplier);
         MultiplicationTree disposeSquare(int, int, Multiplier);
         MultiplicationTree disposeRectangle(int, int, Multiplier);
@@ -27,6 +28,7 @@ class StandardTiling : public Algorithm
 
     public: 
         StandardTiling(vector<Multiplier>);
+        StandardTiling(vector<Multiplier>, bool);
         vector<MultiplicationTree> dispositions(int, int);
         virtual ~StandardTiling() = default;
 };

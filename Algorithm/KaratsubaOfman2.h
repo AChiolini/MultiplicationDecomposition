@@ -16,12 +16,15 @@ class KaratsubaOfman2 : public Algorithm
     private:
         vector<Multiplier> multipliers;
         bool LUT_solution;
-        vector <MultiplicationTree> dispose(int, int, Multiplier);
+        bool sign_operations_included;
+        vector<MultiplicationTree> dispose(int, int, Multiplier);
         MultiplicationTree notRecursiveDisposition(int, int, Multiplier);
+        vector<MultiplicationTree> recursiveDisposition(int, int, Multiplier);
 
     public: 
         KaratsubaOfman2(vector<Multiplier>);
-        vector <MultiplicationTree> dispositions(int, int);
+        KaratsubaOfman2(vector<Multiplier>, bool);
+        vector<MultiplicationTree> dispositions(int, int);
         virtual ~KaratsubaOfman2() = default;
 };
 

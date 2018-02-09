@@ -16,6 +16,13 @@ using namespace std;
 KaratsubaOfman2::KaratsubaOfman2(vector<Multiplier> multipliers)
 {
     this->multipliers = multipliers;
+    this->sign_operations_included = true;
+}
+
+KaratsubaOfman2::KaratsubaOfman2(vector<Multiplier> multipliers, bool sign_operations_included)
+{
+    this->multipliers = multipliers;
+    this->sign_operations_included = sign_operations_included;
 }
 
 /*****************************************************************************/
@@ -109,7 +116,7 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
 {
     int part0, part1;
     shared_ptr<InputNode> input1, input2;
-    shared_ptr<OperationNode> x0y0, x1y1, dx, dy, dxdy, operation1, operation2, operation3;
+    shared_ptr<OperationNode> x0y0, x1y1, dx, dy, dxdy, operation1, operation2, operation3, root;
     Link first_operand, second_operand, first_operand2, second_operand2;
     shared_ptr<MultiplicationUnit> multiplication_unit;
 
@@ -211,17 +218,32 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     operation3->insertOperandLast(first_operand);
     operation3->insertOperandLast(second_operand);
     // Adding signed operation
-    operation1 = make_shared<OperationNode>(make_shared<Addition>());
-    first_operand = Link(operation3);
-    second_operand = Link(Algorithm::addSignedOperation(x, y, input1, input2));
-    operation1->insertOperandLast(first_operand);
-    operation1->insertOperandLast(second_operand);
+    if(this->sign_operation_included == true)
+    {
+        operation1 = make_shared<OperationNode>(make_shared<Addition>());
+        first_operand = Link(operation3);
+        second_operand = Link(Algorithm::addSignedOperation(x, y, input1, input2));
+        operation1->insertOperandLast(first_operand);
+        operation1->insertOperandLast(second_operand);
+    }
     // Creating root
-    operation3 = make_shared<OperationNode>(make_shared<Addition>());
-    first_operand = Link(operation1);
+    root = make_shared<OperationNode>(make_shared<Addition>());
+    if(this->sign_operation_included == true)
+    {
+        first_operand = Link(operation1);
+    }
+    else
+    {
+        first_operand = Link(operation3);
+    }
     second_operand = Link(operation2);
-    operation3->insertOperandLast(first_operand);
-    operation3->insertOperandLast(second_operand);
-    return MultiplicationTree(operation3, "Karatsuba-Ofman 2 way split", x, y);
+    root->insertOperandLast(first_operand);
+    root->insertOperandLast(second_operand);
+    return MultiplicationTree(root, "Karatsuba-Ofman 2 way split", x, y);
+}
 
+vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, Multiplier multiplier)
+{
+    vector<MultiplicationTree> multiplication_trees;
+    return multiplication_trees;
 }
