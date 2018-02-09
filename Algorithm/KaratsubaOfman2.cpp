@@ -245,5 +245,9 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
 vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, Multiplier multiplier)
 {
     vector<MultiplicationTree> multiplication_trees;
+    vector<shared_ptr<Algorithm>> algorithms;
+    vector<Multiplier> multiplier;
+
+    algorithms.push_back(make_shared<StandardTiling>())
     return multiplication_trees;
 }

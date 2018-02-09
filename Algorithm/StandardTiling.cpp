@@ -60,8 +60,8 @@ MultiplicationTree StandardTiling::dispose(int x, int y, Multiplier multiplier)
         }
         else
         {
-            first_operand = Link(input1, 0, x - 1, true);
-            second_operand = Link(input2, 0, y - 1, true);
+            first_operand = Link(input1, 0, x - 1, false);
+            second_operand = Link(input2, 0, y - 1, false);
         }
         multiplication_unit = make_shared<LUT>(x, y);
         root = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
