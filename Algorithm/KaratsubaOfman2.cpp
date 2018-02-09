@@ -31,7 +31,9 @@ KaratsubaOfman2::KaratsubaOfman2(vector<Multiplier> multipliers)
 
 vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
 {
-    vector <MultiplicationTree> multiplication_trees;
+    vector <MultiplicationTree> multiplication_trees, returned_trees;
+    int i, j;
+    MultiplicationTree tmp;
 
     // Pre-Checks
     // X must be equal to y
@@ -44,6 +46,19 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
     {
         return multiplication_trees;
     }
+    // Getting disposition
+    for(i = 0; i < multipliers.size(); i++)
+    {
+        returned_trees = dispose (length_x, length_y, multipliers[i]);
+        for(j = 0; j < returned_trees.size(); j++)
+        {
+            if(returned_trees[j].getRoot() != nullptr)
+            {
+                multiplication_trees.push_back(returned_trees[j]);
+            }
+        }
+    }
+    return multiplicationTrees;
 
 
 
@@ -193,32 +208,28 @@ vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier mul
 
 MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multiplier multiplier)
 {
-    int x1, x0, y1, y0;
+    int part0, part1;
     shared_ptr<InputNode> input1, input2;
-    shared_ptr<OperationNode> x1y1, dx, dy, dxdy, operation1, operation2, operation3, operation4;
+    shared_ptr<OperationNode> x1y1, dx, dy, dxdy, operation1, operation2, operation3;
     Link first_operand, second_operand, first_operand2, second_operand2;
     MultiplicationUnit multiplication_unit;
 
     // Preparings lengths
-    x--;
-    y--;
-    x1 = x / 2;
-    y1 = y / 2;
-    x0 = x - x1;
-    y0 = y - y1;
-    input1 = make_shared<InputNode>(true, x + 1);
-    input2 = make_shared<InputNode>(false, y + 1);
+    part1 = (x - 1) / 2;
+    part0 = x - 1 - part1;
+    input1 = make_shared<InputNode>(true, x);
+    input2 = make_shared<InputNode>(false, y);
     // Prechecks
     // x0 is greater or equal than x1, so if x0y0 is mapped on A LUT then also x1y1 is mapped in a LUT
-    if(Multiplier::isLUTMapped(x0 + 1, y0 + 1, multiplier) == true && this->LUT_Solution == true)
+    if(Multiplier::isLUTMapped(part0 + 1, part0 + 1, multiplier) == true && this->LUT_Solution == true)
     {
         // We want to return just a solution with just LUTs
         return MultiplicationTree();
     }
     // Checkin if x1 * y1 can be mapped in a LUT
-    if(Multiplier::isLUTMapped(x1 + 1, y1 + 1, multiplier) == true)
+    if(Multiplier::isLUTMapped(part1 + 1, part1 + 1, multiplier) == true)
     {
-        multiplication_unit = make_shared<LUT>(x1 + 1, y1 + 1);
+        multiplication_unit = make_shared<LUT>(part1 + 1, part1 + 1);
     }
     else
     {
@@ -226,33 +237,34 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     }
     x1y1 = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
     // Operands of x1y1
-    first_operand = Link(input1, x0, x1, false);
-    second_operand = Link(input2, y0, y1, false);
+    first_operand = Link(input1, part0, part1, false);
+    second_operand = Link(input2, part0, part1, false);
     x1y1->insertOperandLast(first_operand);
     x1y1->insertOperandLast(second_operand);
     // Working on dxdy
-    first_operand = Link(input1, 0, x0, false);
+    first_operand = Link(input1, 0, part0, false);
     operation1 = make_shared<OperationNode>(make_shared<C2>());
     operation1->insertOperandLast(first_operand);
-    first_operand = Link(input1, x0, x1, false);
+    first_operand = Link(input1, part0, part1, false);
     // Given that DX = x1 - x0 will not create overflow the length of the operation
     // will be the length of x0 (that is equal to x1 or equal to x1 + 1) + 1 for the sign
-    second_operand = Link(operation1, 0, x0 + 1, true);
+    second_operand = Link(operation1, 0, part0 + 1, true);
     dx = make_shared<OperationNode>(make_shared<Addition>());
     dx->insertOperandLast(first_operand);
     dx->insertOperandLast(second_operand);
-    first_operand = Link(input2, 0, y0, false);
+    first_operand = Link(input2, 0, part0, false);
     operation1 = make_shared<OperationNode>(make_shared<C2>());
     operation1->insertOperandLast(first_operand);
-    first_operand = Link(input2, y0, y1, false);
-    second_operand = Link(operation1, 0, y0 + 1, true);
+    first_operand = Link(input2, part0, part1, false);
+    second_operand = Link(operation1, 0, part0 + 1, true);
     dy = make_shared<OperationNode>(make_shared<Addition>());
     dy->insertOperandLast(first_operand);
     dy->insertOperandLast(second_operand);
     // If x1y1 is mapped in a LUT, then maybe x0y0 can be mapped in a LUT too
-    if(Multiplier::isLUTMapped(x0 + 1, y0 + 1, multiplier) == true)
+    if(Multiplier::isLUTMapped(part0 + 1, part0 + 1, multiplier) == true)
     {
-        multiplication_unit = make_shared<LUT>(x0 + 1, y0 + 1);
+        this->LUT_solution = true;
+        multiplication_unit = make_shared<LUT>(part0 + 1, part0 + 1);
     }
     else
     {
@@ -261,8 +273,8 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     x0y0 = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
     dxdy = make_shared<OperationNode>(make_shared<Multiplication>(multiplication_unit));
     // Operands of x0y0
-    first_operand = Link(input1, 0, x0, false);
-    second_operand = Link(input2, 0, y0, false);
+    first_operand = Link(input1, 0, part0, false);
+    second_operand = Link(input2, 0, part0, false);
     x0y0->insertOperandLast(first_operand);
     x0y0->insertOperandLast(second_operand);
     // Operands of dxdy
@@ -270,7 +282,7 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     second_operand = Link(dy);
     dxdy->insertOperandLast(first_operand);
     dxdy->insertOperandLast(second_operand);
-    // Computing x1y1 + x0y0 - dxdy remember the last operation as middle term
+    // Computing x1y1 + x0y0 - dxdy remembering this operation as middle term
     operation1 = make_shared<OperationNode>(make_shared<Addition>());
     first_operand = Link(x1y1);
     second_operand = Link(x0y0);
@@ -286,7 +298,32 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     operation3->insertOperandLast(second_operand);
     // Operation3 contains middle term
     // x1y1 needs to be shifted
-    operation1 = make_shared<OperationNode>(make_shared<Shift>(x1 + y1));
+    operation1 = make_shared<OperationNode>(make_shared<Shift>(part0 * 2));
+    first_operand = Link(x1y1);
+    operation1->insertOperandLast(first_operand);
+    // Middle term needs to be shifted
+    operation2 = make_shared<OperationNode>(make_shared<Shift>(part0));
+    first_operand = Link(operation3);
+    operation2->insertOperandLast(first_operand);
+    // x1y1 + x0y0
+    operation3 = make_shared<OperationNode>(make_shared<Addition>());
+    first_operand = Link(operation1);
+    second_operand = Link(x0y0);
+    operation3->insertOperandLast(first_operand);
+    operation3->insertOperandLast(second_operand);
+    // Adding signed operation
+    operation1 = make_shared<OperationNode>(make_shared<Addition>());
+    first_operand = Link(operation3);
+    second_operand = Link(Algorithm::addSignedOperation(x, y, input1, input2));
+    operation1->insertOperandLast(first_operand);
+    operation1->insertOperandLast(second_operand);
+    // Creating root
+    operation3 = make_shared<OperationNode>(make_shared<Addition>());
+    first_operand = Link(operation1);
+    second_operand = Link(operation2);
+    operation3->insertOperandLast(first_operand);
+    operation3->insertOperandLast(second_operand);
+    return MultiplicationTree(operation3, "Karatsuba-Ofman 2 way split", x, y);
 
 }
 
