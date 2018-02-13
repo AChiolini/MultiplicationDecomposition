@@ -1,6 +1,21 @@
 #include <stdexcept>
 #include "Multiplication.h"
 
+Multiplication::Multiplication(const Multiplication &multiplication)
+{
+    shared_ptr<MultiplicationUnit> unit;
+
+    if(multiplication.multiplication_unit->type() == LUTUNIT)
+    {
+        unit = make_shared<LUT>(*(LUT::castToLUT(multiplication.multiplication_unit)));
+    }
+    else
+    {
+        unit = make_shared<Multiplier>(*(Multiplier::castToMultiplier(multiplication.multiplication_unit)));
+    }
+    setMultiplicationUnit(unit);
+}
+
 Multiplication::Multiplication(shared_ptr<MultiplicationUnit> multiplication_unit)
 {
     setMultiplicationUnit(multiplication_unit);
@@ -23,7 +38,7 @@ void Multiplication::setMultiplicationUnit(shared_ptr<MultiplicationUnit> multip
     }
 }
 
-OperationType Multiplication::type()
+OperationType Multiplication::type() const
 {
     return MULTIPLICATION;
 }

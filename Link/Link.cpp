@@ -1,4 +1,6 @@
 #include "Link.h"
+#include "../Node/InputNode.h"
+#include "../Node/OperationNode.h"
 
 Link::Link()
 {
@@ -6,6 +8,21 @@ Link::Link()
     this->start = -1;
     this->length = -1;
     this->sign_included = true;
+}
+
+Link::Link(const Link &link)
+{
+    if(link.node->type() == INPUT)
+    {
+        this->node = make_shared<InputNode>(*(InputNode::castToInputNode(link.node)));
+    }
+    else
+    {
+        this->node = make_shared<OperationNode>(*(OperationNode::castToOperationNode(link.node)));
+    }
+    this->start = link.start;
+    this->length = link.length;
+    this->sign_included = link.sign_included;
 }
 
 /* Constructor that only requires the shared pointer to the node.

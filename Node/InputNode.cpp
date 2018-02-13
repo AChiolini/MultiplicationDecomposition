@@ -62,7 +62,7 @@ string InputNode::getVariableName()
     return s;
 }
 
-NodeType InputNode::type()
+NodeType InputNode::type() const
 {
     return INPUT;
 }

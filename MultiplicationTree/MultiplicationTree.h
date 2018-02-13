@@ -15,8 +15,8 @@ using namespace std;
 class MultiplicationTree
 {
     private:
-        int lengthX;
-        int lengthY;
+        int length_x;
+        int length_y;
 	    shared_ptr<OperationNode> root;
         string description;
         vector<Variable> assignment(vector<Node*>);
@@ -38,7 +38,6 @@ class MultiplicationTree
         void setDescription(string);
         void setLengthX(int);
         void setLengthY(int);
-        MultiplicationTree copy();
         long long executeMultiplication(long long, long long);
         virtual ~MultiplicationTree() = default;
 };

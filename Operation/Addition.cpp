@@ -16,7 +16,7 @@ void Addition::setLatency(double latency)
     this->latency = latency;
 }
 
-OperationType Addition::type()
+OperationType Addition::type() const
 {
     return ADDITION;
 }

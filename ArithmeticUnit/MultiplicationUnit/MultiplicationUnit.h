@@ -14,6 +14,7 @@ enum MultiplicationUnitType
 class MultiplicationUnit
 {        
     public:
+        virtual MultiplicationUnitType type() const = 0;
         virtual int getInputLength1() = 0;
         virtual int getInputLength2() = 0;
         virtual double getLatency() = 0;

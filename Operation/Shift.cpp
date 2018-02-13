@@ -41,7 +41,7 @@ void Shift::setLatency(double latency)
     this->latency = latency;
 }
 
-OperationType Shift::type()
+OperationType Shift::type() const
 {
     return SHIFT;
 }

@@ -47,6 +47,11 @@ LUT::LUT(int input_length1, int input_length2, double latency)
     }
 }
 
+MultiplicationUnitType LUT::type() const
+{
+    return LUTUNIT;
+}
+
 int LUT::getInputLength1()
 {
     return this->input_length1;

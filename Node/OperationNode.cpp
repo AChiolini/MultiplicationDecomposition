@@ -3,6 +3,13 @@
 #include <iostream>
 #include <stdexcept>
 #include "OperationNode.h"
+#include "../Operation/Addition.h"
+#include "../Operation/Multiplication.h"
+#include "../Operation/And.h"
+#include "../Operation/C2.h"
+#include "../Operation/Shift.h"
+#include "../Operation/Fanout.h"
+
 
 using namespace std;
 
@@ -10,6 +17,32 @@ OperationNode::OperationNode()
 {
     this->operation = nullptr;
     this->length = -1;
+}
+
+OperationNode::OperationNode(const OperationNode &operation_node)
+{
+    int i;
+
+    this->length = operation_node.length;
+    switch(operation_node.operation->type())
+    {
+        case ADDITION: this->operation = make_shared<Addition>(*(Addition::castToAddition(operation_node.operation)));
+            break;
+        case MULTIPLICATION: this->operation = make_shared<Multiplication>(*(Multiplication::castToMultiplication(operation_node.operation)));
+            break;
+        case AND: this->operation = make_shared<And>(*(And::castToAnd(operation_node.operation)));
+            break;
+        case SHIFT: this->operation = make_shared<Shift>(*(Shift::castToShift(operation_node.operation)));
+            break;
+        case COMPLEMENT2: this->operation = make_shared<C2>(*(C2::castToC2(operation_node.operation)));
+            break;
+        case FANOUT: this->operation = make_shared<Fanout>(*(Fanout::castToFanout(operation_node.operation)));
+            break;
+    }
+    for(i = 0; i < operation_node.operands.size(); i++)
+    {
+        this->operands.push_back(Link(operation_node.operands[i]));
+    }
 }
 
 OperationNode::OperationNode(shared_ptr<Operation> operation)
@@ -149,7 +182,7 @@ int OperationNode::size()
     return this->operands.size();
 }
 
-NodeType OperationNode::type()
+NodeType OperationNode::type() const
 {
     return OPERATION;
 }

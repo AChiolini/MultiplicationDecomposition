@@ -17,6 +17,7 @@ int main (int argc, char** argv)
 {
     int i, j, delay, input1, input2, output_threshold;
     long long in1, in2;
+    int k;
     int inputLength1, inputLength2, inpu1_threshold, input2_threshold;
     MultiplicationTree *ptr;
     vector <Multiplier> multipliers;
@@ -55,6 +56,10 @@ int main (int argc, char** argv)
         for (j = 0; j < algorithms.size(); j++)
         {
             multiplicationTrees = (algorithms[j])->dispositions(inputLength1, inputLength2);
+            for (i = 0, k = multiplicationTrees.size(); i < k; i++)
+            {
+                multiplicationTrees.push_back(MultiplicationTree(multiplicationTrees[i]));
+            }
             for (i = 0; i < multiplicationTrees.size(); i++)
             {
                 cout << multiplicationTrees[i].getDescription() << endl;

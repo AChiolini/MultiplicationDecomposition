@@ -47,7 +47,7 @@ void Fanout::setLatency(double latency)
     this->latency = latency;
 }
 
-OperationType Fanout::type()
+OperationType Fanout::type() const
 {
     return FANOUT;
 }

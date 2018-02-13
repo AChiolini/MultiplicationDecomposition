@@ -36,6 +36,7 @@ class OperationNode : public Node
     public:
         // Class constructors
         OperationNode();
+        OperationNode(const OperationNode&);
         OperationNode(shared_ptr<Operation>);
         OperationNode(shared_ptr<Operation>, int);
         // Class methods
@@ -51,7 +52,7 @@ class OperationNode : public Node
         Link getOperandAt(int);
         string getOperationExpression(vector<Variable>);
         // Inherited methods
-        NodeType type();
+        NodeType type() const;
         double getLatency();
         vector<Node*> getNodes();
         long long executeNode(long long, long long);

@@ -1,6 +1,7 @@
 #ifndef MULTIPLIER_H
 #define MULTIPLIER_H
 
+#include <memory>
 #include "../MultiplicationUnit.h"
 
 using namespace std;
@@ -18,6 +19,7 @@ class Multiplier : public MultiplicationUnit
         Multiplier();
         Multiplier(const Multiplier&) = default;
         Multiplier(int, int, int, int, double);
+        MultiplicationUnitType type() const;
         int getInputLength1();
         int getInputLength2();
         int getInputThreshold1();
@@ -31,6 +33,8 @@ class Multiplier : public MultiplicationUnit
         string description();
         virtual ~Multiplier() = default;
 
+        static Multiplier* castToMultiplier(MultiplicationUnit* unit) { return static_cast<Multiplier*>(unit); }
+        static Multiplier* castToMultiplier(shared_ptr<MultiplicationUnit> unit) { return static_cast<Multiplier*>(unit.get()); }
         static bool isLUTMapped(int x, int y, Multiplier multiplier)
         {
             int min_input, max_input, min_threshold, max_threshold;

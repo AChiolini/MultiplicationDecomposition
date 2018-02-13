@@ -15,7 +15,7 @@ enum NodeType
 class Node
 {
     public:
-        virtual NodeType type() = 0;
+        virtual NodeType type() const = 0;
         virtual int getLength() = 0;
         virtual double getLatency() = 0;
         virtual vector<Node*> getNodes() = 0;

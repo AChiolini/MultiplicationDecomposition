@@ -23,12 +23,13 @@ class Multiplication : public Operation
 
     public:
         // Class constructor
+        Multiplication(const Multiplication&);
         Multiplication(shared_ptr<MultiplicationUnit>);
         // Class methods
         shared_ptr<MultiplicationUnit> getMultiplicationUnit();
         void setMultiplicationUnit(shared_ptr<MultiplicationUnit>);
         // Inherited methods
-        OperationType type();  ///Forse da togliere
+        OperationType type() const;
         int requiredOperands();
         double getLatency();
         string description();

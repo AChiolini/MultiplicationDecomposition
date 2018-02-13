@@ -12,15 +12,21 @@ using namespace std;
 
 MultiplicationTree::MultiplicationTree()
 {
+    cout << "empty construct called" << endl;
     this->root = nullptr;
     this->description = "";
-    this->lengthX = 0;
-    this->lengthY = 0;
+    this->length_x = 0;
+    this->length_y = 0;
+    cout << "empty construct terminated" << endl;
 }
 
 MultiplicationTree::MultiplicationTree(const MultiplicationTree &multiplication_tree)
 {
-    this->lengthX = multiplication_tree.lengthX;
+    cout << "am i called?" << endl;
+    this->length_x = multiplication_tree.length_x;
+    this->length_y = multiplication_tree.length_y;
+    this->root = make_shared<OperationNode>(*(multiplication_tree.root.get()));
+    this->description = multiplication_tree.description;
 }
 
 /*****************************************************************************/
@@ -28,12 +34,12 @@ MultiplicationTree::MultiplicationTree(const MultiplicationTree &multiplication_
 /* description.                                                              */
 /*****************************************************************************/
 
-MultiplicationTree::MultiplicationTree(shared_ptr<OperationNode> root, string description, int lengthX, int lengthY)
+MultiplicationTree::MultiplicationTree(shared_ptr<OperationNode> root, string description, int length_x, int length_y)
 {
     this->root = root;
     this->description = description;
-    this->lengthX = lengthX;
-    this->lengthY = lengthY;
+    this->length_x = length_x;
+    this->length_y = length_y;
 }
 
 /*****************************************************************************/
@@ -66,12 +72,12 @@ int MultiplicationTree::getLatency()
 
 int MultiplicationTree::getLengthX()
 {
-    return lengthX;
+    return length_x;
 }
 
 int MultiplicationTree::getLengthY()
 {
-    return lengthY;
+    return length_y;
 }
 
 /*****************************************************************************/
@@ -92,15 +98,15 @@ void MultiplicationTree::setDescription(string description)
     this->description = description;
 }
 
-void MultiplicationTree::setLengthX(int lengthX)
+void MultiplicationTree::setLengthX(int length_x)
 {
 
-    this->lengthX = lengthX;
+    this->length_x = length_x;
 }
 
-void MultiplicationTree::setLengthY(int lengthY)
+void MultiplicationTree::setLengthY(int length_y)
 {
-    this->lengthY = lengthY;
+    this->length_y = length_y;
 }
 
 /*****************************************************************************/
@@ -240,6 +246,6 @@ long long MultiplicationTree::executeMultiplication(long long input1, long long 
 
 int MultiplicationTree::getOutputLength()
 {
-    return (lengthX + lengthY);
+    return (length_x + length_y);
 }
 

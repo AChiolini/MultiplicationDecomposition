@@ -19,6 +19,7 @@ class Shift : public Operation
     public:
         // Class constructors
         Shift();
+        Shift(const Shift&) = default;
         Shift(int);
         Shift(int, double);
         // Class methods
@@ -26,7 +27,7 @@ class Shift : public Operation
         void setShift(int);
         void setLatency(double);
         // Inherited methods
-        OperationType type();
+        OperationType type() const;
         int requiredOperands();
         double getLatency();
         string description();

@@ -41,7 +41,7 @@ void C2::setLatency(double latency)
     this->latency = latency;
 }
 
-OperationType C2::type()
+OperationType C2::type() const
 {
     return COMPLEMENT2;
 }

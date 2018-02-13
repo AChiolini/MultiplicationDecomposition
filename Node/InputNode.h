@@ -22,6 +22,7 @@ class InputNode : public Node
     public:
         // Class constructor
         InputNode();
+        InputNode(const InputNode&) = default;
         InputNode(bool);
         InputNode(bool, int);
         // Class methods
@@ -31,7 +32,7 @@ class InputNode : public Node
         void setLength(int);
         string getVariableName();
         // Inherited methods
-        NodeType type();
+        NodeType type() const;
         double getLatency();
         vector<Node*> getNodes();
         long long executeNode(long long, long long);

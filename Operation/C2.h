@@ -21,6 +21,7 @@ class C2 : public Operation
     public:
         // Class constructors
         C2();
+        C2(const C2&) = default;
         C2(bool);
         C2(bool, double);
         // Class methods
@@ -28,7 +29,7 @@ class C2 : public Operation
         void setOverflow(bool);
         void setLatency(double);
         // Inherited methods
-	    OperationType type();
+	    OperationType type() const;
 		int requiredOperands();
         double getLatency();
         string description();

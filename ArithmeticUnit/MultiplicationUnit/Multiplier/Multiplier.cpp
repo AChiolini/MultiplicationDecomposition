@@ -21,6 +21,11 @@ Multiplier::Multiplier(int input_length1, int input_length2, int input_threshold
     setLatency(latency);
 }
 
+MultiplicationUnitType Multiplier::type() const
+{
+    return MULTIPLIER;
+}
+
 int Multiplier::getInputLength1()
 {
     return this->input_length1;

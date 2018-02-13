@@ -60,7 +60,7 @@ void And::setLatency(double latency)
     this->latency = latency;
 }
 
-OperationType And::type()
+OperationType And::type() const
 {
     return AND;
 }

@@ -18,6 +18,7 @@ class Fanout : public Operation
     public:
         // Class constructors
         Fanout();
+        Fanout(const Fanout&) = default;
         Fanout(int);
         Fanout(int, double);
         // Class methods
@@ -25,7 +26,7 @@ class Fanout : public Operation
         void setFanValue(int);
         void setLatency(double);
         // Inherited methods
-        OperationType type();
+        OperationType type() const;
         int requiredOperands();
         double getLatency();
         string description();

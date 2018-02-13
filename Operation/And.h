@@ -19,6 +19,7 @@ class And : public Operation
     public:
         // Class constructors
         And();
+        And(const And&) = default;
         And(int, int);
         And(int, int, double);
         // Class methods
@@ -28,7 +29,7 @@ class And : public Operation
         void setShiftInput2(int);
         void setLatency(double);
         // Inherited methods
-        OperationType type();
+        OperationType type() const;
         int requiredOperands();
         double getLatency();
         string description();

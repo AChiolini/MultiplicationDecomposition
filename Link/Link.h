@@ -20,6 +20,7 @@ class Link
 
     public:
         Link();
+        Link(const Link&);
         Link(shared_ptr<Node>);
         Link(shared_ptr<Node>, int, int);
         Link(shared_ptr<Node>, int, int, bool);

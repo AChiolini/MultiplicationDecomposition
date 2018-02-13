@@ -12,7 +12,6 @@ enum OperationType
     ADDITION = 0,
     MULTIPLICATION,
     AND,
-    OR,
     SHIFT,
     COMPLEMENT2,
     FANOUT,
@@ -21,7 +20,7 @@ enum OperationType
 class Operation 
 {
     public:
-        virtual OperationType type() = 0;
+        virtual OperationType type() const = 0;
         virtual int requiredOperands() = 0;
         virtual double getLatency() = 0;
         virtual string description() = 0;

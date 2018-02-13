@@ -20,11 +20,12 @@ class Addition : public Operation
     public:
         // Class constructors
         Addition();
+        Addition(const Addition&) = default;
         Addition(double);
         // Class method
         void setLatency(double);
         // Inherited methods
-        OperationType type();
+        OperationType type() const;
         int requiredOperands();
         double getLatency();
         string description();
