@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include "OperationNode.h"
+#include "InputNode.h"
 
 using namespace std;
 
@@ -196,6 +197,64 @@ vector<Node*> OperationNode::getNodes()
         nodes.push_back(this);
     }
     return nodes;
+}
+
+void OperationNode::substituteLeaves(shared_ptr<Node> input1, shared_ptr<Node> input2)
+{
+    int i;
+    InputNode *input;
+    OperationNode *operation;
+
+    for(i = 0; i < this->operands.size(); i++)
+    {
+        if(this->operands[i].getNode()->type() == INPUT)
+        {
+            input = InputNode::castToInputNode(operands[i].getNode());
+            if(input->isFirstInput() == true)
+            {
+                operands[i].setNode(input1);
+                cout << "Input 1 incontrato" << endl;
+            }
+            else
+            {
+                operands[i].setNode(input2);
+                //cout << input2.use_count() << endl;
+            }
+        }
+        else
+        {
+            operation = OperationNode::castToOperationNode(operands[i].getNode());
+            operation->substituteLeaves(input1, input2);
+        }
+    }
+}
+
+void OperationNode::shiftLinksOperands(int s1, int s2)
+{
+    int i;
+    InputNode *input;
+    OperationNode *operation;
+
+    for(i = 0; i < this->operands.size(); i++)
+    {
+        if(this->operands[i].getNode()->type() == INPUT)
+        {
+            input = InputNode::castToInputNode(operands[i].getNode());
+            if(input->isFirstInput() == true)
+            {
+                operands[i].setStart(operands[i].getStart() + s1);
+            }
+            else
+            {
+                operands[i].setStart(operands[i].getStart() + s2);
+            }
+        }
+        else
+        {
+            operation = OperationNode::castToOperationNode(operands[i].getNode());
+            operation->shiftLinksOperands(s1, s2);
+        }
+    }
 }
 
 long long OperationNode::executeNode(long long input1, long long input2)

@@ -55,11 +55,9 @@ int main (int argc, char** argv)
         algorithms.push_back(new ProposedTiling(multipliers));
         for (j = 0; j < algorithms.size(); j++)
         {
+            cout << "Function call" << endl;
             multiplicationTrees = (algorithms[j])->dispositions(inputLength1, inputLength2);
-            for (i = 0, k = multiplicationTrees.size(); i < k; i++)
-            {
-                multiplicationTrees.push_back(multiplicationTrees[i].copyTree());
-            }
+            cout << "Disposed" << endl;
             for (i = 0; i < multiplicationTrees.size(); i++)
             {
                 cout << multiplicationTrees[i].getDescription() << endl;

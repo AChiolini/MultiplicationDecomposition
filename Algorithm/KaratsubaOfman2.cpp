@@ -39,9 +39,9 @@ void KaratsubaOfman2::setSignOperationsIncluded(bool sign_operations_included)
 /* Method that provides all the dispositions available.                      */
 /*****************************************************************************/
 
-vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
+vector<MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
 {
-    vector <MultiplicationTree> multiplication_trees, returned_trees;
+    vector<MultiplicationTree> multiplication_trees, returned_trees;
     int i, j;
     MultiplicationTree tmp;
 
@@ -67,6 +67,12 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
                 multiplication_trees.push_back(returned_trees[j]);
             }
         }
+        returned_trees.clear();
+    }
+    for(i = 0; i < multiplication_trees.size(); i++)
+    {
+        cout << multiplication_trees[i].getRoot() << endl;
+        cout << multiplication_trees[i].getRoot().use_count() << endl;
     }
     return multiplication_trees;
 }
@@ -79,7 +85,7 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
 vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier multiplier)
 {
     vector<MultiplicationTree> dispositions;
-    int min_dim;
+    int min_dim, i;
 
     // First of all, pre checks
     // Checking if the multiplication can be mapped in one LUT
@@ -117,7 +123,8 @@ vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier mul
     }
     else
     {
-        dispositions.push_back(MultiplicationTree());
+
+        dispositions = recursiveDisposition(x, y, multiplier);
         return dispositions;
     }
 }
@@ -158,14 +165,14 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     x1y1->insertOperandLast(first_operand);
     x1y1->insertOperandLast(second_operand);
     // Working on dxdy
-    first_operand = Link(input1, 0, part0, false);
     operation1 = make_shared<OperationNode>(make_shared<C2>());
+    first_operand = Link(input1, 0, part0, false);
     operation1->insertOperandLast(first_operand);
-    first_operand = Link(input1, part0, part1, false);
     // Given that DX = x1 - x0 will not create overflow the length of the operation
     // will be the length of x0 (that is equal to x1 or equal to x1 + 1) + 1 for the sign
-    second_operand = Link(operation1, 0, part0 + 1, true);
     dx = make_shared<OperationNode>(make_shared<Addition>());
+    first_operand = Link(input1, part0, part1, false);
+    second_operand = Link(operation1, 0, part0 + 1, true);
     dx->insertOperandLast(first_operand);
     dx->insertOperandLast(second_operand);
     first_operand = Link(input2, 0, part0, false);
@@ -254,33 +261,156 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
 
 vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, Multiplier multiplier)
 {
-    vector<MultiplicationTree> multiplication_trees, returned_treesx0y0, returned_treesx1y1, returned_treesdxdy;
+    vector<MultiplicationTree> multiplication_trees, returned_trees0, returned_trees1, returned_treesd;
     vector<shared_ptr<Algorithm>> algorithms;
     vector<Multiplier> multipliers;
-    int part0, part1, i;
+    int part0, part1, i, j, k;
     shared_ptr<InputNode> input1, input2;
     shared_ptr<OperationNode> x0y0, x1y1, dx, dy, dxdy, operation1, operation2, operation3, root;
     Link first_operand, second_operand, first_operand2, second_operand2;
     shared_ptr<MultiplicationUnit> multiplication_unit;
+    MultiplicationTree tmp;
 
     // Preparing algorithms
     multipliers.push_back(multiplier);
     algorithms.push_back(make_shared<StandardTiling>(multipliers));
     algorithms.push_back(make_shared<ProposedTiling>(multipliers));
-    algorithms.push_back(make_shared<KaratsubaOfman2>(multipliers));
+    //algorithms.push_back(make_shared<KaratsubaOfman2>(multipliers));
     // Preparing lengths
     part1 = (x - 1) / 2;
     part0 = x - 1 - part1;
-    input1 = make_shared<InputNode>(true, x);
-    input2 = make_shared<InputNode>(false, y);
+    cout << algorithms.size() << endl;
     for(i = 0; i < algorithms.size(); i++)
     {
-
+        multiplication_trees = (algorithms[i])->dispositions(part0, part0);
+        for(j = 0; j < multiplication_trees.size(); j++)
+        {
+            returned_treesd.push_back(multiplication_trees[j]);
+        }
+        (algorithms[i])->setSignOperationsIncluded(false);
+        multiplication_trees = (algorithms[i])->dispositions(part0, part0);
+        for(j = 0; j < multiplication_trees.size(); j++)
+        {
+            returned_trees0.push_back(multiplication_trees[j]);
+        }
     }
-
-
-
-
-
+    if(part1 == part0)
+    {
+        for(i = 0; i < returned_trees0.size(); i++)
+        {
+            returned_trees1.push_back(returned_trees0[i].copyTree());
+        }
+    }
+    else
+    {
+        multiplication_trees = (algorithms[i])->dispositions(part1, part1);
+        for(j = 0; j < multiplication_trees.size(); j++)
+        {
+            returned_trees1.push_back(multiplication_trees[j]);
+        }
+    }
+    // returned trees 0 is used for the first quadrant
+    // returned trees d is used for dxdy
+    // returned trees 1 is used for the last quadrant
+    cout << "STOP" << endl;
+    cout << returned_treesd.size() << endl;
+    for(i = 0; i < returned_trees0.size(); i++)
+    {
+        for(j = 0; j < returned_treesd.size(); j++)
+        {
+            for(k = 0; k < returned_trees1.size(); k++)
+            {
+                input1 = make_shared<InputNode>(true, x);
+                input2 = make_shared<InputNode>(false, y);
+                tmp = returned_trees0[i].copyTree();
+                // Working on x0y0
+                cout << "Pre x0y0" << endl;
+                cout << input1.use_count() << endl;
+                cout << input2.use_count() << endl;
+                x0y0 = tmp.getRoot();
+                x0y0->substituteLeaves(input1, input2);
+                cout << "After x0y0" << endl;
+                cout << input1.use_count() << endl;
+                cout << input2.use_count() << endl;
+                // Working on dxdy
+                operation1 = make_shared<OperationNode>(make_shared<C2>());
+                first_operand = Link(input1, 0, part0, false);
+                operation1->insertOperandLast(first_operand);
+                dx = make_shared<OperationNode>(make_shared<Addition>());
+                first_operand = Link(input1, part0, part1, false);
+                second_operand = Link(operation1, 0, part0 + 1, true);
+                dx->insertOperandLast(first_operand);
+                dx->insertOperandLast(second_operand);
+                first_operand = Link(input2, 0, part0, false);
+                operation1 = make_shared<OperationNode>(make_shared<C2>());
+                operation1->insertOperandLast(first_operand);
+                first_operand = Link(input2, part0, part1, false);
+                second_operand = Link(operation1, 0, part0 + 1, true);
+                dy = make_shared<OperationNode>(make_shared<Addition>());
+                dy->insertOperandLast(first_operand);
+                dy->insertOperandLast(second_operand);
+                tmp = returned_treesd[j].copyTree();
+                dxdy = tmp.getRoot();
+                dxdy->substituteLeaves(dx, dy);
+                // working in x1y1
+                tmp = returned_trees1[k].copyTree();
+                x1y1 = tmp.getRoot();
+                x1y1->substituteLeaves(input1, input2);
+                x1y1->shiftLinksOperands(part0, part0);
+                // Computing x1y1 + x0y0 - dxdy remembering this operation as middle term
+                operation1 = make_shared<OperationNode>(make_shared<Addition>());
+                first_operand = Link(x1y1);
+                second_operand = Link(x0y0);
+                operation1->insertOperandLast(first_operand);
+                operation1->insertOperandLast(second_operand);
+                operation2 = make_shared<OperationNode>(make_shared<C2>());
+                first_operand = Link(dxdy);
+                operation2->insertOperandLast(first_operand);
+                operation3 = make_shared<OperationNode>(make_shared<Addition>());
+                first_operand = Link(operation1);
+                second_operand = Link(operation2);
+                operation3->insertOperandLast(first_operand);
+                operation3->insertOperandLast(second_operand);
+                // Operation3 contains middle term
+                // x1y1 needs to be shifted
+                operation1 = make_shared<OperationNode>(make_shared<Shift>(part0 * 2));
+                first_operand = Link(x1y1);
+                operation1->insertOperandLast(first_operand);
+                // Middle term needs to be shifted
+                operation2 = make_shared<OperationNode>(make_shared<Shift>(part0));
+                first_operand = Link(operation3);
+                operation2->insertOperandLast(first_operand);
+                // x1y1 + x0y0
+                operation3 = make_shared<OperationNode>(make_shared<Addition>());
+                first_operand = Link(operation1);
+                second_operand = Link(x0y0);
+                operation3->insertOperandLast(first_operand);
+                operation3->insertOperandLast(second_operand);
+                // Adding signed operation
+                if(this->sign_operations_included == true)
+                {
+                    operation1 = make_shared<OperationNode>(make_shared<Addition>());
+                    first_operand = Link(operation3);
+                    second_operand = Link(Algorithm::addSignedOperation(x, y, input1, input2));
+                    operation1->insertOperandLast(first_operand);
+                    operation1->insertOperandLast(second_operand);
+                }
+                // Creating root
+                root = make_shared<OperationNode>(make_shared<Addition>());
+                if(this->sign_operations_included == true)
+                {
+                    first_operand = Link(operation1);
+                }
+                else
+                {
+                    first_operand = Link(operation3);
+                }
+                second_operand = Link(operation2);
+                root->insertOperandLast(first_operand);
+                root->insertOperandLast(second_operand);
+                multiplication_trees.push_back(MultiplicationTree(root, "Karatsuba-Ofman 2 way split", x, y));
+            }
+        }
+    }
     return multiplication_trees;
 }

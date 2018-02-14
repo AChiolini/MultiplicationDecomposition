@@ -55,6 +55,8 @@ class OperationNode : public Node
         NodeType type() const;
         double getLatency();
         vector<Node*> getNodes();
+        void substituteLeaves(shared_ptr<Node>, shared_ptr<Node>);
+        void shiftLinksOperands(int, int);
         long long executeNode(long long, long long);
         // Class destructor
         virtual ~OperationNode() = default;
