@@ -24,7 +24,7 @@ class MultiplicationTree
 
     public:
         MultiplicationTree();
-        MultiplicationTree(const MultiplicationTree&);
+        MultiplicationTree(const MultiplicationTree&) = default;
         MultiplicationTree(shared_ptr<OperationNode>, string, int, int);
         shared_ptr<OperationNode> getRoot();
         string getDescription();
@@ -38,6 +38,7 @@ class MultiplicationTree
         void setDescription(string);
         void setLengthX(int);
         void setLengthY(int);
+        MultiplicationTree copyTree();
         long long executeMultiplication(long long, long long);
         virtual ~MultiplicationTree() = default;
 };

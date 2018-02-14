@@ -321,10 +321,10 @@ MultiplicationTree StandardTiling::disposeRectangle(int x, int y, Multiplier mul
     }
     if(this->sign_operations_included == true)
     {
-        operation_nodes.push_back(Algorithm::addSignedOperation(x, y, input1, input2));
+        operation_nodes.push_back(Algorithm::addSignedOperation(x + 1, y + 1, input1, input2));
     }
     root = createTree(operation_nodes);
-    return MultiplicationTree(root, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
+    return MultiplicationTree(root, "Standard tiling (" + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x + 1, y + 1);
 }
 
 shared_ptr<OperationNode> StandardTiling::createTree(vector <shared_ptr<OperationNode>> operation_nodes)

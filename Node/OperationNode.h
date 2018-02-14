@@ -36,7 +36,7 @@ class OperationNode : public Node
     public:
         // Class constructors
         OperationNode();
-        OperationNode(const OperationNode&);
+        OperationNode(const OperationNode&) = default;
         OperationNode(shared_ptr<Operation>);
         OperationNode(shared_ptr<Operation>, int);
         // Class methods

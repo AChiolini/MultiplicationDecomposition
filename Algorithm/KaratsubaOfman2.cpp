@@ -60,7 +60,6 @@ vector <MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
     for(i = 0; i < multipliers.size(); i++)
     {
         returned_trees = dispose (x, y, multipliers[i]);
-        cout << "AM i HERE?" << endl;
         for(j = 0; j < returned_trees.size(); j++)
         {
             if(returned_trees[j].getRoot() != nullptr)
@@ -111,7 +110,6 @@ vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier mul
     // Checking if it can be splitted in two parts in which each part is covered just by a multiplier
     // If it is, then call not_recursive disposition, otherwise call recursive_disposition
     // Each part has to be smaller than the greatest input divided by two
-    cout << "mult calld" << endl;
     if((min_dim * 2) - 1 >= x)
     {
         dispositions.push_back(notRecursiveDisposition(x, y, multiplier));
@@ -119,9 +117,7 @@ vector<MultiplicationTree> KaratsubaOfman2::dispose(int x, int y, Multiplier mul
     }
     else
     {
-        cout << "empty construc calling" << endl;
         dispositions.push_back(MultiplicationTree());
-        cout << "empty construc" << endl;
         return dispositions;
     }
 }

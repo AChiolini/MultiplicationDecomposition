@@ -20,7 +20,7 @@ class Link
 
     public:
         Link();
-        Link(const Link&);
+        Link(const Link&) = default;
         Link(shared_ptr<Node>);
         Link(shared_ptr<Node>, int, int);
         Link(shared_ptr<Node>, int, int, bool);

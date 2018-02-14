@@ -58,7 +58,7 @@ int main (int argc, char** argv)
             multiplicationTrees = (algorithms[j])->dispositions(inputLength1, inputLength2);
             for (i = 0, k = multiplicationTrees.size(); i < k; i++)
             {
-                multiplicationTrees.push_back(MultiplicationTree(multiplicationTrees[i]));
+                multiplicationTrees.push_back(multiplicationTrees[i].copyTree());
             }
             for (i = 0; i < multiplicationTrees.size(); i++)
             {

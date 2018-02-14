@@ -10,21 +10,6 @@ Link::Link()
     this->sign_included = true;
 }
 
-Link::Link(const Link &link)
-{
-    if(link.node->type() == INPUT)
-    {
-        this->node = make_shared<InputNode>(*(InputNode::castToInputNode(link.node)));
-    }
-    else
-    {
-        this->node = make_shared<OperationNode>(*(OperationNode::castToOperationNode(link.node)));
-    }
-    this->start = link.start;
-    this->length = link.length;
-    this->sign_included = link.sign_included;
-}
-
 /* Constructor that only requires the shared pointer to the node.
  * Start and length are set to -1 that means the operation should
  * take the entire bit string as output of the node. Sign is included.

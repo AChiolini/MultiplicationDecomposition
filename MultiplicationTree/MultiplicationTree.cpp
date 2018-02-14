@@ -3,6 +3,12 @@
 #include <string.h>
 #include "MultiplicationTree.h"
 #include "../Node/InputNode.h"
+#include "../Operation/Addition.h"
+#include "../Operation/Multiplication.h"
+#include "../Operation/And.h"
+#include "../Operation/C2.h"
+#include "../Operation/Shift.h"
+#include "../Operation/Fanout.h"
 
 using namespace std;
 
@@ -12,21 +18,10 @@ using namespace std;
 
 MultiplicationTree::MultiplicationTree()
 {
-    cout << "empty construct called" << endl;
     this->root = nullptr;
     this->description = "";
     this->length_x = 0;
     this->length_y = 0;
-    cout << "empty construct terminated" << endl;
-}
-
-MultiplicationTree::MultiplicationTree(const MultiplicationTree &multiplication_tree)
-{
-    cout << "am i called?" << endl;
-    this->length_x = multiplication_tree.length_x;
-    this->length_y = multiplication_tree.length_y;
-    this->root = make_shared<OperationNode>(*(multiplication_tree.root.get()));
-    this->description = multiplication_tree.description;
 }
 
 /*****************************************************************************/
@@ -237,6 +232,85 @@ string MultiplicationTree::getCost()
         }
     }
     return s;
+}
+
+MultiplicationTree MultiplicationTree::copyTree()
+{
+    int i, j, k,root_position;
+    vector<Node*> nodes;
+    vector<shared_ptr<Node>> copy_nodes;
+    Link link;
+    OperationNode *operation_node;
+    shared_ptr<Operation> operation, copied_operation;
+    shared_ptr<OperationNode> copied_operation_node, root;
+
+    if(this->root == nullptr)
+    {
+        return MultiplicationTree();
+    }
+    // Copying all the nodes
+    nodes = this->root->getNodes();
+    // Finding root
+    for(i = 0; i < nodes.size(); i++)
+    {
+        if(this->root.get() == nodes[i])
+        {
+            root_position = i;
+        }
+    }
+    for(i = 0; i < nodes.size(); i++)
+    {
+        switch(nodes[i]->type())
+        {
+            case INPUT: copy_nodes.push_back(make_shared<InputNode>(*(InputNode::castToInputNode(nodes[i]))));
+                break;
+            case OPERATION: operation_node = OperationNode::castToOperationNode(nodes[i]);
+                operation = operation_node->getOperation();
+                switch(operation->type())
+                {
+                    case ADDITION: copied_operation = make_shared<Addition>(*(Addition::castToAddition(operation)));
+                        break;
+                    case MULTIPLICATION: copied_operation = make_shared<Multiplication>(*(Multiplication::castToMultiplication(operation)));
+                        break;
+                    case AND: copied_operation = make_shared<And>(*(And::castToAnd(operation)));
+                        break;
+                    case SHIFT: copied_operation = make_shared<Shift>(*(Shift::castToShift(operation)));
+                        break;
+                    case COMPLEMENT2: copied_operation = make_shared<C2>(*(C2::castToC2(operation)));
+                        break;
+                    case FANOUT: copied_operation = make_shared<Fanout>(*(Fanout::castToFanout(operation)));
+                        break;
+                }
+                copied_operation_node = make_shared<OperationNode>(copied_operation, operation_node->getLength());
+                if(i == root_position)
+                {
+                    root = copied_operation_node;
+                }
+                copy_nodes.push_back(copied_operation_node);
+                break;
+        }
+    }
+    // Setting links
+    for(i = 0; i < nodes.size(); i++)
+    {
+        if(nodes[i]->type() == OPERATION)
+        {
+            operation_node = OperationNode::castToOperationNode(nodes[i]);
+            for(j = 0; j < operation_node->size(); j++)
+            {
+                link = operation_node->getOperandAt(j);
+                for(k = 0; k < nodes.size(); k++)
+                {
+                    if(link.getNode().get() == nodes[k])
+                    {
+                        link.setNode(copy_nodes[k]);
+                    }
+                }
+                OperationNode::castToOperationNode(copy_nodes[i])->insertOperandLast(link);
+            }
+        }
+    }
+    return MultiplicationTree(root, this->description, this->length_x, this->length_y);
 }
 
 long long MultiplicationTree::executeMultiplication(long long input1, long long input2)
