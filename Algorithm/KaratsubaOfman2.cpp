@@ -56,7 +56,8 @@ vector<MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
     {
         return multiplication_trees;
     }
-    // Getting disposition
+    // Getting dispositions
+    this->LUT_solution = false;
     for(i = 0; i < multipliers.size(); i++)
     {
         returned_trees = dispose (x, y, multipliers[i]);
@@ -68,11 +69,6 @@ vector<MultiplicationTree> KaratsubaOfman2::dispositions(int x, int y)
             }
         }
         returned_trees.clear();
-    }
-    for(i = 0; i < multiplication_trees.size(); i++)
-    {
-        cout << multiplication_trees[i].getRoot() << endl;
-        cout << multiplication_trees[i].getRoot().use_count() << endl;
     }
     return multiplication_trees;
 }
@@ -256,7 +252,7 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     second_operand = Link(operation2);
     root->insertOperandLast(first_operand);
     root->insertOperandLast(second_operand);
-    return MultiplicationTree(root, "Karatsuba-Ofman 2 way split", x, y);
+    return MultiplicationTree(root, "Karatsuba-Ofman 2 way split (standard algorithm)", x, y);
 }
 
 vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, Multiplier multiplier)
@@ -275,20 +271,19 @@ vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, M
     multipliers.push_back(multiplier);
     algorithms.push_back(make_shared<StandardTiling>(multipliers));
     algorithms.push_back(make_shared<ProposedTiling>(multipliers));
-    //algorithms.push_back(make_shared<KaratsubaOfman2>(multipliers));
+    algorithms.push_back(make_shared<KaratsubaOfman2>(multipliers));
     // Preparing lengths
     part1 = (x - 1) / 2;
     part0 = x - 1 - part1;
-    cout << algorithms.size() << endl;
     for(i = 0; i < algorithms.size(); i++)
     {
-        multiplication_trees = (algorithms[i])->dispositions(part0, part0);
+        multiplication_trees = (algorithms[i])->dispositions(part0 + 1, part0 + 1);
         for(j = 0; j < multiplication_trees.size(); j++)
         {
             returned_treesd.push_back(multiplication_trees[j]);
         }
         (algorithms[i])->setSignOperationsIncluded(false);
-        multiplication_trees = (algorithms[i])->dispositions(part0, part0);
+        multiplication_trees = (algorithms[i])->dispositions(part0 + 1, part0 + 1);
         for(j = 0; j < multiplication_trees.size(); j++)
         {
             returned_trees0.push_back(multiplication_trees[j]);
@@ -303,17 +298,18 @@ vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, M
     }
     else
     {
-        multiplication_trees = (algorithms[i])->dispositions(part1, part1);
-        for(j = 0; j < multiplication_trees.size(); j++)
+        for(i = 0; i < algorithms.size(); i++)
         {
-            returned_trees1.push_back(multiplication_trees[j]);
+            multiplication_trees = (algorithms[i])->dispositions(part1 + 1, part1 + 1);
+            for(j = 0; j < multiplication_trees.size(); j++)
+            {
+                returned_trees1.push_back(multiplication_trees[j]);
+            }
         }
     }
     // returned trees 0 is used for the first quadrant
     // returned trees d is used for dxdy
     // returned trees 1 is used for the last quadrant
-    cout << "STOP" << endl;
-    cout << returned_treesd.size() << endl;
     for(i = 0; i < returned_trees0.size(); i++)
     {
         for(j = 0; j < returned_treesd.size(); j++)
@@ -324,14 +320,8 @@ vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, M
                 input2 = make_shared<InputNode>(false, y);
                 tmp = returned_trees0[i].copyTree();
                 // Working on x0y0
-                cout << "Pre x0y0" << endl;
-                cout << input1.use_count() << endl;
-                cout << input2.use_count() << endl;
                 x0y0 = tmp.getRoot();
                 x0y0->substituteLeaves(input1, input2);
-                cout << "After x0y0" << endl;
-                cout << input1.use_count() << endl;
-                cout << input2.use_count() << endl;
                 // Working on dxdy
                 operation1 = make_shared<OperationNode>(make_shared<C2>());
                 first_operand = Link(input1, 0, part0, false);
@@ -408,7 +398,7 @@ vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, M
                 second_operand = Link(operation2);
                 root->insertOperandLast(first_operand);
                 root->insertOperandLast(second_operand);
-                multiplication_trees.push_back(MultiplicationTree(root, "Karatsuba-Ofman 2 way split", x, y));
+                multiplication_trees.push_back(MultiplicationTree(root, "Karatsuba-Ofman 2 way split (recursive algorithm)", x, y));
             }
         }
     }

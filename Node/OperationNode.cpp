@@ -207,24 +207,25 @@ void OperationNode::substituteLeaves(shared_ptr<Node> input1, shared_ptr<Node> i
 
     for(i = 0; i < this->operands.size(); i++)
     {
-        if(this->operands[i].getNode()->type() == INPUT)
+        if(this != input1.get() && this != input2.get())
         {
-            input = InputNode::castToInputNode(operands[i].getNode());
-            if(input->isFirstInput() == true)
+            if(this->operands[i].getNode()->type() == INPUT)
             {
-                operands[i].setNode(input1);
-                cout << "Input 1 incontrato" << endl;
+                input = InputNode::castToInputNode(operands[i].getNode());
+                if(input->isFirstInput() == true)
+                {
+                    operands[i].setNode(input1);
+                }
+                else
+                {
+                    operands[i].setNode(input2);
+                }
             }
             else
             {
-                operands[i].setNode(input2);
-                //cout << input2.use_count() << endl;
+                operation = OperationNode::castToOperationNode(operands[i].getNode());
+                operation->substituteLeaves(input1, input2);
             }
-        }
-        else
-        {
-            operation = OperationNode::castToOperationNode(operands[i].getNode());
-            operation->substituteLeaves(input1, input2);
         }
     }
 }

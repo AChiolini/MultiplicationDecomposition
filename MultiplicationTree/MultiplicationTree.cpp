@@ -234,6 +234,20 @@ string MultiplicationTree::getCost()
     return s;
 }
 
+string MultiplicationTree::getAllInfo(long long input1, long long input2)
+{
+    string s;
+
+    s = this->getDescription() + "\n";
+    s = s + "Expression: " + this->getExpression() + "\n";
+    s = s + "Delay: " + to_string(this->getLatency()) + "\n";
+    s = s + "Cost: " + this->getCost() + "\n";
+    s = s + "Expected value: " + to_string(input1 * input2) + "\n";
+    s = s + "Obtained value: " + to_string(this->executeMultiplication(input1, input2)) + "\n";
+    s = s + "Output Length: " + to_string(this->getOutputLength()) + "\n";
+    return s;
+}
+
 MultiplicationTree MultiplicationTree::copyTree()
 {
     int i, j, k,root_position;

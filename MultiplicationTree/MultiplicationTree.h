@@ -34,6 +34,7 @@ class MultiplicationTree
         int getLengthX();
         int getLengthY();
         int getOutputLength();
+        string getAllInfo(long long, long long);
         void setRoot(shared_ptr<OperationNode>);
         void setDescription(string);
         void setLengthX(int);

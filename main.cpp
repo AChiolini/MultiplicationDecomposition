@@ -55,18 +55,10 @@ int main (int argc, char** argv)
         algorithms.push_back(new ProposedTiling(multipliers));
         for (j = 0; j < algorithms.size(); j++)
         {
-            cout << "Function call" << endl;
             multiplicationTrees = (algorithms[j])->dispositions(inputLength1, inputLength2);
-            cout << "Disposed" << endl;
             for (i = 0; i < multiplicationTrees.size(); i++)
             {
-                cout << multiplicationTrees[i].getDescription() << endl;
-                cout << "Expression: " << multiplicationTrees[i].getExpression() << endl;
-                cout << "Delay: " << multiplicationTrees[i].getLatency() << endl;
-                cout << "Cost: " << multiplicationTrees[i].getCost() << endl;
-                cout << "Expected value: " << in1 * in2 << endl;
-                cout << "Obtained value: " << multiplicationTrees[i].executeMultiplication(in1, in2) << endl;
-                cout << "Output Length: " << multiplicationTrees[i].getOutputLength() << endl;
+                cout << multiplicationTrees[i].getAllInfo(in1, in2);
                 cout << endl;
                 cout << endl;
             }
