@@ -257,9 +257,10 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
 
 vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, Multiplier multiplier)
 {
-    vector<MultiplicationTree> multiplication_trees, returned_trees0, returned_trees1, returned_treesd;
+    vector<MultiplicationTree> multiplication_trees, returned_trees0, returned_trees1, returned_treesd, returned_trees;
     vector<shared_ptr<Algorithm>> algorithms;
     vector<Multiplier> multipliers;
+    vector<OperationNode*> empty;
     int part0, part1, i, j, k;
     shared_ptr<InputNode> input1, input2;
     shared_ptr<OperationNode> x0y0, x1y1, dx, dy, dxdy, operation1, operation2, operation3, root;
@@ -346,7 +347,7 @@ vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, M
                 tmp = returned_trees1[k].copyTree();
                 x1y1 = tmp.getRoot();
                 x1y1->substituteLeaves(input1, input2);
-                x1y1->shiftLinksOperands(part0, part0);
+                x1y1->shiftLinksOperands(part0, part0, empty);
                 // Computing x1y1 + x0y0 - dxdy remembering this operation as middle term
                 operation1 = make_shared<OperationNode>(make_shared<Addition>());
                 first_operand = Link(x1y1);
@@ -398,9 +399,9 @@ vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, M
                 second_operand = Link(operation2);
                 root->insertOperandLast(first_operand);
                 root->insertOperandLast(second_operand);
-                multiplication_trees.push_back(MultiplicationTree(root, "Karatsuba-Ofman 2 way split (recursive algorithm)", x, y));
+                returned_trees.push_back(MultiplicationTree(root, "Karatsuba-Ofman 2 way split (recursive algorithm)", x, y));
             }
         }
     }
-    return multiplication_trees;
+    return returned_trees;
 }

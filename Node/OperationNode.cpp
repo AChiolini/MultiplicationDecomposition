@@ -205,9 +205,9 @@ void OperationNode::substituteLeaves(shared_ptr<Node> input1, shared_ptr<Node> i
     InputNode *input;
     OperationNode *operation;
 
-    for(i = 0; i < this->operands.size(); i++)
+    if(this != input1.get() && this != input2.get())
     {
-        if(this != input1.get() && this != input2.get())
+        for(i = 0; i < this->operands.size(); i++)
         {
             if(this->operands[i].getNode()->type() == INPUT)
             {
@@ -230,32 +230,69 @@ void OperationNode::substituteLeaves(shared_ptr<Node> input1, shared_ptr<Node> i
     }
 }
 
-void OperationNode::shiftLinksOperands(int s1, int s2)
+vector<OperationNode*> OperationNode::shiftLinksOperands(int s1, int s2, vector<OperationNode*> changed_nodes)
 {
-    int i;
+    int i, j, k;
     InputNode *input;
     OperationNode *operation;
+    bool found, inserted;
+    vector<OperationNode*> nodes, returned_nodes;
 
-    for(i = 0; i < this->operands.size(); i++)
+    for(i = 0, found = false; i < changed_nodes.size(); i++)
     {
-        if(this->operands[i].getNode()->type() == INPUT)
+        nodes.push_back(changed_nodes[i]);
+        if(this == changed_nodes[i])
         {
-            input = InputNode::castToInputNode(operands[i].getNode());
-            if(input->isFirstInput() == true)
-            {
-                operands[i].setStart(operands[i].getStart() + s1);
-            }
-            else
-            {
-                operands[i].setStart(operands[i].getStart() + s2);
-            }
-        }
-        else
-        {
-            operation = OperationNode::castToOperationNode(operands[i].getNode());
-            operation->shiftLinksOperands(s1, s2);
+            found = true;
         }
     }
+    inserted = false;
+    if(found == false)
+    {
+        for(i = 0; i < this->operands.size(); i++)
+        {
+            if(this->operands[i].getNode()->type() == INPUT)
+            {
+                inserted = true;
+                input = InputNode::castToInputNode(operands[i].getNode());
+                if(input->isFirstInput() == true)
+                {
+                    operands[i].setStart(operands[i].getStart() + s1);
+                }
+                else
+                {
+                    operands[i].setStart(operands[i].getStart() + s2);
+                }
+            }
+        }
+        if(inserted == true)
+        {
+            nodes.push_back(this);
+        }
+        for(i = 0; i < this->operands.size(); i++)
+        {
+            if(this->operands[i].getNode()->type() == OPERATION)
+            {
+                operation = OperationNode::castToOperationNode(operands[i].getNode());
+                returned_nodes = operation->shiftLinksOperands(s1, s2, nodes);
+                for(j = 0; j < returned_nodes.size(); j++)
+                {
+                    for(k = 0, found = false; k < nodes.size() && found == false; k++)
+                    {
+                        if(returned_nodes[j] == nodes[k])
+                        {
+                            found = true;
+                        }
+                    }
+                    if(found == false)
+                    {
+                        nodes.push_back(returned_nodes[j]);
+                    }
+                }
+            }
+        }
+    }
+    return nodes;
 }
 
 long long OperationNode::executeNode(long long input1, long long input2)
