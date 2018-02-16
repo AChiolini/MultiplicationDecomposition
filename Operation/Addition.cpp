@@ -47,7 +47,7 @@ string Addition::getExpression(vector<string> operands_names)
 
     if(operands_names.size() != 2)
     {
-        throw length_error ("Operands for addition must be 2");
+        throw invalid_argument ("Operands for addition must be 2");
     }
     s = operands_names[0] + " + " + operands_names[1];
     return s;
@@ -59,7 +59,7 @@ int Addition::outputLength(vector<Link> operands)
 
     if(operands.size() != 2)
     {
-        throw length_error ("Operands for addition must be 2");
+        throw invalid_argument ("Operands for addition must be 2");
     }
     Operation::checkLinks(operands);
     length1 = operands[0].getLength();
@@ -89,12 +89,12 @@ long long Addition::executeOperation(vector<Link> operands, vector<long long> va
 
     if(operands.size() != 2)
     {
-        throw length_error ("Operands for addition must be 2");
+        throw invalid_argument ("Operands for addition must be 2");
     }
     Operation::checkLinks(operands);
     if(values.size() != 2)
     {
-        throw length_error ("Values for addition must be 2");
+        throw invalid_argument ("Values for addition must be 2");
     }
     // Taking the values
     value1 = values[0];

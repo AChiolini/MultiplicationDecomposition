@@ -69,7 +69,7 @@ string Multiplication::getExpression(vector<string> operands_names)
 
     if(operands_names.size() != 2)
     {
-        throw length_error ("Operands for multiplication must be 2");
+        throw invalid_argument ("Operands for multiplication must be 2");
     }
     s = operands_names[0] + " x " + operands_names[1];
     return s;
@@ -104,12 +104,12 @@ long long Multiplication::executeOperation(vector<Link> operands, vector<long lo
 
     if(operands.size() != 2)
     {
-        throw length_error ("Operands for multiplication must be 2");
+        throw invalid_argument ("Operands for multiplication must be 2");
     }
     Operation::checkLinks(operands);
     if(values.size() != 2)
     {
-        throw length_error ("Values for multiplication must be 2");
+        throw invalid_argument ("Values for multiplication must be 2");
     }
     // Taking the values
     value1 = values[0];

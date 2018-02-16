@@ -91,7 +91,7 @@ string And::getExpression(vector<string> operands_names)
 
     if(operands_names.size() != 2)
     {
-        throw length_error ("Operands for and must be 2");
+        throw invalid_argument ("Operands for and must be 2");
     }
     if(this->shift_input1 != 0)
     {
@@ -111,7 +111,7 @@ int And::outputLength(vector<Link> operands)
 
     if(operands.size() != 2)
     {
-        throw length_error ("Operands for and must be 2");
+        throw invalid_argument ("Operands for and must be 2");
     }
     Operation::checkLinks(operands);
     length1 = operands[0].getLength();

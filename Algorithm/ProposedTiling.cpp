@@ -458,7 +458,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     else
                     {
                         //TODO decidere cosa fare se non è una LUT
-                        cout << "La parte da coprire non è una LUT" << endl;
+                        //cout << "La parte da coprire non è una LUT" << endl;
                         return MultiplicationTree();
                     }
                 }
@@ -533,7 +533,7 @@ MultiplicationTree ProposedTiling::disposeVertical(int x, int y, Multiplier mult
                     else
                     {
                         //TODO decidere cosa fare se non è una LUT
-                        cout << "La parte da coprire non è una LUT in verticale" << endl;
+                        //cout << "La parte da coprire non è una LUT in verticale" << endl;
                         return MultiplicationTree();
                     }
                 }

@@ -252,7 +252,7 @@ MultiplicationTree KaratsubaOfman2::notRecursiveDisposition(int x, int y, Multip
     second_operand = Link(operation2);
     root->insertOperandLast(first_operand);
     root->insertOperandLast(second_operand);
-    return MultiplicationTree(root, "Karatsuba-Ofman 2 way split (standard algorithm)", x, y);
+    return MultiplicationTree(root, "Karatsuba-Ofman 2 way split (standard algorithm using " + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y);
 }
 
 vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, Multiplier multiplier)
@@ -399,7 +399,7 @@ vector<MultiplicationTree> KaratsubaOfman2::recursiveDisposition(int x, int y, M
                 second_operand = Link(operation2);
                 root->insertOperandLast(first_operand);
                 root->insertOperandLast(second_operand);
-                returned_trees.push_back(MultiplicationTree(root, "Karatsuba-Ofman 2 way split (recursive algorithm)", x, y));
+                returned_trees.push_back(MultiplicationTree(root, "Karatsuba-Ofman 2 way split (recursive algorithm using " + to_string(multiplier.getInputLength1()) + "x" + to_string(multiplier.getInputLength2()) + ")", x, y));
             }
         }
     }
